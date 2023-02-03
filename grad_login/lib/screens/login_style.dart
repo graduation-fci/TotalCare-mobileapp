@@ -1,15 +1,21 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+// ignore_for_file: prefer_const_constructors
 
-class login extends StatefulWidget {
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/authService.dart';
+
+class Login extends StatefulWidget {
+  static const String routeName = '/login';
+  const Login({super.key});
+
   @override
-  State<login> createState() => _loginState();
+  State<Login> createState() => _LoginState();
 }
 
-class _loginState extends State<login> {
+class _LoginState extends State<Login> {
   TextEditingController nameController = TextEditingController();
-  TextEditingController PasswordController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   var visible = true;
   @override
   Widget build(BuildContext context) {
@@ -55,7 +61,7 @@ class _loginState extends State<login> {
                   padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                   child: TextField(
                     obscureText: visible,
-                    controller: PasswordController,
+                    controller: passwordController,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20)),
@@ -82,8 +88,12 @@ class _loginState extends State<login> {
                     child: ElevatedButton(
                       child: const Text('Login'),
                       onPressed: () {
-                        print(nameController.text);
-                        print(PasswordController.text);
+                        Provider.of<AuthService>(context, listen: false).login(
+                            nameController.text,
+                            passwordController.text,
+                            context);
+                        Provider.of<AuthService>(context, listen: false)
+                            .getCurrentUser();
                       },
                     )),
                 Column(
