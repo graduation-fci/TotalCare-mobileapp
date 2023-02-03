@@ -1,23 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/users.dart';
+import '../providers/userService.dart';
+import '../providers/authService.dart';
+import '../models/user.dart';
 
-class LoginScreen extends StatelessWidget {
+
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  var newUser = User(
+    username: 'hassan003',
+    // id: 'hassan001',
+    firstName: 'Hassan',
+    lastName: 'Elsayed',
+    email: 'hassanleave03@test.com',
+    password: 'Aa012345543210',
+    profile_type: 'STD',
+    // birthdate: DateTime.now(),
+  );
+
+  @override
   Widget build(BuildContext context) {
-    var newUser = User(
-      username: 'username',
-      id: '',
-      firstName: 'firstName',
-      lastName: 'lastName',
-      email: 'email',
-      password: 'password',
-      profile_Type: 'profile_Type',
-      // birthdate: DateTime.now(),
-    );
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -27,8 +36,22 @@ class LoginScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () async => {
-              await Provider.of<Users>(context, listen: false)
-                  .login('test@test.com', 'hassan')
+              // await Provider.of<Users>(context, listen: false)
+              //     .login('hassanelsayed009', 'test123123', context)
+              // await Provider.of<Users>(context, listen: false).register(
+              //   newUser,
+              //   context,
+              // )
+              await Provider.of<AuthService>(context, listen: false).login(
+                'hassan003',
+                'Aa012345543210',
+                context,
+              )
+              // await Provider.of<AuthService>(context, listen: false).refreshJwt(
+              //   context,
+              // )
+              // await Provider.of<AuthService>(context, listen: false).logout()
+              
             },
             child: const Icon(
               Icons.add,
@@ -37,7 +60,15 @@ class LoginScreen extends StatelessWidget {
           )
         ],
       ),
-      body: Container(child: Text(newUser.username)),
+      body: Container(
+        height: 300,
+        child: ListView.builder(
+          itemBuilder: (context, item) => Text(
+            newUser.username,
+          ),
+          itemCount: Provider.of<Users>(context).users.length,
+        ),
+      ),
     );
   }
 }
