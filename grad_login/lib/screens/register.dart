@@ -2,6 +2,7 @@
 
 // import 'package:final_project/login.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class RegisterFormScreen extends StatelessWidget {
   final Map<String, dynamic> _authData = {
@@ -64,20 +65,18 @@ class RegisterFormScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(50.0),
                 child: Column(
                   children: [
-                    const Text(
-                      'Total Care',
-                      style: TextStyle(fontSize: 26),
+                    Image.asset(
+                      'assets/images/TotalCare.png',
                     ),
-                    SizedBox(
-                      height: mediaQuery.height * 0.04,
-                    ),
+
                     Container(
                         alignment: Alignment.topLeft,
                         child: const Text('Email')),
                     SizedBox(
-                      height: mediaQuery.height * 0.01,
+                      height: mediaQuery.height * 0.02,
                     ),
                     TextFormField(
+                      //make autofocus: true after completion
                       autofocus: false,
                       // controller: emailController,
                       keyboardType: TextInputType.emailAddress,
@@ -92,6 +91,7 @@ class RegisterFormScreen extends StatelessWidget {
                         _authData['email'] = value;
                       },
                       decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20.0),
                         ),
@@ -100,13 +100,13 @@ class RegisterFormScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.04,
+                      height: mediaQuery.height * 0.02,
                     ),
                     Container(
                         alignment: Alignment.topLeft,
                         child: const Text('First Name')),
                     SizedBox(
-                      height: mediaQuery.height * 0.01,
+                      height: mediaQuery.height * 0.02,
                     ),
                     TextFormField(
                       // controller: firstNameController,
@@ -120,6 +120,7 @@ class RegisterFormScreen extends StatelessWidget {
                         }
                       },
                       decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0)),
                         labelText: 'Enter Your First Name',
@@ -127,13 +128,13 @@ class RegisterFormScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.04,
+                      height: mediaQuery.height * 0.02,
                     ),
                     Container(
                         alignment: Alignment.topLeft,
                         child: const Text('Last Name')),
                     SizedBox(
-                      height: mediaQuery.height * 0.01,
+                      height: mediaQuery.height * 0.02,
                     ),
                     TextFormField(
                       // controller: lastNameController,
@@ -148,6 +149,7 @@ class RegisterFormScreen extends StatelessWidget {
                         return null;
                       },
                       decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0)),
                         labelText: 'Enter Your Last Name',
@@ -155,13 +157,13 @@ class RegisterFormScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.04,
+                      height: mediaQuery.height * 0.02,
                     ),
                     Container(
                         alignment: Alignment.topLeft,
                         child: const Text('Username')),
                     SizedBox(
-                      height: mediaQuery.height * 0.01,
+                      height: mediaQuery.height * 0.02,
                     ),
                     TextFormField(
                       // controller: userNameController,
@@ -176,6 +178,7 @@ class RegisterFormScreen extends StatelessWidget {
                         return null;
                       },
                       decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0)),
                         labelText: 'What Should We Call You?',
@@ -183,13 +186,13 @@ class RegisterFormScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.04,
+                      height: mediaQuery.height * 0.02,
                     ),
                     Container(
                         alignment: Alignment.topLeft,
                         child: const Text('Phone Number')),
                     SizedBox(
-                      height: mediaQuery.height * 0.01,
+                      height: mediaQuery.height * 0.02,
                     ),
                     TextFormField(
                       // controller: mobileController,
@@ -203,6 +206,7 @@ class RegisterFormScreen extends StatelessWidget {
                         }
                       },
                       decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0)),
                         labelText: 'Enter Your Phone Number',
@@ -210,13 +214,13 @@ class RegisterFormScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.04,
+                      height: mediaQuery.height * 0.02,
                     ),
                     // Container(
                     //     alignment: Alignment.topLeft,
                     //     child: const Text('Birth Date')),
                     // SizedBox(
-                    //   height: mediaQuery.height * 0.01,
+                    //   height: mediaQuery.height * 0.02,
                     // ),
                     // // IconButton(
                     // //     onPressed: () {
@@ -244,13 +248,13 @@ class RegisterFormScreen extends StatelessWidget {
                     //   ),
                     // ),
                     // SizedBox(
-                    //   height: mediaQuery.height * 0.04,
+                    //   height: mediaQuery.height * 0.02,
                     // ),
                     Container(
                         alignment: Alignment.topLeft,
                         child: const Text('Password')),
                     SizedBox(
-                      height: mediaQuery.height * 0.01,
+                      height: mediaQuery.height * 0.02,
                     ),
                     TextFormField(
                       controller: passwordController,
@@ -266,6 +270,7 @@ class RegisterFormScreen extends StatelessWidget {
                       },
                       obscureText: true,
                       decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0)),
                         labelText: 'Enter Your Password',
@@ -274,13 +279,13 @@ class RegisterFormScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.04,
+                      height: mediaQuery.height * 0.02,
                     ),
                     Container(
                         alignment: Alignment.topLeft,
                         child: const Text('Confirm Your Password')),
                     SizedBox(
-                      height: mediaQuery.height * 0.01,
+                      height: mediaQuery.height * 0.02,
                     ),
                     TextFormField(
                       // controller: rePasswordController,
@@ -293,6 +298,7 @@ class RegisterFormScreen extends StatelessWidget {
                       },
                       obscureText: true,
                       decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0)),
                         labelText: 'Confirm Your Password',
@@ -300,7 +306,7 @@ class RegisterFormScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.04,
+                      height: mediaQuery.height * 0.02,
                     ),
                     TextButton(
                       style: ButtonStyle(
@@ -311,52 +317,66 @@ class RegisterFormScreen extends StatelessWidget {
                               mediaQuery.width * 0.77,
                               mediaQuery.height * 0.08)),
                           foregroundColor:
-                              MaterialStateProperty.all(Colors.white70),
+                              MaterialStateProperty.all(Colors.white),
                           backgroundColor:
-                              MaterialStateProperty.all(Colors.blueAccent)),
+                              MaterialStateProperty.all(Colors.redAccent)),
                       onPressed: () => register(context),
-                      child: const Text('Register'),
-                    ),
-                    SizedBox(
-                      height: mediaQuery.height * 0.04,
-                    ),
-                    const Divider(),
-                    SizedBox(
-                      height: mediaQuery.height * 0.01,
-                    ),
-                    TextButton(
-                      onPressed: () {},
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          SizedBox(
-                            width: mediaQuery.height * 0.07,
-                            child: Image.network(
-                                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKoBxdc41cpqz-7ipwR7smTudicsd8J0MBKL0yyup1qA&s'),
-                          ),
-                          const Text('Sign up using Google'),
-                        ],
+                      child: const Text(
+                        'Register',
+                        style: TextStyle(fontSize: 18, letterSpacing: 2),
                       ),
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.01,
+                      height: mediaQuery.height * 0.02,
                     ),
-                    TextButton(
-                      onPressed: () {},
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          SizedBox(
-                            width: mediaQuery.height * 0.07,
-                            child: Image.network(
-                                'https://imgs.search.brave.com/1TdjcfEDQyBphTbyy3o9G7Hznno23ojIcxzQgX536fc/rs:fit:1024:1024:1/g:ce/aHR0cHM6Ly93d3cu/Y2hzaWNhLm9yZy93/cC1jb250ZW50L3Vw/bG9hZHMvMjAyMC8x/MC9GYWNlYm9vay1M/b2dvLVBORy1UcmFu/c3BhcmVudC1MaWtl/LTE3LnBuZw'),
-                          ),
-                          const Text('Sign up using Facebook'),
-                        ],
+                    const Divider(
+                      thickness: 2,
+                    ),
+                    SizedBox(
+                      height: mediaQuery.height * 0.02,
+                    ),
+                    Container(
+                      alignment: Alignment.bottomCenter,
+                      child: TextButton.icon(
+                        label: const Text(
+                          'Sign up using Facebook',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        onPressed: () {},
+                        icon: const Icon(
+                          MdiIcons.facebook,
+                          size: 34,
+                          color: Color(0xff3E529C),
+                        ),
                       ),
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.01,
+                      height: mediaQuery.height * 0.02,
+                    ),
+                    Container(
+                      alignment: Alignment.lerp(
+                          Alignment.bottomRight, Alignment.bottomCenter, 1.11),
+                      child: TextButton.icon(
+                        label: const Text(
+                          'Sign up using Google',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        onPressed: () {},
+                        icon: Container(
+                          padding: const EdgeInsets.all(0),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              color: const Color(0xffEC2D2F)),
+                          child: const Icon(
+                            MdiIcons.google,
+                            size: 30,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: mediaQuery.height * 0.02,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

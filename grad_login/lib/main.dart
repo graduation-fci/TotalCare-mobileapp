@@ -22,11 +22,13 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'first demo',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          //useMaterial3: true,
+          primarySwatch: Colors.red,
         ),
-        home: LoginScreen(),
+        home: RegisterFormScreen(),
       ),
     );
   }
