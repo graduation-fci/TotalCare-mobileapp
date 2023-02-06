@@ -2,58 +2,75 @@
 
 // import 'package:final_project/login.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class RegisterFormScreen extends StatelessWidget {
-  final Map<String, dynamic> _authData = {
-    'username': '',
-    'password': '',
-    'first_name': '',
-    'last_name': '',
-    'phone_number': '',
-    'email': '',
-  };
-  // final TextEditingController emailController = TextEditingController();
-  // final TextEditingController firstNameController = TextEditingController();
-  // final TextEditingController lastNameController = TextEditingController();
-  // final TextEditingController userNameController = TextEditingController();
-  // final TextEditingController mobileController = TextEditingController();
-  // final TextEditingController birthDateController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  // final TextEditingController rePasswordController = TextEditingController();
+import '../providers/userService.dart';
+import '../models/user.dart';
+import './exams_screen.dart';
 
+class RegisterFormScreen extends StatefulWidget {
   static const routeName = '/register';
-
-  final formKey = GlobalKey<FormState>();
 
   RegisterFormScreen({super.key});
 
+  @override
+  State<RegisterFormScreen> createState() => _RegisterFormScreenState();
+}
+
+class _RegisterFormScreenState extends State<RegisterFormScreen> {
+  // final Map<String, dynamic> user = {
+  final TextEditingController passwordController = TextEditingController();
+
+  final formKey = GlobalKey<FormState>();
+  var _isLoading = false;
+
+  User user = User(
+      username: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      profile_type: '');
+
   // void loginNav(BuildContext context) {
-  //   Navigator.of(context).pushNamed(LoginFormScreen.routeName);
-  // }
-
-  void register(BuildContext context) {
-    // if (passwordController.text == rePasswordController.text) {
-    //   print(emailController.text);
-    //   print(firstNameController.text);
-    //   print(lastNameController.text);
-    //   print(userNameController.text);
-    //   print(mobileController.text);
-    //   print(birthDateController.text);
-    //   print(passwordController.text);
-    //   print(rePasswordController.text);
-    // } else {
-    //   print('Passwords are not Identical!');
-    // }
-    if (formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Processing Data')),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
+
+    void register(BuildContext context) {
+      // if (passwordController.text == rePasswordController.text) {
+      //   print(emailController.text);
+      //   print(firstNameController.text);
+      //   print(lastNameController.text);
+      //   print(userNameController.text);
+      //   print(mobileController.text);
+      //   print(birthDateController.text);
+      //   print(passwordController.text);
+      //   print(rePasswordController.text);
+      // } else {
+      //   print('Passwords are not Identical!');
+      // }
+      setState(() {
+        _isLoading = true;
+      });
+      try {
+        Provider.of<UserService>(context, listen: false)
+            .register(user, context);
+        Navigator.of(context).pushReplacementNamed(ExamsScreen.routeName);
+        setState(() {
+          _isLoading = false;
+        });
+      } catch (err) {
+        //
+      }
+
+      // if (formKey.currentState!.validate()) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     const SnackBar(content: Text('Processing Data')),
+      //   );
+      // }
+    }
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -89,7 +106,7 @@ class RegisterFormScreen extends StatelessWidget {
                         }
                       },
                       onSaved: (value) {
-                        _authData['email'] = value;
+                        user.email = value!;
                       },
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
@@ -112,7 +129,7 @@ class RegisterFormScreen extends StatelessWidget {
                       // controller: firstNameController,
                       keyboardType: TextInputType.name,
                       onSaved: (value) {
-                        _authData['first_name'] = value;
+                        user.firstName = value!;
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -139,7 +156,7 @@ class RegisterFormScreen extends StatelessWidget {
                       // controller: lastNameController,
                       keyboardType: TextInputType.name,
                       onSaved: (value) {
-                        _authData['last_name'] = value;
+                        user.lastName = value!;
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -166,7 +183,7 @@ class RegisterFormScreen extends StatelessWidget {
                     TextFormField(
                       // controller: userNameController,
                       onSaved: (value) {
-                        _authData['username'] = value;
+                        user.username = value!;
                       },
                       keyboardType: TextInputType.text,
                       validator: (value) {
@@ -185,33 +202,33 @@ class RegisterFormScreen extends StatelessWidget {
                     SizedBox(
                       height: mediaQuery.height * 0.04,
                     ),
-                    Container(
-                        alignment: Alignment.topLeft,
-                        child: const Text('Phone Number')),
-                    SizedBox(
-                      height: mediaQuery.height * 0.01,
-                    ),
-                    TextFormField(
-                      // controller: mobileController,
-                      keyboardType: TextInputType.phone,
-                      onSaved: (value) {
-                        _authData['phone_number'] = value;
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Phone Number Cannot be Empty!';
-                        }
-                      },
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0)),
-                        labelText: 'Enter Your Phone Number',
-                        // focusedBorder: OutlineInputBorder(),
-                      ),
-                    ),
-                    SizedBox(
-                      height: mediaQuery.height * 0.04,
-                    ),
+                    // Container(
+                    //     alignment: Alignment.topLeft,
+                    //     child: const Text('Phone Number')),
+                    // SizedBox(
+                    //   height: mediaQuery.height * 0.01,
+                    // ),
+                    // TextFormField(
+                    //   // controller: mobileController,
+                    //   keyboardType: TextInputType.phone,
+                    //   onSaved: (value) {
+                    //     user['phone_number'] = value;
+                    //   },
+                    //   validator: (value) {
+                    //     if (value == null || value.isEmpty) {
+                    //       return 'Phone Number Cannot be Empty!';
+                    //     }
+                    //   },
+                    //   decoration: InputDecoration(
+                    //     border: OutlineInputBorder(
+                    //         borderRadius: BorderRadius.circular(20.0)),
+                    //     labelText: 'Enter Your Phone Number',
+                    //     // focusedBorder: OutlineInputBorder(),
+                    //   ),
+                    // ),
+                    // SizedBox(
+                    //   height: mediaQuery.height * 0.04,
+                    // ),
                     // Container(
                     //     alignment: Alignment.topLeft,
                     //     child: const Text('Birth Date')),
@@ -262,7 +279,7 @@ class RegisterFormScreen extends StatelessWidget {
                         return null;
                       },
                       onSaved: (value) {
-                        _authData['password'] = value;
+                        user.password = value!;
                       },
                       obscureText: true,
                       decoration: InputDecoration(
