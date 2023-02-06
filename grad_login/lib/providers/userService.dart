@@ -6,9 +6,7 @@ import 'package:http/http.dart' as http;
 
 import '../models/user.dart';
 
-
-
-class Users with ChangeNotifier {
+class UserService with ChangeNotifier {
   final List<User> _users = [];
 
   List<User> get users {

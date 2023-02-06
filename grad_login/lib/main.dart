@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(
-          value: Users(),
+          value: UserService(),
         ),
         ChangeNotifierProvider.value(
           value: AuthService(),

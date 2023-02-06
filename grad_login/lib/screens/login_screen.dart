@@ -5,7 +5,6 @@ import '../providers/userService.dart';
 import '../providers/authService.dart';
 import '../models/user.dart';
 
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -51,7 +50,6 @@ class _LoginScreenState extends State<LoginScreen> {
               //   context,
               // )
               // await Provider.of<AuthService>(context, listen: false).logout()
-              
             },
             child: const Icon(
               Icons.add,
@@ -66,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
           itemBuilder: (context, item) => Text(
             newUser.username,
           ),
-          itemCount: Provider.of<Users>(context).users.length,
+          itemCount: Provider.of<UserService>(context).users.length,
         ),
       ),
     );

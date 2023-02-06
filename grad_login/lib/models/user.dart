@@ -1,10 +1,10 @@
 class User {
-  final String username;
-  final String firstName;
-  final String lastName;
-  final String email;
-  final String password;
-  final String profile_type;
+  String username;
+  String firstName;
+  String lastName;
+  String email;
+  String password;
+  String profile_type;
 
   User({
     required this.username,
