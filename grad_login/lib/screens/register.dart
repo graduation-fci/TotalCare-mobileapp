@@ -3,8 +3,18 @@
 // import 'package:final_project/login.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:country_picker/country_picker.dart';
 
-class RegisterFormScreen extends StatelessWidget {
+class RegisterFormScreen extends StatefulWidget {
+  static const routeName = '/register';
+
+  const RegisterFormScreen({super.key});
+
+  @override
+  State<RegisterFormScreen> createState() => _RegisterFormScreenState();
+}
+
+class _RegisterFormScreenState extends State<RegisterFormScreen> {
   final Map<String, dynamic> _authData = {
     'username': '',
     'password': '',
@@ -13,25 +23,35 @@ class RegisterFormScreen extends StatelessWidget {
     'phone_number': '',
     'email': '',
   };
-  // final TextEditingController emailController = TextEditingController();
-  // final TextEditingController firstNameController = TextEditingController();
-  // final TextEditingController lastNameController = TextEditingController();
-  // final TextEditingController userNameController = TextEditingController();
-  // final TextEditingController mobileController = TextEditingController();
-  // final TextEditingController birthDateController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  // final TextEditingController rePasswordController = TextEditingController();
 
-  static const routeName = '/register';
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController userNameController = TextEditingController();
+  final TextEditingController mobileController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController rePasswordController = TextEditingController();
+
+  FocusNode firstNameFocus = FocusNode();
+  FocusNode lastNameFocus = FocusNode();
+  FocusNode userNameFocus = FocusNode();
+  FocusNode countryFocus = FocusNode();
+  FocusNode phoneFocus = FocusNode();
+  FocusNode passwordFocus = FocusNode();
+  FocusNode rePasswordFocus = FocusNode();
+
+  bool visible = true;
+
+  String countryName = 'Select Country: ';
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   final formKey = GlobalKey<FormState>();
 
-  RegisterFormScreen({super.key});
-
   // void loginNav(BuildContext context) {
-  //   Navigator.of(context).pushNamed(LoginFormScreen.routeName);
-  // }
-
   void register(BuildContext context) {
     // if (passwordController.text == rePasswordController.text) {
     //   print(emailController.text);
@@ -68,7 +88,6 @@ class RegisterFormScreen extends StatelessWidget {
                     Image.asset(
                       'assets/images/TotalCare.png',
                     ),
-
                     Container(
                         alignment: Alignment.topLeft,
                         child: const Text('Email')),
@@ -76,21 +95,26 @@ class RegisterFormScreen extends StatelessWidget {
                       height: mediaQuery.height * 0.02,
                     ),
                     TextFormField(
-                      //make autofocus: true after completion
-                      autofocus: false,
-                      // controller: emailController,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      autofocus: true,
+                      onEditingComplete: () {
+                        firstNameFocus.requestFocus();
+                      },
+                      controller: emailController,
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
-                        if (value == null ||
-                            !value.contains('@') ||
-                            value.isEmpty) {
+                        if (value == null || value.isEmpty) {
                           return 'Email Address Should not be Empty!';
+                        } else if (!value.contains('@')) {
+                          return 'Email Address must Contain @ Symbol!';
                         }
+                        return null;
                       },
                       onSaved: (value) {
                         _authData['email'] = value;
                       },
                       decoration: InputDecoration(
+                        prefixIcon: const Icon(MdiIcons.email),
                         contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20.0),
@@ -109,7 +133,9 @@ class RegisterFormScreen extends StatelessWidget {
                       height: mediaQuery.height * 0.02,
                     ),
                     TextFormField(
-                      // controller: firstNameController,
+                      onEditingComplete: () => lastNameFocus.requestFocus(),
+                      focusNode: firstNameFocus,
+                      controller: firstNameController,
                       keyboardType: TextInputType.name,
                       onSaved: (value) {
                         _authData['first_name'] = value;
@@ -120,6 +146,7 @@ class RegisterFormScreen extends StatelessWidget {
                         }
                       },
                       decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.account_box),
                         contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0)),
@@ -137,7 +164,9 @@ class RegisterFormScreen extends StatelessWidget {
                       height: mediaQuery.height * 0.02,
                     ),
                     TextFormField(
-                      // controller: lastNameController,
+                      onEditingComplete: () => userNameFocus.requestFocus(),
+                      focusNode: lastNameFocus,
+                      controller: lastNameController,
                       keyboardType: TextInputType.name,
                       onSaved: (value) {
                         _authData['last_name'] = value;
@@ -149,6 +178,7 @@ class RegisterFormScreen extends StatelessWidget {
                         return null;
                       },
                       decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.account_box),
                         contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0)),
@@ -166,7 +196,9 @@ class RegisterFormScreen extends StatelessWidget {
                       height: mediaQuery.height * 0.02,
                     ),
                     TextFormField(
-                      // controller: userNameController,
+                      focusNode: userNameFocus,
+                      onEditingComplete: () => countryFocus.requestFocus(),
+                      controller: userNameController,
                       onSaved: (value) {
                         _authData['username'] = value;
                       },
@@ -178,6 +210,7 @@ class RegisterFormScreen extends StatelessWidget {
                         return null;
                       },
                       decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.person_add_alt_1),
                         contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0)),
@@ -190,12 +223,45 @@ class RegisterFormScreen extends StatelessWidget {
                     ),
                     Container(
                         alignment: Alignment.topLeft,
-                        child: const Text('Phone Number')),
+                        child: const Text('Country')),
+                    SizedBox(
+                      height: mediaQuery.height * 0.02,
+                    ),
+                    Container(
+                      alignment: Alignment.lerp(
+                          Alignment.bottomRight, Alignment.center, 2.1),
+                      child: TextButton.icon(
+                        focusNode: countryFocus,
+                        label: Text(countryName),
+                        onPressed: () => showCountryPicker(
+                          context: context,
+                          showPhoneCode: true,
+                          onSelect: (Country country) {
+                            country.flagEmoji;
+                            mobileController.text = '+${country.phoneCode}';
+                            countryName =
+                                '${country.flagEmoji}  ${country.name}';
+                            phoneFocus.requestFocus();
+                            setState(() {});
+                          },
+                        ),
+                        icon: const Icon(Icons.arrow_drop_down),
+                      ),
+                    ),
+                    SizedBox(
+                      height: mediaQuery.height * 0.02,
+                    ),
+                    Container(
+                      alignment: Alignment.topLeft,
+                      child: const Text('Phone Number'),
+                    ),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
                     TextFormField(
-                      // controller: mobileController,
+                      onEditingComplete: () => passwordFocus.requestFocus(),
+                      controller: mobileController,
+                      focusNode: phoneFocus,
                       keyboardType: TextInputType.phone,
                       onSaved: (value) {
                         _authData['phone_number'] = value;
@@ -205,10 +271,9 @@ class RegisterFormScreen extends StatelessWidget {
                           return 'Phone Number Cannot be Empty!';
                         }
                       },
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.all(5),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0)),
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.all(5),
+                        border: OutlineInputBorder(),
                         labelText: 'Enter Your Phone Number',
                         // focusedBorder: OutlineInputBorder(),
                       ),
@@ -232,6 +297,7 @@ class RegisterFormScreen extends StatelessWidget {
                     // //     },
                     // //     icon: const Icon(Icons.date_range_outlined)),
                     // TextFormField(
+                    // onEditingComplete: () => firstNameFocus.requestFocus(),
                     //   // controller: birthDateController,
                     //   keyboardType: TextInputType.datetime,
                     //   validator: (value) {
@@ -257,19 +323,42 @@ class RegisterFormScreen extends StatelessWidget {
                       height: mediaQuery.height * 0.02,
                     ),
                     TextFormField(
+                      onEditingComplete: () => rePasswordFocus.requestFocus(),
+                      focusNode: passwordFocus,
                       controller: passwordController,
                       keyboardType: TextInputType.text,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Password Should not be Empty!';
+                        } else if (value.length < 8) {
+                          return 'Password must be at least 8 Characters!';
+                        } else if (!value.contains(RegExp(r'[A-Z]'))) {
+                          return 'Password must contain at least one Upper case letter!';
+                        } else if (!value.contains(RegExp(r'[a-z]'))) {
+                          return 'Password must contain at least one Lower case letter!';
+                        } else if (!value.contains(RegExp(r'[!@#\$&*~]'))) {
+                          return 'Password must contain at least one Symbol!\n[!@#\\\$&*~]';
+                        } else if (!value.contains(RegExp(r'[0-9]'))) {
+                          return 'Password must contain at least one digit!';
                         }
                         return null;
                       },
                       onSaved: (value) {
                         _authData['password'] = value;
                       },
-                      obscureText: true,
+                      obscureText: visible,
                       decoration: InputDecoration(
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            visible = !visible;
+                            setState(() {});
+                          },
+                          icon: visible
+                              ? const Icon(Icons.visibility)
+                              : const Icon(Icons.visibility_off),
+                        ),
+                        prefixIcon: const Icon(MdiIcons.formTextboxPassword),
                         contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0)),
@@ -288,16 +377,30 @@ class RegisterFormScreen extends StatelessWidget {
                       height: mediaQuery.height * 0.02,
                     ),
                     TextFormField(
+                      focusNode: rePasswordFocus,
                       // controller: rePasswordController,
                       keyboardType: TextInputType.text,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Password Confirmation Field Cannot be Empty!';
+                        } else if (value != passwordController.value.text) {
+                          return 'Passwords must be Identical!';
                         }
                         return null;
                       },
                       obscureText: true,
                       decoration: InputDecoration(
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            visible = !visible;
+                            setState(() {});
+                          },
+                          icon: visible
+                              ? const Icon(Icons.visibility)
+                              : const Icon(Icons.visibility_off),
+                        ),
+                        prefixIcon: const Icon(MdiIcons.formTextboxPassword),
                         contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0)),
