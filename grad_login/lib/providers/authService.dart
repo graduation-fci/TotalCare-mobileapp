@@ -8,6 +8,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 import '../screens/exams_screen.dart';
+import '../my_config.dart';
 
 const tokenKey = 'token';
 const storage = FlutterSecureStorage();
@@ -31,10 +32,8 @@ class AuthService with ChangeNotifier {
     return storage.read(key: tokenKey).then((value) => token = value);
   }
 
-  Future<void> getExams(BuildContext context) async {
-    final jsonString = await DefaultAssetBundle.of(context)
-        .loadString('assets/my_config.json');
-    final dynamic apiEndPoint = jsonDecode(jsonString)['apiUrl'];
+  Future<void> getExams() async {
+    const dynamic apiEndPoint = Config.apiUrl;
     final examsEndpoint = Uri.parse(apiEndPoint + '/exam/exams/');
     String? token = '';
     getToken().then((value) {
@@ -58,9 +57,8 @@ class AuthService with ChangeNotifier {
   Future<void> login(
       String username, String password, BuildContext context) async {
     // final loginEndPoint = getEndPoint(context, '/auth/jwt/create/');
-    final jsonString = await DefaultAssetBundle.of(context)
-        .loadString('assets/my_config.json');
-    final dynamic apiEndPoint = jsonDecode(jsonString)['apiUrl'];
+    
+    const dynamic apiEndPoint = Config.apiUrl;
     final loginEndPoint = Uri.parse(apiEndPoint + '/auth/jwt/create/');
 
     final response = await http.post(
@@ -116,11 +114,9 @@ class AuthService with ChangeNotifier {
     print(await storage.read(key: 'refresh'));
   }
 
-  Future<void> refreshJwt(BuildContext context) async {
+  Future<void> refreshJwt() async {
     try {
-      final jsonString = await DefaultAssetBundle.of(context)
-          .loadString('assets/my_config.json');
-      final dynamic apiEndPoint = jsonDecode(jsonString)['apiUrl'];
+      const dynamic apiEndPoint = Config.apiUrl;
       final refreshEndPoint = Uri.parse(apiEndPoint + '/auth/jwt/refresh/');
 
       print(await storage.read(key: tokenKey));

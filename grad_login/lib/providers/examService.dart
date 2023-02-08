@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/exam.dart';
+import '../my_config.dart';
 
 class ExamService with ChangeNotifier {
   // Function examUrl(id) {
@@ -16,10 +17,8 @@ class ExamService with ChangeNotifier {
     return [..._exams];
   }
 
-  Future<void> getExams(BuildContext context) async {
-    final jsonString = await DefaultAssetBundle.of(context)
-        .loadString('assets/my_config.json');
-    final dynamic apiEndPoint = jsonDecode(jsonString)['apiUrl'];
+  Future<void> getExams() async {
+    const dynamic apiEndPoint = Config.apiUrl;
     final examsEndPoint = Uri.parse(apiEndPoint + '/exam/exams/');
     final response = await http.get(examsEndPoint);
     final fetchedData =
@@ -42,10 +41,8 @@ class ExamService with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getSingleExam(BuildContext context) async {
-    final jsonString = await DefaultAssetBundle.of(context)
-        .loadString('assets/my_config.json');
-    final dynamic apiEndPoint = jsonDecode(jsonString)['apiUrl'];
+  Future<void> getSingleExam() async {
+    const dynamic apiEndPoint = Config.apiUrl;
     final examsEndPoint = Uri.parse(apiEndPoint + '/exam/exams/');
 
     await http.get(examsEndPoint);

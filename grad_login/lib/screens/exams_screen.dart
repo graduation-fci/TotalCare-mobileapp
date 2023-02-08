@@ -17,7 +17,7 @@ class _ExamsScreenState extends State<ExamsScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    Provider.of<ExamService>(context, listen: false).getExams(context);
+    Provider.of<ExamService>(context, listen: false).getExams();
     super.initState();
   }
 

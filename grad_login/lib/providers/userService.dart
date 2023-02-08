@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/user.dart';
+import '../my_config.dart';
 
 class UserService with ChangeNotifier {
   final List<User> _users = [];
@@ -14,9 +15,7 @@ class UserService with ChangeNotifier {
   }
 
   Future<void> register(User user, BuildContext context) async {
-    final jsonString = await DefaultAssetBundle.of(context)
-        .loadString('assets/my_config.json');
-    final dynamic apiEndPoint = jsonDecode(jsonString)['apiUrl'];
+    const dynamic apiEndPoint = Config.apiUrl;
     final registerEndPoint = Uri.parse(apiEndPoint + '/auth/users/');
 
     try {
@@ -58,10 +57,8 @@ class UserService with ChangeNotifier {
     }
   }
 
-  Future<void> getUser(BuildContext context) async {
-    final jsonString = await DefaultAssetBundle.of(context)
-        .loadString('assets/my_config.json');
-    final dynamic apiEndPoint = jsonDecode(jsonString)['apiUrl'];
+  Future<void> getUser() async {
+    const dynamic apiEndPoint = Config.apiUrl;
     final registerEndPoint = Uri.parse(apiEndPoint + '/auth/users/me/');
     await http.get(registerEndPoint);
   }
