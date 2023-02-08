@@ -11,6 +11,7 @@ import '../screens/exams_screen.dart';
 
 const tokenKey = 'token';
 const storage = FlutterSecureStorage();
+String? token;
 
 class AuthService with ChangeNotifier {
   // Uri getEndPoint(BuildContext context, String urlSegment) async {
@@ -22,11 +23,40 @@ class AuthService with ChangeNotifier {
   //   return endPoint;
   // }
 
+  Future<void> setToken(String value) {
+    return storage.write(key: tokenKey, value: value);
+  }
+
+  Future<String?> getToken() {
+    return storage.read(key: tokenKey).then((value) => token = value);
+  }
+
+  Future<void> getExams(BuildContext context) async {
+    final jsonString = await DefaultAssetBundle.of(context)
+        .loadString('assets/my_config.json');
+    final dynamic apiEndPoint = jsonDecode(jsonString)['apiUrl'];
+    final examsEndpoint = Uri.parse(apiEndPoint + '/exam/exams/');
+    String? token = '';
+    getToken().then((value) {
+      token = value;
+    });
+
+    final response = await http.get(
+      examsEndpoint,
+      headers: {
+        "content-type": "application/json",
+        // "accept": "application/json",
+        // "Authorization": "JWT $token",
+        HttpHeaders.authorizationHeader: 'JWT $token',
+      },
+    );
+
+    print(token);
+    print(response.body);
+  }
+
   Future<void> login(
-    String username,
-    String password,
-    BuildContext context,
-  ) async {
+      String username, String password, BuildContext context) async {
     // final loginEndPoint = getEndPoint(context, '/auth/jwt/create/');
     final jsonString = await DefaultAssetBundle.of(context)
         .loadString('assets/my_config.json');
@@ -48,13 +78,25 @@ class AuthService with ChangeNotifier {
 
     await storage.write(key: tokenKey, value: responseData['access']);
     await storage.write(key: 'refresh', value: responseData['refresh']);
-    String? value = await storage.read(key: 'refresh');
+    // String? value = await storage.read(key: tokenKey);
 
     Navigator.of(context).pushReplacementNamed(ExamsScreen.routeName);
 
     print(responseData['access']);
-    print(value);
+    // print(value);
   }
+
+  //how to get data from API which requires JWT authentication?
+  // String token = await Candidate().getToken();
+  // final response = await http.get(url, headers: {
+  //   'Content-Type': 'application/json',
+  //   'Accept': 'application/json',
+  //   'Authorization': 'Bearer $token',
+  // });
+  // print('Token : ${token}');
+  // print(response);
+
+//Source: https://stackoverflow.com/questions/58079131
 
   Future<void> loginWithJwt(jwt) async {
     await storage.write(key: tokenKey, value: jwt);
