@@ -33,9 +33,11 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'first demo',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: const Login(),
+            colorScheme: ColorScheme.fromSwatch().copyWith(
+          primary: const Color.fromRGBO(2, 0, 105, 0.85),
+          secondary: const Color.fromRGBO(167, 252, 132, 0.7),
+        )),
+        home: Login(),
         routes: {
           Login.routeName: (ctx) => const Login(),
           RegisterFormScreen.routeName: (ctx) => RegisterFormScreen(),
