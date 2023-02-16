@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../widgets/input_field.dart';
 import '../providers/authService.dart';
 
 class Login extends StatefulWidget {
@@ -16,119 +17,124 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
   var visible = true;
   @override
   Widget build(BuildContext context) {
+    var mediaQuery = MediaQuery.of(context);
+    var mainTopPadding =
+        AppBar().preferredSize.height + mediaQuery.size.height * 0.07;
     // var materialCommunityIcons;
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('login'),
-        ),
-        body: Padding(
-            padding: EdgeInsets.all(10),
-            child: Column(
-              children: <Widget>[
-                Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.all(10),
-                    child: const Text(
-                      'Total Care',
-                      style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 30),
-                    )),
-                Container(
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.all(10),
-                    child: const Text(
-                      "sign in",
-                      style: TextStyle(fontSize: 20),
-                    )),
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  child: TextField(
-                    controller: nameController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      labelText: 'UserName',
-                      // labelStyle:
-                    ),
+    return SafeArea(
+      child: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            body: Center(
+              child: Padding(
+                  padding: EdgeInsets.only(
+                    top: mainTopPadding,
+                    left: mediaQuery.size.width * 0.05,
+                    right: mediaQuery.size.width * 0.05,
                   ),
-                ),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                  child: TextField(
-                    obscureText: visible,
-                    controller: passwordController,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20)),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.all(10),
+                        child: Text(
+                          'Total Care',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 32,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          "sign in",
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ),
+                      InputField(
+                        nameController: nameController,
+                        labelText: 'Username',
+                        isPassword: false,
+                      ),
+                      InputField(
+                        nameController: nameController,
                         labelText: 'Password',
-                        suffixIcon: IconButton(
+                        isPassword: true,
+                      ),
+                      TextButton(
+                        onPressed: () {},
+                        child: const Text(
+                          'forget Password',
+                        ),
+                      ),
+                      Container(
+                          height: 50,
+                          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
+                            child: Text(
+                              'Login',
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary),
+                            ),
                             onPressed: () {
-                              visible = !visible;
-                              setState(() {});
+                              Provider.of<AuthService>(context, listen: false)
+                                  .login(nameController.text,
+                                      passwordController.text, context);
+                              Provider.of<AuthService>(context, listen: false)
+                                  .getExams();
                             },
-                            icon: visible
-                                ? Icon(Icons.visibility_off)
-                                : Icon(Icons.visibility))),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {},
-                  child: const Text(
-                    'forget Password',
-                  ),
-                ),
-                Container(
-                    height: 50,
-                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: ElevatedButton(
-                      child: const Text('Login'),
-                      onPressed: () {
-                        Provider.of<AuthService>(context, listen: false).login(
-                            nameController.text,
-                            passwordController.text,
-                            context);
-                        Provider.of<AuthService>(context, listen: false)
-                            .getCurrentUser();
-                      },
-                    )),
-                Column(
-                  children: [
-                    const Text('OR Sign up with'),
-                    Row(
-                      children: [
-                        TextButton(
-                            onPressed: () {},
-                            style: TextButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(40)),
-                                // primary: Colors.white,
-                                // backgroundColor: palette.googleColor,
-                                minimumSize: const Size(300, 50),
-                                side: const BorderSide(
-                                  width: 2,
-                                  color: Color.fromARGB(255, 222, 33, 80),
-                                )),
-                            child: Row(
-                              children: [
-                                // Icon(
-                                //   MaterialCommunityIcons.google,
-                                // ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Text('Google')
-                              ],
-                            )),
-                      ],
-                    )
-                  ],
-                )
-              ],
-            )));
+                          )),
+                      Column(
+                        children: [
+                          const Text('OR Sign up with'),
+                          Row(
+                            children: [
+                              TextButton(
+                                  onPressed: () {},
+                                  style: TextButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(40)),
+                                      // primary: Colors.white,
+                                      // backgroundColor: palette.googleColor,
+                                      minimumSize: const Size(300, 50),
+                                      side: const BorderSide(
+                                        width: 2,
+                                        color: Color.fromARGB(255, 222, 33, 80),
+                                      )),
+                                  child: Row(
+                                    children: [
+                                      // Icon(
+                                      //   MaterialCommunityIcons.google,
+                                      // ),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      Text('Google')
+                                    ],
+                                  )),
+                            ],
+                          )
+                        ],
+                      )
+                    ],
+                  )),
+            )),
+      ),
+    );
   }
 }
