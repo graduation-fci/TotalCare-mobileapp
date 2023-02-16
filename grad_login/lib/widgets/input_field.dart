@@ -24,43 +24,47 @@ class _InputFieldState extends State<InputField> {
   Widget build(BuildContext context) {
     return widget.isPassword
         ? Container(
-            padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-            child: Opacity(
-              opacity: 0.7,
-              child: TextField(
-                obscureText: visible,
-                controller: widget.nameController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20)),
-                  labelText: widget.labelText,
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      visible = !visible;
-                      setState(() {});
-                    },
-                    icon: visible
-                        ? Icon(Icons.visibility_off)
-                        : Icon(Icons.visibility),
-                  ),
+            height: 68,
+            padding: const EdgeInsets.all(10),
+            child: TextField(
+              obscureText: visible,
+              controller: widget.nameController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(40),
+                ),
+                labelText: widget.labelText,
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    visible = !visible;
+                    setState(() {});
+                  },
+                  icon: visible
+                      ? const Icon(
+                          Icons.visibility_off,
+                          size: 22,
+                        )
+                      : Icon(
+                          Icons.visibility,
+                          color: Colors.black.withOpacity(0.8),
+                          size: 22,
+                        ),
                 ),
               ),
             ),
           )
         : Container(
+            height: 68,
             padding: const EdgeInsets.all(10),
-            child: Opacity(
-              opacity: 0.7,
-              child: TextField(
-                controller: widget.nameController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  labelText: widget.labelText,
-                  // labelStyle: TextStyle(fontStyle: )
-                  // labelStyle:
+            child: TextField(
+              controller: widget.nameController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(40),
                 ),
+                labelText: widget.labelText,
+                // labelStyle: TextStyle(fontStyle: )
+                // labelStyle:
               ),
             ),
           );

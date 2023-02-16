@@ -34,10 +34,10 @@ class MyApp extends StatelessWidget {
         title: 'first demo',
         theme: ThemeData(
             colorScheme: ColorScheme.fromSwatch().copyWith(
-          primary: const Color.fromRGBO(2, 0, 105, 0.85),
+          primary: const Color.fromARGB(255, 22, 36, 66),
           secondary: const Color.fromRGBO(167, 252, 132, 0.7),
         )),
-        home: Login(),
+        home: const Login(),
         routes: {
           Login.routeName: (ctx) => const Login(),
           RegisterFormScreen.routeName: (ctx) => RegisterFormScreen(),
