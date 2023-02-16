@@ -28,17 +28,18 @@ class AuthService with ChangeNotifier {
     return storage.write(key: tokenKey, value: value);
   }
 
-  Future<String?> getToken() {
-    return storage.read(key: tokenKey).then((value) => token = value);
+  Future<String?> getToken() async {
+    return await storage.read(key: tokenKey).then((value) => token = value);
   }
 
   Future<void> getExams() async {
     const dynamic apiEndPoint = Config.apiUrl;
     final examsEndpoint = Uri.parse(apiEndPoint + '/exam/exams/');
     String? token = '';
-    getToken().then((value) {
+    await getToken().then((value) {
       token = value;
     });
+    print(token);
 
     final response = await http.get(
       examsEndpoint,
@@ -50,14 +51,14 @@ class AuthService with ChangeNotifier {
       },
     );
 
-    print(token);
+    // print(token);
     print(response.body);
   }
 
   Future<void> login(
       String username, String password, BuildContext context) async {
     // final loginEndPoint = getEndPoint(context, '/auth/jwt/create/');
-    
+
     const dynamic apiEndPoint = Config.apiUrl;
     final loginEndPoint = Uri.parse(apiEndPoint + '/auth/jwt/create/');
 
@@ -83,18 +84,6 @@ class AuthService with ChangeNotifier {
     print(responseData['access']);
     // print(value);
   }
-
-  //how to get data from API which requires JWT authentication?
-  // String token = await Candidate().getToken();
-  // final response = await http.get(url, headers: {
-  //   'Content-Type': 'application/json',
-  //   'Accept': 'application/json',
-  //   'Authorization': 'Bearer $token',
-  // });
-  // print('Token : ${token}');
-  // print(response);
-
-//Source: https://stackoverflow.com/questions/58079131
 
   Future<void> loginWithJwt(jwt) async {
     await storage.write(key: tokenKey, value: jwt);
