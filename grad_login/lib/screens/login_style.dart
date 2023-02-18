@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import '../widgets/input_field.dart';
 import '../providers/authService.dart';
 
+import './register.dart';
+
 class Login extends StatefulWidget {
   static const String routeName = '/login';
   const Login({super.key});
@@ -66,7 +68,7 @@ class _LoginState extends State<Login> {
                     isPassword: false,
                   ),
                   InputField(
-                    nameController: nameController,
+                    nameController: passwordController,
                     labelText: 'Password',
                     isPassword: true,
                   ),
@@ -112,8 +114,6 @@ class _LoginState extends State<Login> {
                           nameController.text,
                           passwordController.text,
                           context);
-                      Provider.of<AuthService>(context, listen: false)
-                          .getExams();
                     },
                   ),
                   Column(
@@ -174,7 +174,7 @@ class _LoginState extends State<Login> {
                                 width: 10,
                               ),
                               Text(
-                                'Sign up With Google',
+                                'Sign in With Google',
                                 style: TextStyle(
                                   color: Theme.of(context).colorScheme.primary,
                                 ),
@@ -196,7 +196,10 @@ class _LoginState extends State<Login> {
                               ),
                             ),
                             TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .pushNamed(RegisterFormScreen.routeName);
+                              },
                               child: Text(
                                 'Sign up',
                                 style: TextStyle(

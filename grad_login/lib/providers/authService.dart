@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 
 import '../screens/exams_screen.dart';
 import '../my_config.dart';
+import '../models/exam.dart';
 
 const tokenKey = 'token';
 const storage = FlutterSecureStorage();
@@ -24,6 +25,12 @@ class AuthService with ChangeNotifier {
   //   return endPoint;
   // }
 
+  List<Exam> _exams = [];
+
+  List<Exam> get exams {
+    return [..._exams];
+  }
+
   Future<void> setToken(String value) {
     return storage.write(key: tokenKey, value: value);
   }
@@ -35,11 +42,11 @@ class AuthService with ChangeNotifier {
   Future<void> getExams() async {
     const dynamic apiEndPoint = Config.apiUrl;
     final examsEndpoint = Uri.parse(apiEndPoint + '/exam/exams/');
-    String? token = '';
+
+    String? token;
     await getToken().then((value) {
       token = value;
     });
-    print(token);
 
     final response = await http.get(
       examsEndpoint,
@@ -50,15 +57,33 @@ class AuthService with ChangeNotifier {
         HttpHeaders.authorizationHeader: 'JWT $token',
       },
     );
+    final List? fetchedData = json.decode(response.body)['results'];
 
-    // print(token);
-    print(response.body);
+    List<Exam> loadedData = [];
+    print(fetchedData);
+
+    if (fetchedData == null) return;
+
+    for (var examData in fetchedData) {
+      loadedData.add(
+        Exam(
+          title: examData['title'],
+          id: examData['id'],
+          subject: examData['subject'],
+          starts_at: examData['starts_at'],
+          ends_at: examData['ends_at'],
+        ),
+      );
+    }
+    _exams = loadedData;
+    notifyListeners();
+
+    // print(response.body);
   }
 
   Future<void> login(
       String username, String password, BuildContext context) async {
     // final loginEndPoint = getEndPoint(context, '/auth/jwt/create/');
-
     const dynamic apiEndPoint = Config.apiUrl;
     final loginEndPoint = Uri.parse(apiEndPoint + '/auth/jwt/create/');
 
@@ -79,9 +104,12 @@ class AuthService with ChangeNotifier {
     await storage.write(key: 'refresh', value: responseData['refresh']);
     // String? value = await storage.read(key: tokenKey);
 
-    Navigator.of(context).pushReplacementNamed(ExamsScreen.routeName);
+    if (responseData != null) {
+      getExams();
 
-    print(responseData['access']);
+      Navigator.of(context).pushReplacementNamed(ExamsScreen.routeName);
+    }
+
     // print(value);
   }
 
