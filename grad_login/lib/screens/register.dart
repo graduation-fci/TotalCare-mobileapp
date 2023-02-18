@@ -2,75 +2,88 @@
 
 // import 'package:final_project/login.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../providers/userService.dart';
-import '../models/user.dart';
-import './exams_screen.dart';
+import 'package:grad_login/screens/login_style.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:country_picker/country_picker.dart';
 
 class RegisterFormScreen extends StatefulWidget {
   static const routeName = '/register';
 
-  RegisterFormScreen({super.key});
+  const RegisterFormScreen({super.key});
 
   @override
   State<RegisterFormScreen> createState() => _RegisterFormScreenState();
 }
 
 class _RegisterFormScreenState extends State<RegisterFormScreen> {
-  // final Map<String, dynamic> user = {
+  final Map<String, dynamic> _authData = {
+    'username': '',
+    'password': '',
+    'first_name': '',
+    'last_name': '',
+    'phone_number': '',
+    'email': '',
+  };
+
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController userNameController = TextEditingController();
+  final TextEditingController mobileController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController rePasswordController = TextEditingController();
+
+  FocusNode firstNameFocus = FocusNode();
+  FocusNode lastNameFocus = FocusNode();
+  FocusNode userNameFocus = FocusNode();
+  FocusNode countryFocus = FocusNode();
+  FocusNode phoneFocus = FocusNode();
+  FocusNode passwordFocus = FocusNode();
+  FocusNode rePasswordFocus = FocusNode();
+
+  MaterialStateTextStyle labelStyle() {
+    return MaterialStateTextStyle.resolveWith((Set<MaterialState> states) {
+      return const TextStyle(
+        fontSize: 14,
+      );
+    });
+  }
+
+  bool visible = true;
+
+  String countryName = 'Select Country: ';
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   final formKey = GlobalKey<FormState>();
-  var _isLoading = false;
-
-  User user = User(
-      username: '',
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: '',
-      profile_type: '');
 
   // void loginNav(BuildContext context) {
+  void register(BuildContext context) {
+    // if (passwordController.text == rePasswordController.text) {
+    //   print(emailController.text);
+    //   print(firstNameController.text);
+    //   print(lastNameController.text);
+    //   print(userNameController.text);
+    //   print(mobileController.text);
+    //   print(birthDateController.text);
+    //   print(passwordController.text);
+    //   print(rePasswordController.text);
+    // } else {
+    //   print('Passwords are not Identical!');
+    // }
+    if (formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Processing Data')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
-
-    void register(BuildContext context) {
-      // if (passwordController.text == rePasswordController.text) {
-      //   print(emailController.text);
-      //   print(firstNameController.text);
-      //   print(lastNameController.text);
-      //   print(userNameController.text);
-      //   print(mobileController.text);
-      //   print(birthDateController.text);
-      //   print(passwordController.text);
-      //   print(rePasswordController.text);
-      // } else {
-      //   print('Passwords are not Identical!');
-      // }
-      setState(() {
-        _isLoading = true;
-      });
-      try {
-        Provider.of<UserService>(context, listen: false)
-            .register(user, context);
-        Navigator.of(context).pushReplacementNamed(ExamsScreen.routeName);
-        setState(() {
-          _isLoading = false;
-        });
-      } catch (err) {
-        //
-      }
-
-      // if (formKey.currentState!.validate()) {
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     const SnackBar(content: Text('Processing Data')),
-      //   );
-      // }
-    }
-
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -78,58 +91,65 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
             child: Form(
               key: formKey,
               child: Padding(
-                padding: const EdgeInsets.all(50.0),
+                padding: EdgeInsets.symmetric(
+                    horizontal: mediaQuery.width * 0.13,
+                    vertical: mediaQuery.height * 0.08),
                 child: Column(
                   children: [
-                    const Text(
-                      'Total Care',
-                      style: TextStyle(fontSize: 26),
-                    ),
-                    SizedBox(
-                      height: mediaQuery.height * 0.04,
+                    Image.asset(
+                      'assets/images/TotalCare.png',
                     ),
                     Container(
                         alignment: Alignment.topLeft,
                         child: const Text('Email')),
                     SizedBox(
-                      height: mediaQuery.height * 0.01,
+                      height: mediaQuery.height * 0.02,
                     ),
                     TextFormField(
-                      autofocus: false,
-                      // controller: emailController,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      onEditingComplete: () {
+                        firstNameFocus.requestFocus();
+                      },
+                      controller: emailController,
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
-                        if (value == null ||
-                            !value.contains('@') ||
-                            value.isEmpty) {
+                        if (value == null || value.isEmpty) {
                           return 'Email Address Should not be Empty!';
+                        } else if (!value.contains('@')) {
+                          return 'Email Address must Contain @ Symbol!';
                         }
+                        return null;
                       },
                       onSaved: (value) {
-                        user.email = value!;
+                        _authData['email'] = value;
                       },
                       decoration: InputDecoration(
+                        prefixIcon: const Icon(MdiIcons.email),
+                        contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20.0),
                         ),
-                        labelText: 'Enter Your Email Account',
+                        labelText: 'Enter Your Email',
+                        labelStyle: labelStyle(),
                         // focusedBorder: const OutlineInputBorder(),
                       ),
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.04,
+                      height: mediaQuery.height * 0.02,
                     ),
                     Container(
                         alignment: Alignment.topLeft,
                         child: const Text('First Name')),
                     SizedBox(
-                      height: mediaQuery.height * 0.01,
+                      height: mediaQuery.height * 0.02,
                     ),
                     TextFormField(
-                      // controller: firstNameController,
+                      onEditingComplete: () => lastNameFocus.requestFocus(),
+                      focusNode: firstNameFocus,
+                      controller: firstNameController,
                       keyboardType: TextInputType.name,
                       onSaved: (value) {
-                        user.firstName = value!;
+                        _authData['first_name'] = value;
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -137,26 +157,32 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         }
                       },
                       decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.account_box),
+                        contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0)),
                         labelText: 'Enter Your First Name',
+                        labelStyle: labelStyle(),
+
                         // focusedBorder: OutlineInputBorder(),
                       ),
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.04,
+                      height: mediaQuery.height * 0.02,
                     ),
                     Container(
                         alignment: Alignment.topLeft,
                         child: const Text('Last Name')),
                     SizedBox(
-                      height: mediaQuery.height * 0.01,
+                      height: mediaQuery.height * 0.02,
                     ),
                     TextFormField(
-                      // controller: lastNameController,
+                      onEditingComplete: () => userNameFocus.requestFocus(),
+                      focusNode: lastNameFocus,
+                      controller: lastNameController,
                       keyboardType: TextInputType.name,
                       onSaved: (value) {
-                        user.lastName = value!;
+                        _authData['last_name'] = value;
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -165,25 +191,31 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         return null;
                       },
                       decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.account_box),
+                        contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0)),
                         labelText: 'Enter Your Last Name',
+                        labelStyle: labelStyle(),
+
                         // focusedBorder: OutlineInputBorder(),
                       ),
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.04,
+                      height: mediaQuery.height * 0.02,
                     ),
                     Container(
                         alignment: Alignment.topLeft,
                         child: const Text('Username')),
                     SizedBox(
-                      height: mediaQuery.height * 0.01,
+                      height: mediaQuery.height * 0.02,
                     ),
                     TextFormField(
-                      // controller: userNameController,
+                      focusNode: userNameFocus,
+                      onEditingComplete: () => countryFocus.requestFocus(),
+                      controller: userNameController,
                       onSaved: (value) {
-                        user.username = value!;
+                        _authData['username'] = value;
                       },
                       keyboardType: TextInputType.text,
                       validator: (value) {
@@ -193,47 +225,86 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         return null;
                       },
                       decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.person_add_alt_1),
+                        contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0)),
                         labelText: 'What Should We Call You?',
+                        labelStyle: labelStyle(),
+
                         // focusedBorder: OutlineInputBorder(),
                       ),
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.04,
+                      height: mediaQuery.height * 0.02,
                     ),
-                    // Container(
-                    //     alignment: Alignment.topLeft,
-                    //     child: const Text('Phone Number')),
-                    // SizedBox(
-                    //   height: mediaQuery.height * 0.01,
-                    // ),
-                    // TextFormField(
-                    //   // controller: mobileController,
-                    //   keyboardType: TextInputType.phone,
-                    //   onSaved: (value) {
-                    //     user['phone_number'] = value;
-                    //   },
-                    //   validator: (value) {
-                    //     if (value == null || value.isEmpty) {
-                    //       return 'Phone Number Cannot be Empty!';
-                    //     }
-                    //   },
-                    //   decoration: InputDecoration(
-                    //     border: OutlineInputBorder(
-                    //         borderRadius: BorderRadius.circular(20.0)),
-                    //     labelText: 'Enter Your Phone Number',
-                    //     // focusedBorder: OutlineInputBorder(),
-                    //   ),
-                    // ),
-                    // SizedBox(
-                    //   height: mediaQuery.height * 0.04,
-                    // ),
+                    Container(
+                        alignment: Alignment.topLeft,
+                        child: const Text('Country')),
+                    SizedBox(
+                      height: mediaQuery.height * 0.02,
+                    ),
+                    Container(
+                      alignment: Alignment.lerp(
+                          Alignment.bottomRight, Alignment.center, 2.1),
+                      child: TextButton.icon(
+                        focusNode: countryFocus,
+                        label: Text(countryName),
+                        onPressed: () => showCountryPicker(
+                          context: context,
+                          showPhoneCode: true,
+                          onSelect: (Country country) {
+                            country.flagEmoji;
+                            mobileController.text = '+${country.phoneCode}';
+                            countryName =
+                                '${country.flagEmoji}  ${country.name}';
+                            phoneFocus.requestFocus();
+                            setState(() {});
+                          },
+                        ),
+                        icon: const Icon(Icons.arrow_drop_down),
+                      ),
+                    ),
+                    SizedBox(
+                      height: mediaQuery.height * 0.02,
+                    ),
+                    Container(
+                      alignment: Alignment.topLeft,
+                      child: const Text('Phone Number'),
+                    ),
+                    SizedBox(
+                      height: mediaQuery.height * 0.02,
+                    ),
+                    TextFormField(
+                      onEditingComplete: () => passwordFocus.requestFocus(),
+                      controller: mobileController,
+                      focusNode: phoneFocus,
+                      keyboardType: TextInputType.phone,
+                      onSaved: (value) {
+                        _authData['phone_number'] = value;
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Phone Number Cannot be Empty!';
+                        }
+                      },
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.all(5),
+                        border: const OutlineInputBorder(),
+                        labelText: 'Enter Your Phone Number',
+                        labelStyle: labelStyle(),
+
+                        // focusedBorder: OutlineInputBorder(),
+                      ),
+                    ),
+                    SizedBox(
+                      height: mediaQuery.height * 0.02,
+                    ),
                     // Container(
                     //     alignment: Alignment.topLeft,
                     //     child: const Text('Birth Date')),
                     // SizedBox(
-                    //   height: mediaQuery.height * 0.01,
+                    //   height: mediaQuery.height * 0.02,
                     // ),
                     // // IconButton(
                     // //     onPressed: () {
@@ -245,6 +316,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                     // //     },
                     // //     icon: const Icon(Icons.date_range_outlined)),
                     // TextFormField(
+                    // onEditingComplete: () => firstNameFocus.requestFocus(),
                     //   // controller: birthDateController,
                     //   keyboardType: TextInputType.datetime,
                     //   validator: (value) {
@@ -261,63 +333,106 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                     //   ),
                     // ),
                     // SizedBox(
-                    //   height: mediaQuery.height * 0.04,
+                    //   height: mediaQuery.height * 0.02,
                     // ),
                     Container(
                         alignment: Alignment.topLeft,
                         child: const Text('Password')),
                     SizedBox(
-                      height: mediaQuery.height * 0.01,
+                      height: mediaQuery.height * 0.02,
                     ),
                     TextFormField(
+                      onEditingComplete: () => rePasswordFocus.requestFocus(),
+                      focusNode: passwordFocus,
                       controller: passwordController,
                       keyboardType: TextInputType.text,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Password Should not be Empty!';
+                        } else if (value.length < 8) {
+                          return 'Password must be at least 8 Characters!';
+                        } else if (!value.contains(RegExp(r'[A-Z]'))) {
+                          return 'Password must contain at least one Upper case letter!';
+                        } else if (!value.contains(RegExp(r'[a-z]'))) {
+                          return 'Password must contain at least one Lower case letter!';
+                        } else if (!value.contains(RegExp(r'[!@#\$&*~]'))) {
+                          return 'Password must contain at least one Symbol!\n[!@#\\\$&*~]';
+                        } else if (!value.contains(RegExp(r'[0-9]'))) {
+                          return 'Password must contain at least one digit!';
                         }
                         return null;
                       },
                       onSaved: (value) {
-                        user.password = value!;
+                        _authData['password'] = value;
                       },
-                      obscureText: true,
+                      obscureText: visible,
                       decoration: InputDecoration(
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            visible = !visible;
+                            setState(() {});
+                          },
+                          icon: visible
+                              ? const Icon(Icons.visibility)
+                              : const Icon(Icons.visibility_off),
+                        ),
+                        prefixIcon: const Icon(MdiIcons.formTextboxPassword),
+                        contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0)),
-                        labelText: 'Enter Your Password',
+                        labelText: 'Enter Password',
+                        labelStyle: labelStyle(),
+
                         //hintText: 'password',
                         // focusedBorder: const OutlineInputBorder(),
                       ),
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.04,
+                      height: mediaQuery.height * 0.02,
                     ),
                     Container(
                         alignment: Alignment.topLeft,
-                        child: const Text('Confirm Your Password')),
+                        child: const Text('Confirm Password')),
                     SizedBox(
-                      height: mediaQuery.height * 0.01,
+                      height: mediaQuery.height * 0.02,
                     ),
                     TextFormField(
+                      focusNode: rePasswordFocus,
                       // controller: rePasswordController,
                       keyboardType: TextInputType.text,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Password Confirmation Field Cannot be Empty!';
+                        } else if (value != passwordController.value.text) {
+                          return 'Passwords must be Identical!';
                         }
                         return null;
                       },
                       obscureText: true,
                       decoration: InputDecoration(
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            visible = !visible;
+                            setState(() {});
+                          },
+                          icon: visible
+                              ? const Icon(Icons.visibility)
+                              : const Icon(Icons.visibility_off),
+                        ),
+                        prefixIcon: const Icon(MdiIcons.formTextboxPassword),
+                        contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0)),
-                        labelText: 'Confirm Your Password',
+                        labelText: 'Confirm Password',
+                        labelStyle: labelStyle(),
+
                         // focusedBorder: const OutlineInputBorder(),
                       ),
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.04,
+                      height: mediaQuery.height * 0.02,
                     ),
                     TextButton(
                       style: ButtonStyle(
@@ -328,59 +443,59 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                               mediaQuery.width * 0.77,
                               mediaQuery.height * 0.08)),
                           foregroundColor:
-                              MaterialStateProperty.all(Colors.white70),
+                              MaterialStateProperty.all(Colors.white),
                           backgroundColor:
-                              MaterialStateProperty.all(Colors.blueAccent)),
+                              MaterialStateProperty.all(Colors.redAccent)),
                       onPressed: () => register(context),
-                      child: const Text('Register'),
-                    ),
-                    SizedBox(
-                      height: mediaQuery.height * 0.04,
-                    ),
-                    const Divider(),
-                    SizedBox(
-                      height: mediaQuery.height * 0.01,
-                    ),
-                    TextButton(
-                      onPressed: () {},
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          SizedBox(
-                            width: mediaQuery.height * 0.07,
-                            child: Image.network(
-                                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKoBxdc41cpqz-7ipwR7smTudicsd8J0MBKL0yyup1qA&s'),
-                          ),
-                          const Text('Sign up using Google'),
-                        ],
+                      child: const Text(
+                        'Register',
+                        style: TextStyle(fontSize: 18, letterSpacing: 2),
                       ),
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.01,
+                      height: mediaQuery.height * 0.02,
                     ),
-                    TextButton(
-                      onPressed: () {},
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          SizedBox(
-                            width: mediaQuery.height * 0.07,
-                            child: Image.network(
-                                'https://imgs.search.brave.com/1TdjcfEDQyBphTbyy3o9G7Hznno23ojIcxzQgX536fc/rs:fit:1024:1024:1/g:ce/aHR0cHM6Ly93d3cu/Y2hzaWNhLm9yZy93/cC1jb250ZW50L3Vw/bG9hZHMvMjAyMC8x/MC9GYWNlYm9vay1M/b2dvLVBORy1UcmFu/c3BhcmVudC1MaWtl/LTE3LnBuZw'),
+                    const Divider(
+                      thickness: 2,
+                    ),
+                    SizedBox(
+                      height: mediaQuery.height * 0.02,
+                    ),
+                    Container(
+                      alignment: Alignment.lerp(
+                          Alignment.bottomRight, Alignment.bottomCenter, 1.11),
+                      child: TextButton.icon(
+                        label: const Text(
+                          'Sign up using Google',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        onPressed: () {},
+                        icon: Container(
+                          padding: const EdgeInsets.all(0),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              color: const Color(0xffEC2D2F)),
+                          child: const Icon(
+                            MdiIcons.google,
+                            size: 30,
+                            color: Colors.white,
                           ),
-                          const Text('Sign up using Facebook'),
-                        ],
+                        ),
                       ),
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.01,
+                      height: mediaQuery.height * 0.02,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text('Already have an account?'),
                         TextButton(
-                            onPressed: () => {}, child: const Text('Login'))
+                            onPressed: () => {
+                                  Navigator.of(context)
+                                      .pushReplacementNamed(Login.routeName),
+                                },
+                            child: const Text('Login'))
                       ],
                     )
                   ],
