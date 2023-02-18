@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:grad_login/providers/authService.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/examService.dart';
-import '../models/exam.dart';
+import '../providers/authService.dart';
 
 class ExamsScreen extends StatefulWidget {
   static const routeName = '/exams-screen';
+
   const ExamsScreen({super.key});
 
   @override
@@ -14,45 +13,53 @@ class ExamsScreen extends StatefulWidget {
 }
 
 class _ExamsScreenState extends State<ExamsScreen> {
+  bool? isLoaded = false;
+  final ScrollController scrollController = ScrollController();
+  var currentPage = 1;
+
   @override
   void initState() {
-    Provider.of<AuthService>(context, listen: false).getExams();
+    scrollController.addListener(_scrollListener);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final exams = Provider.of<AuthService>(context).exams;
+
     return Scaffold(
+      backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
           title: const Text(
         'Exams',
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
       )),
-      body: Column(
-        children: [
-          SizedBox(
+      body: isLoaded!
+          ? const Center(
+              child: CircularProgressIndicator(
+              color: Colors.black,
+            ))
+          : Container(
               height: 300,
               child: ListView.builder(
-                itemBuilder: (ctx, i) => SizedBox(
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 30,
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        child: Card(
-                          elevation: 6,
-                          child: Text(exams[i].title),
-                        ),
-                      ),
-                      const Divider(),
-                    ],
-                  ),
+                padding: const EdgeInsets.all(12),
+                controller: scrollController,
+                itemBuilder: (ctx, i) => ListTile(
+                  title: Text(exams[i].title),
+                  leading: CircleAvatar(child: Text('$i')),
                 ),
                 itemCount: exams.length,
-              )),
-        ],
-      ),
+              ),
+            ),
     );
+  }
+
+  void _scrollListener() {
+    if (scrollController.position.pixels ==
+        scrollController.position.maxScrollExtent) {
+      currentPage += 1;
+      Provider.of<AuthService>(context, listen: false).getExams();
+    }
+    print('not call');
   }
 }

@@ -16,19 +16,14 @@ const storage = FlutterSecureStorage();
 String? token;
 
 class AuthService with ChangeNotifier {
-  // Uri getEndPoint(BuildContext context, String urlSegment) async {
-  //   final jsonString = await DefaultAssetBundle.of(context)
-  //       .loadString('assets/my_config.json');
-  //   final dynamic apiEndPoint = jsonDecode(jsonString)['apiUrl'];
-  //   final endPoint = Uri.parse(apiEndPoint + urlSegment);
-
-  //   return endPoint;
-  // }
-
-  List<Exam> _exams = [];
+  List<Exam>? _exams;
+  String? next;
+  String? previous;
+  int? count;
+  int currentPage = 1;
 
   List<Exam> get exams {
-    return [..._exams];
+    return [...?_exams];
   }
 
   Future<void> setToken(String value) {
@@ -41,7 +36,8 @@ class AuthService with ChangeNotifier {
 
   Future<void> getExams() async {
     const dynamic apiEndPoint = Config.apiUrl;
-    final examsEndpoint = Uri.parse(apiEndPoint + '/exam/exams/');
+    final examsEndpoint =
+        Uri.parse(apiEndPoint + '/exam/exams/?page=$currentPage');
 
     String? token;
     await getToken().then((value) {
@@ -53,18 +49,19 @@ class AuthService with ChangeNotifier {
       headers: {
         "content-type": "application/json",
         // "accept": "application/json",
-        // "Authorization": "JWT $token",
-        HttpHeaders.authorizationHeader: 'JWT $token',
+        "Authorization": "JWT $token",
       },
     );
-    final List? fetchedData = json.decode(response.body)['results'];
+    final resultData = json.decode(response.body)['results'];
+    final nextPage = json.decode(response.body)['next'];
+    final previousPage = json.decode(response.body)['previous'];
+    final pageCount = json.decode(response.body)['count'];
 
     List<Exam> loadedData = [];
-    print(fetchedData);
 
-    if (fetchedData == null) return;
+    if (resultData == null) return;
 
-    for (var examData in fetchedData) {
+    for (var examData in resultData) {
       loadedData.add(
         Exam(
           title: examData['title'],
@@ -75,7 +72,12 @@ class AuthService with ChangeNotifier {
         ),
       );
     }
-    _exams = loadedData;
+    _exams == null ? _exams = loadedData : _exams = _exams! + loadedData;
+    next = nextPage;
+    previous = previousPage;
+    count = pageCount;
+    currentPage += 1;
+    // print(count);
     notifyListeners();
 
     // print(response.body);

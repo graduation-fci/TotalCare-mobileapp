@@ -21,8 +21,9 @@ class ExamService with ChangeNotifier {
     const dynamic apiEndPoint = Config.apiUrl;
     final examsEndPoint = Uri.parse(apiEndPoint + '/exam/exams/');
     final response = await http.get(examsEndPoint);
-    final fetchedData =
-        json.decode(response.body)['exam'] ;
+    final fetchedData = json.decode(response.body)['results'];
+    
+
 
     List<Exam> loadedData = [];
     if (fetchedData == null) return;
