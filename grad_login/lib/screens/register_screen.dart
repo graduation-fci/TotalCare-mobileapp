@@ -1,11 +1,11 @@
 // ignore_for_file: avoid_print
 
-// import 'package:final_project/login.dart';
 import 'package:flutter/material.dart';
 import 'package:grad_login/screens/login_screen.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../providers/authService.dart';
 
@@ -27,6 +27,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
     'phone_number': '',
     'email': '',
   };
+  Locale? locale;
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController firstNameController = TextEditingController();
@@ -53,8 +54,6 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
   }
 
   bool visible = true;
-
-  String countryName = 'Select Country: ';
 
   @override
   void initState() {
@@ -87,6 +86,9 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
+    final appLocalization = AppLocalizations.of(context)!;
+    String countryName = appLocalization.countryName;
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -104,7 +106,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                     ),
                     Container(
                         alignment: Alignment.topLeft,
-                        child: const Text('Email')),
+                        child: Text(appLocalization.email)),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
@@ -117,9 +119,9 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Email Address Should not be Empty!';
+                          return appLocalization.emailNotEmpty;
                         } else if (!value.contains(r'\w+@\w+.\w+')) {
-                          return 'Invalid email address format';
+                          return appLocalization.invalidEmail;
                         }
                         return null;
                       },
@@ -132,7 +134,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20.0),
                         ),
-                        labelText: 'Enter Your Email',
+                        labelText: appLocalization.email,
                         labelStyle: labelStyle(),
                         // focusedBorder: const OutlineInputBorder(),
                       ),
@@ -142,7 +144,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                     ),
                     Container(
                         alignment: Alignment.topLeft,
-                        child: const Text('First Name')),
+                        child: Text(appLocalization.firstName)),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
@@ -156,7 +158,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'First Name Cannot be Empty!';
+                          return appLocalization.firstNameNotEmpty;
                         }
                       },
                       decoration: InputDecoration(
@@ -164,7 +166,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0)),
-                        labelText: 'Enter Your First Name',
+                        labelText: appLocalization.firstName,
                         labelStyle: labelStyle(),
 
                         // focusedBorder: OutlineInputBorder(),
@@ -175,7 +177,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                     ),
                     Container(
                         alignment: Alignment.topLeft,
-                        child: const Text('Last Name')),
+                        child: Text(appLocalization.lastName)),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
@@ -189,7 +191,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Last Name Cannot be Empty!';
+                          return appLocalization.lastNameNotEmpty;
                         }
                         return null;
                       },
@@ -198,7 +200,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0)),
-                        labelText: 'Enter Your Last Name',
+                        labelText: appLocalization.firstName,
                         labelStyle: labelStyle(),
 
                         // focusedBorder: OutlineInputBorder(),
@@ -209,7 +211,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                     ),
                     Container(
                         alignment: Alignment.topLeft,
-                        child: const Text('Username')),
+                        child: Text(appLocalization.username)),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
@@ -223,7 +225,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       keyboardType: TextInputType.text,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Username Should not be Empty!';
+                          return appLocalization.usernameNotEmpty;
                         }
                         return null;
                       },
@@ -232,7 +234,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0)),
-                        labelText: 'What Should We Call You?',
+                        labelText: appLocalization.username,
                         labelStyle: labelStyle(),
 
                         // focusedBorder: OutlineInputBorder(),
@@ -243,7 +245,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                     ),
                     Container(
                         alignment: Alignment.topLeft,
-                        child: const Text('Country')),
+                        child: Text(appLocalization.country)),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
@@ -273,7 +275,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                     ),
                     Container(
                       alignment: Alignment.topLeft,
-                      child: const Text('Phone Number'),
+                      child: Text(appLocalization.phoneNumber),
                     ),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
@@ -288,13 +290,14 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Phone Number Cannot be Empty!';
+                          return appLocalization.phoneNumberNotEmpty;
                         }
                       },
                       decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.phone),
                         contentPadding: const EdgeInsets.all(5),
                         border: const OutlineInputBorder(),
-                        labelText: 'Enter Your Phone Number',
+                        labelText: appLocalization.phoneNumber,
                         labelStyle: labelStyle(),
 
                         // focusedBorder: OutlineInputBorder(),
@@ -340,7 +343,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                     // ),
                     Container(
                         alignment: Alignment.topLeft,
-                        child: const Text('Password')),
+                        child: Text(appLocalization.password)),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
@@ -352,7 +355,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Password Should not be Empty!';
+                          return appLocalization.passwordNotEmpty;
                         } else if (!value.contains(RegExp(
                             r'(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&~*]).{8,}$'))) {
                           return '''Password must be atleast 8 characters, 
@@ -374,11 +377,11 @@ include an uppercase letter, number and symbol''';
                               ? const Icon(Icons.visibility)
                               : const Icon(Icons.visibility_off),
                         ),
-                        prefixIcon: const Icon(MdiIcons.formTextboxPassword),
+                        prefixIcon: const Icon(Icons.lock),
                         contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0)),
-                        labelText: 'Enter Password',
+                        labelText: appLocalization.password,
                         labelStyle: labelStyle(),
 
                         //hintText: 'password',
@@ -390,7 +393,7 @@ include an uppercase letter, number and symbol''';
                     ),
                     Container(
                         alignment: Alignment.topLeft,
-                        child: const Text('Confirm Password')),
+                        child: Text(appLocalization.confirmPassword)),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
@@ -401,9 +404,9 @@ include an uppercase letter, number and symbol''';
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Password Confirmation Field Cannot be Empty!';
+                          return appLocalization.confirmPasswordNotEmpty;
                         } else if (value != passwordController.value.text) {
-                          return 'Passwords must be Identical!';
+                          return appLocalization.confirmPasswordIdentical;
                         }
                         return null;
                       },
@@ -418,11 +421,11 @@ include an uppercase letter, number and symbol''';
                               ? const Icon(Icons.visibility)
                               : const Icon(Icons.visibility_off),
                         ),
-                        prefixIcon: const Icon(MdiIcons.formTextboxPassword),
+                        prefixIcon: const Icon(Icons.lock),
                         contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0)),
-                        labelText: 'Confirm Password',
+                        labelText: appLocalization.confirmPassword,
                         labelStyle: labelStyle(),
 
                         // focusedBorder: const OutlineInputBorder(),
@@ -444,9 +447,11 @@ include an uppercase letter, number and symbol''';
                           backgroundColor: MaterialStateProperty.all(
                               Theme.of(context).colorScheme.secondary)),
                       onPressed: () => register(context),
-                      child: const Text(
-                        'Register',
-                        style: TextStyle(fontSize: 18, letterSpacing: 2),
+                      child: Text(
+                        appLocalization.register,
+                        style: const TextStyle(
+                          fontSize: 18,
+                        ),
                       ),
                     ),
                     SizedBox(
@@ -458,19 +463,43 @@ include an uppercase letter, number and symbol''';
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
-                    Container(
-                      alignment: Alignment.lerp(
-                          Alignment.bottomRight, Alignment.bottomCenter, 1.11),
-                      child: TextButton.icon(
-                        label: const Text(
-                          'Sign up using Google',
-                          style: TextStyle(color: Colors.black),
+                    TextButton(
+                      onPressed: () {
+                        print('tap');
+                      },
+                      style: TextButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(40),
                         ),
-                        onPressed: () {},
-                        icon: Image.asset(
-                          'assets/images/google.png',
-                          height: 30,
-                          width: 30,
+                        minimumSize: Size(
+                          mediaQuery.width * 0.85,
+                          mediaQuery.height * 0.06,
+                        ),
+                        side: const BorderSide(
+                          width: 0.8,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      child: SizedBox(
+                        width: mediaQuery.width * 0.8,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/images/google.png',
+                              height: 20,
+                              width: 20,
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              appLocalization.signInWithGoogle,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -480,7 +509,7 @@ include an uppercase letter, number and symbol''';
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('Already have an account?'),
+                        Text(appLocalization.alreadyHaveAnAccount),
                         TextButton(
                             onPressed: () => {
                                   Navigator.of(context).pushReplacementNamed(
@@ -491,7 +520,7 @@ include an uppercase letter, number and symbol''';
                                         .isRegister = false;
                                   }),
                                 },
-                            child: const Text('Login'))
+                            child: Text(appLocalization.login))
                       ],
                     )
                   ],
