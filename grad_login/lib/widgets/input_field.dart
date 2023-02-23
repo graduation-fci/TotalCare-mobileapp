@@ -5,12 +5,14 @@ import 'package:flutter/material.dart';
 class InputField extends StatefulWidget {
   final TextEditingController nameController;
   final String labelText;
+  final IconData prefixIcon;
   var isPassword = false;
 
   InputField({
     required this.nameController,
     required this.labelText,
     required this.isPassword,
+    required this.prefixIcon,
   });
 
   @override
@@ -24,20 +26,28 @@ class _InputFieldState extends State<InputField> {
   Widget build(BuildContext context) {
     return widget.isPassword
         ? Container(
-            height: 68,
             padding: const EdgeInsets.all(10),
-            child: TextField(
+            child: TextFormField(
               obscureText: visible,
               controller: widget.nameController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return '${widget.labelText} is required.';
+                }
+                return null;
+              },
               decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(5),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(40),
                 ),
                 labelText: widget.labelText,
+                prefixIcon: Icon(widget.prefixIcon),
                 suffixIcon: IconButton(
                   onPressed: () {
-                    visible = !visible;
-                    setState(() {});
+                    setState(() {
+                      visible = !visible;
+                    });
                   },
                   icon: visible
                       ? const Icon(
@@ -54,14 +64,21 @@ class _InputFieldState extends State<InputField> {
             ),
           )
         : Container(
-            height: 68,
             padding: const EdgeInsets.all(10),
-            child: TextField(
+            child: TextFormField(
               controller: widget.nameController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return '${widget.labelText} is required.';
+                }
+                return null;
+              },
               decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(5),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(40),
                 ),
+                prefixIcon: Icon(widget.prefixIcon),
                 labelText: widget.labelText,
                 // labelStyle: TextStyle(fontStyle: )
                 // labelStyle:
