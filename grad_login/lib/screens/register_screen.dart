@@ -2,9 +2,12 @@
 
 // import 'package:final_project/login.dart';
 import 'package:flutter/material.dart';
-import 'package:grad_login/screens/login_style.dart';
+import 'package:grad_login/screens/login_screen.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:country_picker/country_picker.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/authService.dart';
 
 class RegisterFormScreen extends StatefulWidget {
   static const routeName = '/register';
@@ -115,8 +118,8 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Email Address Should not be Empty!';
-                        } else if (!value.contains('@')) {
-                          return 'Email Address must Contain @ Symbol!';
+                        } else if (!value.contains(r'\w+@\w+.\w+')) {
+                          return 'Invalid email address format';
                         }
                         return null;
                       },
@@ -350,16 +353,10 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Password Should not be Empty!';
-                        } else if (value.length < 8) {
-                          return 'Password must be at least 8 Characters!';
-                        } else if (!value.contains(RegExp(r'[A-Z]'))) {
-                          return 'Password must contain at least one Upper case letter!';
-                        } else if (!value.contains(RegExp(r'[a-z]'))) {
-                          return 'Password must contain at least one Lower case letter!';
-                        } else if (!value.contains(RegExp(r'[!@#\$&*~]'))) {
-                          return 'Password must contain at least one Symbol!\n[!@#\\\$&*~]';
-                        } else if (!value.contains(RegExp(r'[0-9]'))) {
-                          return 'Password must contain at least one digit!';
+                        } else if (!value.contains(RegExp(
+                            r'(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&~*]).{8,}$'))) {
+                          return '''Password must be atleast 8 characters, 
+include an uppercase letter, number and symbol''';
                         }
                         return null;
                       },
@@ -432,7 +429,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       ),
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.02,
+                      height: mediaQuery.height * 0.03,
                     ),
                     TextButton(
                       style: ButtonStyle(
@@ -441,11 +438,11 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                                   borderRadius: BorderRadius.circular(20))),
                           fixedSize: MaterialStateProperty.all(Size(
                               mediaQuery.width * 0.77,
-                              mediaQuery.height * 0.08)),
-                          foregroundColor:
-                              MaterialStateProperty.all(Colors.white),
-                          backgroundColor:
-                              MaterialStateProperty.all(Colors.redAccent)),
+                              mediaQuery.height * 0.06)),
+                          foregroundColor: MaterialStateProperty.all(
+                              Theme.of(context).colorScheme.primary),
+                          backgroundColor: MaterialStateProperty.all(
+                              Theme.of(context).colorScheme.secondary)),
                       onPressed: () => register(context),
                       child: const Text(
                         'Register',
@@ -470,16 +467,10 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                           style: TextStyle(color: Colors.black),
                         ),
                         onPressed: () {},
-                        icon: Container(
-                          padding: const EdgeInsets.all(0),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              color: const Color(0xffEC2D2F)),
-                          child: const Icon(
-                            MdiIcons.google,
-                            size: 30,
-                            color: Colors.white,
-                          ),
+                        icon: Image.asset(
+                          'assets/images/google.png',
+                          height: 30,
+                          width: 30,
                         ),
                       ),
                     ),
@@ -492,8 +483,13 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         const Text('Already have an account?'),
                         TextButton(
                             onPressed: () => {
-                                  Navigator.of(context)
-                                      .pushReplacementNamed(Login.routeName),
+                                  Navigator.of(context).pushReplacementNamed(
+                                      LoginScreen.routeName),
+                                  setState(() {
+                                    Provider.of<AuthService>(context,
+                                            listen: false)
+                                        .isRegister = false;
+                                  }),
                                 },
                             child: const Text('Login'))
                       ],
