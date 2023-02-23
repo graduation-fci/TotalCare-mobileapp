@@ -45,11 +45,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var mediaQuery = MediaQuery.of(context);
-    var mainTopPadding =
+    final mediaQuery = MediaQuery.of(context);
+    final mainTopPadding =
         AppBar().preferredSize.height + mediaQuery.size.height * 0.07;
-    var errorMessage = Provider.of<AuthService>(context, listen: false).error;
-    var appLocales = AppLocalizations.of(context)!;
+    final errorMessage = Provider.of<AuthService>(context, listen: false).error;
+    final appLocalization = AppLocalizations.of(context)!;
 
     return !Provider.of<AuthService>(context).isRegister
         ? SafeArea(
@@ -70,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Container(
                           padding: EdgeInsets.all(10),
                           child: Text(
-                            appLocales.totalcare,
+                            'Total Care',
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
                               fontWeight: FontWeight.w600,
@@ -81,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Container(
                           padding: const EdgeInsets.all(10),
                           child: Text(
-                            appLocales.signin,
+                            appLocalization.signIn,
                             style: TextStyle(
                               fontSize: 20,
                               color: Theme.of(context).colorScheme.primary,
@@ -90,13 +90,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         InputField(
                           nameController: nameController,
-                          labelText: appLocales.username,
+                          labelText: appLocalization.username,
                           isPassword: false,
                           prefixIcon: Icons.person,
                         ),
                         InputField(
                           nameController: passwordController,
-                          labelText: appLocales.password,
+                          labelText: appLocalization.password,
                           isPassword: true,
                           prefixIcon: Icons.lock,
                         ),
@@ -108,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: TextButton(
                                 onPressed: () {},
                                 child: Text(
-                                  appLocales.forgetpassword,
+                                  appLocalization.forgetPassword,
                                   style: TextStyle(
                                     color: Theme.of(context)
                                         .colorScheme
@@ -154,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           //     ?
                           //     : null,
                           child: Text(
-                            appLocales.login,
+                            appLocalization.login,
                             style: TextStyle(
                                 color: Theme.of(context).colorScheme.primary),
                           ),
@@ -174,7 +174,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
                                 Text(
-                                  appLocales.or,
+                                  appLocalization.or,
                                 ),
                                 Expanded(
                                   child: Container(
@@ -219,7 +219,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       width: 10,
                                     ),
                                     Text(
-                                      appLocales.signinwithgoogle,
+                                      appLocalization.signInWithGoogle,
                                       style: TextStyle(
                                         color: Theme.of(context)
                                             .colorScheme
@@ -236,7 +236,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    '${appLocales.donthaveanaccount} ',
+                                    '${appLocalization.dontHaveAnAccount} ',
                                     style: TextStyle(
                                       fontSize: 14,
                                       color:
@@ -252,7 +252,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       });
                                     },
                                     child: Text(
-                                      appLocales.signup,
+                                      appLocalization.signUp,
                                       style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
