@@ -1,7 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages, file_names
 
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -21,6 +20,8 @@ class AuthService with ChangeNotifier {
   String? previous;
   int? count;
   int currentPage = 1;
+  Map<String, dynamic>? error;
+  bool isRegister = false;
 
   List<Exam> get exams {
     return [...?_exams];
@@ -52,10 +53,12 @@ class AuthService with ChangeNotifier {
         "Authorization": "JWT $token",
       },
     );
+    print(json.decode(response.statusCode.toString()));
+
     final resultData = json.decode(response.body)['results'];
     final nextPage = json.decode(response.body)['next'];
     final previousPage = json.decode(response.body)['previous'];
-    final pageCount = json.decode(response.body)['count'];
+    final examCount = json.decode(response.body)['count'];
 
     List<Exam> loadedData = [];
 
@@ -75,7 +78,7 @@ class AuthService with ChangeNotifier {
     _exams == null ? _exams = loadedData : _exams = _exams! + loadedData;
     next = nextPage;
     previous = previousPage;
-    count = pageCount;
+    count = examCount;
     currentPage += 1;
     // print(count);
     notifyListeners();
@@ -101,16 +104,18 @@ class AuthService with ChangeNotifier {
     );
 
     final responseData = json.decode(response.body);
+    error = json.decode(response.body)['detail'];
 
     await storage.write(key: tokenKey, value: responseData['access']);
     await storage.write(key: 'refresh', value: responseData['refresh']);
     // String? value = await storage.read(key: tokenKey);
 
-    if (responseData != null) {
+    if (responseData != null && error!.isEmpty) {
       getExams();
 
       Navigator.of(context).pushReplacementNamed(ExamsScreen.routeName);
     }
+    print(error);
 
     // print(value);
   }
