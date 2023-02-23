@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../screens/login_screen.dart';
-import '../screens/login_style.dart';
-import '../screens/register.dart';
+import '../screens/register_screen.dart';
 import '../screens/exams_screen.dart';
 import './providers/examService.dart';
 import './providers/userService.dart';
@@ -31,15 +31,17 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         title: 'first demo',
         theme: ThemeData(
             colorScheme: ColorScheme.fromSwatch().copyWith(
           primary: const Color.fromARGB(255, 22, 36, 66),
           secondary: const Color.fromRGBO(167, 252, 132, 0.7),
         )),
-        home: const Login(),
+        home: const LoginScreen(),
         routes: {
-          Login.routeName: (ctx) => const Login(),
+          LoginScreen.routeName: (ctx) => const LoginScreen(),
           RegisterFormScreen.routeName: (ctx) => RegisterFormScreen(),
           ExamsScreen.routeName: (ctx) => const ExamsScreen(),
         },
