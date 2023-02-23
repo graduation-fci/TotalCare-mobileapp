@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../widgets/input_field.dart';
 import '../providers/authService.dart';
@@ -48,6 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
     var mainTopPadding =
         AppBar().preferredSize.height + mediaQuery.size.height * 0.07;
     var errorMessage = Provider.of<AuthService>(context, listen: false).error;
+    var appLocales = AppLocalizations.of(context)!;
 
     return !Provider.of<AuthService>(context).isRegister
         ? SafeArea(
@@ -68,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Container(
                           padding: EdgeInsets.all(10),
                           child: Text(
-                            'Total Care',
+                            appLocales.totalcare,
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
                               fontWeight: FontWeight.w600,
@@ -79,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Container(
                           padding: const EdgeInsets.all(10),
                           child: Text(
-                            "sign in",
+                            appLocales.signin,
                             style: TextStyle(
                               fontSize: 20,
                               color: Theme.of(context).colorScheme.primary,
@@ -88,13 +90,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         InputField(
                           nameController: nameController,
-                          labelText: 'Username',
+                          labelText: appLocales.username,
                           isPassword: false,
                           prefixIcon: Icons.person,
                         ),
                         InputField(
                           nameController: passwordController,
-                          labelText: 'Password',
+                          labelText: appLocales.password,
                           isPassword: true,
                           prefixIcon: Icons.lock,
                         ),
@@ -106,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: TextButton(
                                 onPressed: () {},
                                 child: Text(
-                                  'Forget Password?',
+                                  appLocales.forgetpassword,
                                   style: TextStyle(
                                     color: Theme.of(context)
                                         .colorScheme
@@ -152,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           //     ?
                           //     : null,
                           child: Text(
-                            'Login',
+                            appLocales.login,
                             style: TextStyle(
                                 color: Theme.of(context).colorScheme.primary),
                           ),
@@ -172,7 +174,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
                                 Text(
-                                  'or',
+                                  appLocales.or,
                                 ),
                                 Expanded(
                                   child: Container(
@@ -217,7 +219,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       width: 10,
                                     ),
                                     Text(
-                                      'Sign in With Google',
+                                      appLocales.signinwithgoogle,
                                       style: TextStyle(
                                         color: Theme.of(context)
                                             .colorScheme
@@ -234,7 +236,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    'Don\'t have an account? ',
+                                    '${appLocales.donthaveanaccount} ',
                                     style: TextStyle(
                                       fontSize: 14,
                                       color:
@@ -250,7 +252,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       });
                                     },
                                     child: Text(
-                                      'Sign up',
+                                      appLocales.signup,
                                       style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
