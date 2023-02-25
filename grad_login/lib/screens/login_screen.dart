@@ -4,10 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../widgets/input_field.dart';
-import '../providers/authService.dart';
+import '../app_state.dart';
 
-import 'register_screen.dart';
+import '../providers/examProvider.dart';
+import '../providers/authProvider.dart';
+import '../widgets/input_field.dart';
+
+import './exams_screen.dart';
+import './register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String routeName = '/login';
@@ -48,14 +52,17 @@ class _LoginScreenState extends State<LoginScreen> {
     final mediaQuery = MediaQuery.of(context);
     final mainTopPadding =
         AppBar().preferredSize.height + mediaQuery.size.height * 0.07;
-    final errorMessage = Provider.of<AuthService>(context, listen: false).error;
+    final authResponse = Provider.of<AuthProvider>(context);
+    final examResponse = Provider.of<ExamProvider>(context);
     final appLocalization = AppLocalizations.of(context)!;
+    final GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
 
-    return !Provider.of<AuthService>(context).isRegister
+    return !Provider.of<AuthProvider>(context).isRegister
         ? SafeArea(
             child: GestureDetector(
               onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
               child: Scaffold(
+                key: key,
                 resizeToAvoidBottomInset: false,
                 body: Padding(
                   padding: EdgeInsets.only(
@@ -121,44 +128,52 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ],
                         ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.secondary,
-                            fixedSize: Size(
-                              mediaQuery.size.width * 0.85,
-                              mediaQuery.size.height * 0.06,
+                        if (authResponse.appState != AppState.loading)
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.secondary,
+                              fixedSize: Size(
+                                mediaQuery.size.width * 0.85,
+                                mediaQuery.size.height * 0.06,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(40),
+                              ),
                             ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(40),
-                            ),
-                          ),
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              try {
-                                Provider.of<AuthService>(context, listen: false)
-                                    .login(nameController.text,
-                                        passwordController.text, context);
-                                print(errorMessage);
-                              } catch (_) {
-                                // if (errorMessage!.isNotEmpty) {
-                                //   ScaffoldMessenger.of(context)
-                                //       .showSnackBar(SnackBar(
-                                //     content: Text(errorMessage),
-                                //   ));
-                                // }
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                authResponse
+                                    .login(
+                                        username: nameController.text,
+                                        password: passwordController.text)
+                                    .then((_) {
+                                  if (authResponse.appState == AppState.error) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                authResponse.errorMessage!)));
+                                  }
+                                }).then((_) => {
+                                          examResponse.getExams(),
+                                          Navigator.of(context)
+                                              .pushReplacementNamed(
+                                                  ExamsScreen.routeName),
+                                        });
                               }
-                            }
-                          },
-                          // isButtonActive()
-                          //     ?
-                          //     : null,
-                          child: Text(
-                            appLocalization.login,
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary),
+                              FocusManager.instance.primaryFocus?.unfocus();
+                            },
+                            // isButtonActive()
+                            //     ?
+                            //     : null,
+                            child: Text(
+                              appLocalization.login,
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary),
+                            ),
                           ),
-                        ),
+                        if (authResponse.appState == AppState.loading)
+                          CircularProgressIndicator.adaptive(),
                         Column(
                           children: [
                             Row(
@@ -246,13 +261,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                   TextButton(
                                     onPressed: () {
                                       setState(() {
-                                        Provider.of<AuthService>(context,
+                                        Provider.of<AuthProvider>(context,
                                                 listen: false)
                                             .isRegister = true;
                                       });
                                     },
                                     child: Text(
-                                      appLocalization.signUp,
+                                      appLocalization.register,
                                       style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
