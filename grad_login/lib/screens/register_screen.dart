@@ -1,13 +1,19 @@
 // ignore_for_file: avoid_print
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:grad_login/screens/login_screen.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../providers/authService.dart';
+import '../providers/examProvider.dart';
+import '../providers/authProvider.dart';
+
+import '.././screens/login_screen.dart';
+import '.././screens/exams_screen.dart';
+import '.././models/user.dart';
 
 class RegisterFormScreen extends StatefulWidget {
   static const routeName = '/register';
@@ -19,14 +25,14 @@ class RegisterFormScreen extends StatefulWidget {
 }
 
 class _RegisterFormScreenState extends State<RegisterFormScreen> {
-  final Map<String, dynamic> _authData = {
-    'username': '',
-    'password': '',
-    'first_name': '',
-    'last_name': '',
-    'phone_number': '',
-    'email': '',
-  };
+  final User _userData = User(
+    username: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    profile_type: 'STD',
+  );
   Locale? locale;
 
   final TextEditingController emailController = TextEditingController();
@@ -53,7 +59,8 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
     });
   }
 
-  bool visible = true;
+  bool passwordVisible = true;
+  bool rePasswordVisible = true;
 
   @override
   void initState() {
@@ -63,30 +70,20 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
   final formKey = GlobalKey<FormState>();
 
   // void loginNav(BuildContext context) {
-  void register(BuildContext context) {
-    // if (passwordController.text == rePasswordController.text) {
-    //   print(emailController.text);
-    //   print(firstNameController.text);
-    //   print(lastNameController.text);
-    //   print(userNameController.text);
-    //   print(mobileController.text);
-    //   print(birthDateController.text);
-    //   print(passwordController.text);
-    //   print(rePasswordController.text);
-    // } else {
-    //   print('Passwords are not Identical!');
+  void register() {
+    // if (formKey.currentState!.validate()) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(content: Text('Processing Data')),
+    //   );
     // }
-    if (formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Processing Data')),
-      );
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
     final appLocalization = AppLocalizations.of(context)!;
+    final authResponse = Provider.of<AuthProvider>(context);
+    final examResponse = Provider.of<ExamProvider>(context);
     String countryName = appLocalization.countryName;
 
     return Scaffold(
@@ -100,13 +97,22 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                     horizontal: mediaQuery.width * 0.13,
                     vertical: mediaQuery.height * 0.08),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Image.asset(
-                      'assets/images/TotalCare.png',
-                    ),
                     Container(
-                        alignment: Alignment.topLeft,
-                        child: Text(appLocalization.email)),
+                      alignment: Alignment.center,
+                      child: Image.asset(
+                        'assets/images/TotalCare.png',
+                        height: mediaQuery.height * 0.2,
+                        width: mediaQuery.height * 0.2,
+                      ),
+                    ),
+                    SizedBox(
+                      height: mediaQuery.height * 0.02,
+                    ),
+                    Text(
+                      appLocalization.email,
+                    ),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
@@ -120,13 +126,13 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return appLocalization.emailNotEmpty;
-                        } else if (!value.contains(r'\w+@\w+.\w+')) {
+                        } else if (value.contains(r'\w+@\w+.\w+')) {
                           return appLocalization.invalidEmail;
                         }
                         return null;
                       },
                       onSaved: (value) {
-                        _authData['email'] = value;
+                        _userData.email = value!;
                       },
                       decoration: InputDecoration(
                         prefixIcon: const Icon(MdiIcons.email),
@@ -142,9 +148,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
-                    Container(
-                        alignment: Alignment.topLeft,
-                        child: Text(appLocalization.firstName)),
+                    Text(appLocalization.firstName),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
@@ -154,7 +158,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       controller: firstNameController,
                       keyboardType: TextInputType.name,
                       onSaved: (value) {
-                        _authData['first_name'] = value;
+                        _userData.firstName = value!;
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -175,9 +179,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
-                    Container(
-                        alignment: Alignment.topLeft,
-                        child: Text(appLocalization.lastName)),
+                    Text(appLocalization.lastName),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
@@ -187,7 +189,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       controller: lastNameController,
                       keyboardType: TextInputType.name,
                       onSaved: (value) {
-                        _authData['last_name'] = value;
+                        _userData.lastName = value!;
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -200,7 +202,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         contentPadding: const EdgeInsets.all(5),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0)),
-                        labelText: appLocalization.firstName,
+                        labelText: appLocalization.lastName,
                         labelStyle: labelStyle(),
 
                         // focusedBorder: OutlineInputBorder(),
@@ -209,9 +211,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
-                    Container(
-                        alignment: Alignment.topLeft,
-                        child: Text(appLocalization.username)),
+                    Text(appLocalization.username),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
@@ -220,7 +220,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       onEditingComplete: () => countryFocus.requestFocus(),
                       controller: userNameController,
                       onSaved: (value) {
-                        _authData['username'] = value;
+                        _userData.username = value!;
                       },
                       keyboardType: TextInputType.text,
                       validator: (value) {
@@ -243,40 +243,30 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
-                    Container(
-                        alignment: Alignment.topLeft,
-                        child: Text(appLocalization.country)),
-                    SizedBox(
-                      height: mediaQuery.height * 0.02,
-                    ),
-                    Container(
-                      alignment: Alignment.lerp(
-                          Alignment.bottomRight, Alignment.center, 2.1),
-                      child: TextButton.icon(
-                        focusNode: countryFocus,
-                        label: Text(countryName),
-                        onPressed: () => showCountryPicker(
-                          context: context,
-                          showPhoneCode: true,
-                          onSelect: (Country country) {
-                            country.flagEmoji;
-                            mobileController.text = '+${country.phoneCode}';
-                            countryName =
-                                '${country.flagEmoji}  ${country.name}';
-                            phoneFocus.requestFocus();
-                            setState(() {});
-                          },
-                        ),
-                        icon: const Icon(Icons.arrow_drop_down),
+                    Text(appLocalization.country),
+                    // SizedBox(
+                    //   height: mediaQuery.height * 0.02,
+                    // ),
+                    TextButton.icon(
+                      focusNode: countryFocus,
+                      label: Text(countryName),
+                      onPressed: () => showCountryPicker(
+                        context: context,
+                        showPhoneCode: true,
+                        onSelect: (Country country) {
+                          country.flagEmoji;
+                          mobileController.text = '+${country.phoneCode}';
+                          countryName = '${country.flagEmoji}  ${country.name}';
+                          phoneFocus.requestFocus();
+                          setState(() {});
+                        },
                       ),
+                      icon: const Icon(Icons.arrow_drop_down),
                     ),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
-                    Container(
-                      alignment: Alignment.topLeft,
-                      child: Text(appLocalization.phoneNumber),
-                    ),
+                    Text(appLocalization.phoneNumber),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
@@ -286,7 +276,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       focusNode: phoneFocus,
                       keyboardType: TextInputType.phone,
                       onSaved: (value) {
-                        _authData['phone_number'] = value;
+                        // _authData!. = value;
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -306,44 +296,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
-                    // Container(
-                    //     alignment: Alignment.topLeft,
-                    //     child: const Text('Birth Date')),
-                    // SizedBox(
-                    //   height: mediaQuery.height * 0.02,
-                    // ),
-                    // // IconButton(
-                    // //     onPressed: () {
-                    // //       showDatePicker(
-                    // //           context: context,
-                    // //           initialDate: DateTime.now(),
-                    // //           firstDate: DateTime(1950),
-                    // //           lastDate: DateTime.now());
-                    // //     },
-                    // //     icon: const Icon(Icons.date_range_outlined)),
-                    // TextFormField(
-                    // onEditingComplete: () => firstNameFocus.requestFocus(),
-                    //   // controller: birthDateController,
-                    //   keyboardType: TextInputType.datetime,
-                    //   validator: (value) {
-                    //     if (value == null || value.isEmpty) {
-                    //       return 'Birth Date Cannot be Empty!';
-                    //     }
-                    //     return null;
-                    //   },
-                    //   decoration: InputDecoration(
-                    //     border: OutlineInputBorder(
-                    //         borderRadius: BorderRadius.circular(20.0)),
-                    //     labelText: 'Enter Your Date of Birth',
-                    //     // focusedBorder: OutlineInputBorder(),
-                    //   ),
-                    // ),
-                    // SizedBox(
-                    //   height: mediaQuery.height * 0.02,
-                    // ),
-                    Container(
-                        alignment: Alignment.topLeft,
-                        child: Text(appLocalization.password)),
+                    Text(appLocalization.password),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
@@ -356,7 +309,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return appLocalization.passwordNotEmpty;
-                        } else if (!value.contains(RegExp(
+                        } else if (value.contains(RegExp(
                             r'(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&~*]).{8,}$'))) {
                           return '''Password must be atleast 8 characters, 
 include an uppercase letter, number and symbol''';
@@ -364,18 +317,18 @@ include an uppercase letter, number and symbol''';
                         return null;
                       },
                       onSaved: (value) {
-                        _authData['password'] = value;
+                        _userData.password = value!;
                       },
-                      obscureText: visible,
+                      obscureText: passwordVisible,
                       decoration: InputDecoration(
                         suffixIcon: IconButton(
                           onPressed: () {
-                            visible = !visible;
+                            passwordVisible = !passwordVisible;
                             setState(() {});
                           },
-                          icon: visible
-                              ? const Icon(Icons.visibility)
-                              : const Icon(Icons.visibility_off),
+                          icon: passwordVisible
+                              ? const Icon(Icons.visibility_off)
+                              : const Icon(Icons.visibility),
                         ),
                         prefixIcon: const Icon(Icons.lock),
                         contentPadding: const EdgeInsets.all(5),
@@ -391,9 +344,7 @@ include an uppercase letter, number and symbol''';
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
-                    Container(
-                        alignment: Alignment.topLeft,
-                        child: Text(appLocalization.confirmPassword)),
+                    Text(appLocalization.confirmPassword),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
@@ -410,16 +361,16 @@ include an uppercase letter, number and symbol''';
                         }
                         return null;
                       },
-                      obscureText: true,
+                      obscureText: rePasswordVisible,
                       decoration: InputDecoration(
                         suffixIcon: IconButton(
                           onPressed: () {
-                            visible = !visible;
+                            rePasswordVisible = !rePasswordVisible;
                             setState(() {});
                           },
-                          icon: visible
-                              ? const Icon(Icons.visibility)
-                              : const Icon(Icons.visibility_off),
+                          icon: rePasswordVisible
+                              ? const Icon(Icons.visibility_off)
+                              : const Icon(Icons.visibility),
                         ),
                         prefixIcon: const Icon(Icons.lock),
                         contentPadding: const EdgeInsets.all(5),
@@ -446,7 +397,24 @@ include an uppercase letter, number and symbol''';
                               Theme.of(context).colorScheme.primary),
                           backgroundColor: MaterialStateProperty.all(
                               Theme.of(context).colorScheme.secondary)),
-                      onPressed: () => register(context),
+                      onPressed: () => {
+                        if (formKey.currentState!.validate())
+                          {
+                            formKey.currentState!.save(),
+                            log('$_userData'),
+                            authResponse
+                                .register(_userData)
+                                .then((_) => authResponse.login(
+                                    username: _userData.username,
+                                    password: _userData.password))
+                                .then((_) => {
+                                      examResponse.getExams(),
+                                      Navigator.of(context)
+                                          .pushReplacementNamed(
+                                              ExamsScreen.routeName),
+                                    }),
+                          },
+                      },
                       child: Text(
                         appLocalization.register,
                         style: const TextStyle(
@@ -515,7 +483,7 @@ include an uppercase letter, number and symbol''';
                                   Navigator.of(context).pushReplacementNamed(
                                       LoginScreen.routeName),
                                   setState(() {
-                                    Provider.of<AuthService>(context,
+                                    Provider.of<AuthProvider>(context,
                                             listen: false)
                                         .isRegister = false;
                                   }),
