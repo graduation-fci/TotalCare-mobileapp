@@ -1,60 +1,20 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:grad_login/infrastructure/user/userService.dart';
+import 'package:grad_login/providers/examProvider.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 import '../models/user.dart';
 import '../my_config.dart';
 
-class UserService with ChangeNotifier {
+class UserProvider with ChangeNotifier {
+  UserService userService = UserService();
   final List<User> _users = [];
 
   List<User> get users {
     return [..._users];
-  }
-
-  Future<void> register(User user, BuildContext context) async {
-    const dynamic apiEndPoint = Config.apiUrl;
-    final registerEndPoint = Uri.parse(apiEndPoint + '/auth/users/');
-
-    try {
-      final response = await http.post(
-        registerEndPoint,
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: json.encode(
-          {
-            'username': user.username,
-            'password': user.password,
-            'email': user.email,
-            'firstName': user.firstName,
-            'lastName': user.lastName,
-            'profile_type': user.profile_type,
-            // 'birthdate': user.birthdate,
-          },
-        ),
-      );
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final newUser = User(
-          // id: json.decode(response.body)['name'],
-          // birthdate: user.birthdate,
-          username: user.username,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          password: user.password,
-          profile_type: user.profile_type,
-        );
-
-        _users.add(newUser);
-        notifyListeners();
-        print(registerEndPoint);
-      }
-    } catch (error) {
-      print(error);
-    }
   }
 
   Future<void> getUser() async {
@@ -69,6 +29,18 @@ class UserService with ChangeNotifier {
     final dynamic apiEndPoint = jsonDecode(jsonString)['apiUrl'];
     final registerEndPoint = Uri.parse(apiEndPoint + '/exam/results/');
     await http.get(registerEndPoint);
+  }
+
+  Future<void> getSearchedData(String searchQuery) {
+    return userService.getSearchedData(searchQuery);
+  }
+
+  Future<void> ascendingOrder() {
+    return userService.ascendingOrder();
+  }
+
+  Future<void> descendingOrder() {
+    return userService.descendingOrder();
   }
 
   // Future<void> fetchUsers(BuildContext context) async {
