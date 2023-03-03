@@ -1,13 +1,16 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:grad_login/infrastructure/exam/ordering.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../screens/login_screen.dart';
 import '../screens/register_screen.dart';
 import '../screens/exams_screen.dart';
-import './providers/examService.dart';
-import './providers/userService.dart';
-import './providers/authService.dart';
+import 'providers/examProvider.dart';
+import 'providers/userProvider.dart';
+import 'providers/authProvider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,13 +24,13 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(
-          value: UserService(),
+          value: UserProvider(),
         ),
         ChangeNotifierProvider.value(
-          value: AuthService(),
+          value: AuthProvider(),
         ),
         ChangeNotifierProvider.value(
-          value: ExamService(),
+          value: ExamProvider(),
         ),
       ],
       child: MaterialApp(
