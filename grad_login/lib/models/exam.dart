@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-
 class Exam {
   final String title;
   final dynamic subject;
