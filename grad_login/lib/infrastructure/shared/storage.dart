@@ -1,5 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:grad_login/app_state.dart';
+
+import '../../app_state.dart';
 
 class Storage {
   static const storage = FlutterSecureStorage();
@@ -17,5 +18,9 @@ class Storage {
 
   Future<String?> getToken() async {
     return await storage.read(key: tokenKey).then((value) => token = value);
+  }
+
+  Future<void> removeToken() async {
+    await storage.delete(key: tokenKey);
   }
 }
