@@ -155,7 +155,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 authResponse.errorMessage!)));
                                   }
                                 }).then((_) => {
-                                          examResponse.getExams(),
+                                          if (authResponse.appState ==
+                                              AppState.done)
+                                            examResponse.getExams(),
                                           Navigator.of(context)
                                               .pushReplacementNamed(
                                                   ExamsScreen.routeName),
