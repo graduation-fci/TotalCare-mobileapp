@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:grad_login/providers/examProvider.dart';
+import 'package:grad_login/providers/userProvider.dart';
+import 'package:grad_login/screens/login_screen.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/authService.dart';
+import '../providers/authProvider.dart';
 
 class ExamsScreen extends StatefulWidget {
   static const routeName = '/exams-screen';
@@ -13,9 +16,9 @@ class ExamsScreen extends StatefulWidget {
 }
 
 class _ExamsScreenState extends State<ExamsScreen> {
-  bool? isLoaded = false;
   final ScrollController scrollController = ScrollController();
-  var currentPage = 1;
+  final TextEditingController searchController = TextEditingController();
+  final av = 0;
 
   @override
   void initState() {
@@ -23,42 +26,87 @@ class _ExamsScreenState extends State<ExamsScreen> {
     super.initState();
   }
 
+  // void handleSearch() {
+
+  // }
+
   @override
   Widget build(BuildContext context) {
-    final exams = Provider.of<AuthService>(context).exams;
+    final examResponse = Provider.of<ExamProvider>(context);
+    final authResponse = Provider.of<AuthProvider>(context);
+    final userResponse = Provider.of<UserProvider>(context);
 
-    return Scaffold(
-      backgroundColor: Colors.grey.shade200,
-      appBar: AppBar(
-          title: const Text(
-        'Exams',
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-      )),
-      body: isLoaded!
-          ? const Center(
-              child: CircularProgressIndicator(
-              color: Colors.black,
-            ))
-          : Container(
-              height: 300,
-              child: ListView.builder(
-                padding: const EdgeInsets.all(12),
-                controller: scrollController,
-                itemBuilder: (ctx, i) => ListTile(
-                  title: Text(exams[i].title),
-                  leading: CircleAvatar(child: Text('$i')),
-                ),
-                itemCount: exams.length,
+    return SafeArea(
+      child: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          backgroundColor: Colors.grey.shade200,
+          appBar: AppBar(
+              title: const Text(
+                'Exams',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
               ),
-            ),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      authResponse.logout();
+                      Navigator.of(context)
+                          .pushReplacementNamed(LoginScreen.routeName);
+                    },
+                    child: const Text(
+                      "Logout",
+                      style: TextStyle(color: Colors.white),
+                    ))
+              ]),
+          body: Column(
+            children: [
+              TextField(
+                controller: searchController,
+                onChanged: (value) {
+                  print(userResponse.getSearchedData(value));
+                },
+                decoration: InputDecoration(
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 300,
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(12),
+                  controller: scrollController,
+                  itemBuilder: (ctx, i) => ListTile(
+                    title: Text(examResponse.exams[i].title),
+                    leading: CircleAvatar(child: Text('$i')),
+                  ),
+                  itemCount: examResponse.exams.length,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                      onPressed: () => userResponse.ascendingOrder(),
+                      child: Text('Ascending')),
+                  ElevatedButton(
+                      onPressed: () => userResponse.descendingOrder(),
+                      child: Text('Descending'))
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
     );
   }
 
   void _scrollListener() {
     if (scrollController.position.pixels ==
         scrollController.position.maxScrollExtent) {
-      currentPage += 1;
-      Provider.of<AuthService>(context, listen: false).getExams();
+      Provider.of<ExamProvider>(context, listen: false).getExams();
     }
     print('not call');
   }
