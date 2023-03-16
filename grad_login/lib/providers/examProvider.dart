@@ -38,8 +38,8 @@ class ExamProvider with ChangeNotifier {
             title: examData['title'],
             id: examData['id'],
             subject: examData['subject'],
-            starts_at: examData['starts_at'],
-            ends_at: examData['ends_at'],
+            startsAt: examData['starts_at'],
+            endsAt: examData['ends_at'],
           ),
         );
       }
