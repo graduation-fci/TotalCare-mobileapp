@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:grad_login/widgets/login_button.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -9,9 +10,6 @@ import '../app_state.dart';
 import '../providers/examProvider.dart';
 import '../providers/authProvider.dart';
 import '../widgets/input_field.dart';
-
-import './exams_screen.dart';
-import './register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String routeName = '/login';
@@ -57,240 +55,214 @@ class _LoginScreenState extends State<LoginScreen> {
     final appLocalization = AppLocalizations.of(context)!;
     final GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
 
-    return !Provider.of<AuthProvider>(context).isRegister
-        ? SafeArea(
-            child: GestureDetector(
-              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-              child: Scaffold(
-                key: key,
-                resizeToAvoidBottomInset: false,
-                body: Padding(
-                  padding: EdgeInsets.only(
-                    top: mainTopPadding,
-                    left: mediaQuery.size.width * 0.05,
-                    right: mediaQuery.size.width * 0.05,
+    return SafeArea(
+      child: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Scaffold(
+          key: key,
+          resizeToAvoidBottomInset: false,
+          body: Padding(
+            padding: EdgeInsets.only(
+              top: mainTopPadding,
+              left: mediaQuery.size.width * 0.05,
+              right: mediaQuery.size.width * 0.05,
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    child: Text(
+                      'Total Care',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 32,
+                      ),
+                    ),
                   ),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.all(10),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    child: Text(
+                      appLocalization.signIn,
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                  InputField(
+                    nameController: nameController,
+                    labelText: appLocalization.username,
+                    isPassword: false,
+                    prefixIcon: Icons.person,
+                  ),
+                  InputField(
+                    nameController: passwordController,
+                    labelText: appLocalization.password,
+                    isPassword: true,
+                    prefixIcon: Icons.lock,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () {},
                           child: Text(
-                            'Total Care',
+                            appLocalization.forgetPassword,
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 32,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withOpacity(0.9),
+                              fontSize: 12,
                             ),
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          child: Text(
-                            appLocalization.signIn,
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
+                      ),
+                    ],
+                  ),
+                  LoginButton(
+                    authResponse: authResponse,
+                    nameController: nameController,
+                    passwordController: passwordController,
+                    formKey: _formKey,
+                    examResponse: examResponse,
+                    mediaQuery: mediaQuery,
+                  ),
+                  if (authResponse.appState == AppState.loading)
+                    CircularProgressIndicator.adaptive(),
+                  Column(
+                    children: [
+                      Row(
+                        children: [
+                          CreateDivider(),
+                          Text(
+                            appLocalization.or,
                           ),
-                        ),
-                        InputField(
-                          nameController: nameController,
-                          labelText: appLocalization.username,
-                          isPassword: false,
-                          prefixIcon: Icons.person,
-                        ),
-                        InputField(
-                          nameController: passwordController,
-                          labelText: appLocalization.password,
-                          isPassword: true,
-                          prefixIcon: Icons.lock,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                          CreateDivider(),
+                        ],
+                      ),
+                      SignWithGoogleButton(
+                          mediaQuery: mediaQuery,
+                          appLocalization: appLocalization),
+                      Container(
+                        padding: EdgeInsets.only(top: 12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Container(
-                              alignment: Alignment.centerRight,
-                              child: TextButton(
-                                onPressed: () {},
-                                child: Text(
-                                  appLocalization.forgetPassword,
-                                  style: TextStyle(
+                            Text(
+                              '${appLocalization.dontHaveAnAccount} ',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  Provider.of<AuthProvider>(context,
+                                          listen: false)
+                                      .isRegister = true;
+                                });
+                              },
+                              child: Text(
+                                appLocalization.register,
+                                style: TextStyle(
                                     color: Theme.of(context)
                                         .colorScheme
                                         .primary
                                         .withOpacity(0.9),
-                                    fontSize: 12,
-                                  ),
-                                ),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold),
                               ),
                             ),
                           ],
                         ),
-                        if (authResponse.appState != AppState.loading)
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.secondary,
-                              fixedSize: Size(
-                                mediaQuery.size.width * 0.85,
-                                mediaQuery.size.height * 0.06,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(40),
-                              ),
-                            ),
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                authResponse
-                                    .login(
-                                        username: nameController.text,
-                                        password: passwordController.text)
-                                    .then((_) {
-                                  if (authResponse.appState == AppState.error) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                            content: Text(
-                                                authResponse.errorMessage!)));
-                                  }
-                                }).then((_) => {
-                                          if (authResponse.appState ==
-                                              AppState.done)
-                                            examResponse.getExams(),
-                                          Navigator.of(context)
-                                              .pushReplacementNamed(
-                                                  ExamsScreen.routeName),
-                                        });
-                              }
-                              FocusManager.instance.primaryFocus?.unfocus();
-                            },
-                            // isButtonActive()
-                            //     ?
-                            //     : null,
-                            child: Text(
-                              appLocalization.login,
-                              style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary),
-                            ),
-                          ),
-                        if (authResponse.appState == AppState.loading)
-                          CircularProgressIndicator.adaptive(),
-                        Column(
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    margin: EdgeInsets.only(
-                                        left: 15.0, right: 15.0),
-                                    child: Divider(
-                                      color: Colors.black,
-                                      height: 36,
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  appLocalization.or,
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    margin: EdgeInsets.only(
-                                        left: 15.0, right: 15.0),
-                                    child: Divider(
-                                      color: Colors.black,
-                                      height: 36,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                print('tap');
-                              },
-                              style: TextButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(40),
-                                ),
-                                minimumSize: Size(
-                                  mediaQuery.size.width * 0.85,
-                                  mediaQuery.size.height * 0.06,
-                                ),
-                                side: BorderSide(
-                                  width: 0.8,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              child: SizedBox(
-                                width: mediaQuery.size.width * 0.8,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/google.png',
-                                      height: 20,
-                                      width: 20,
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      appLocalization.signInWithGoogle,
-                                      style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(top: 12),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    '${appLocalization.dontHaveAnAccount} ',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    ),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        Provider.of<AuthProvider>(context,
-                                                listen: false)
-                                            .isRegister = true;
-                                      });
-                                    },
-                                    child: Text(
-                                      appLocalization.register,
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary
-                                              .withOpacity(0.9),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                ),
+                      ),
+                    ],
+                  )
+                ],
               ),
             ),
-          )
-        : RegisterFormScreen();
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SignWithGoogleButton extends StatelessWidget {
+  const SignWithGoogleButton({
+    Key? key,
+    required this.mediaQuery,
+    required this.appLocalization,
+  }) : super(key: key);
+
+  final MediaQueryData mediaQuery;
+  final AppLocalizations appLocalization;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: () {
+        print('tap');
+      },
+      style: TextButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(40),
+        ),
+        minimumSize: Size(
+          mediaQuery.size.width * 0.85,
+          mediaQuery.size.height * 0.06,
+        ),
+        side: BorderSide(
+          width: 0.8,
+          color: Colors.grey,
+        ),
+      ),
+      child: SizedBox(
+        width: mediaQuery.size.width * 0.8,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/images/google.png',
+              height: 20,
+              width: 20,
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Text(
+              appLocalization.signInWithGoogle,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CreateDivider extends StatelessWidget {
+  const CreateDivider({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        margin: EdgeInsets.only(left: 15.0, right: 15.0),
+        child: Divider(
+          color: Colors.black,
+          height: 36,
+        ),
+      ),
+    );
   }
 }
