@@ -5,6 +5,7 @@ import 'package:grad_login/screens/login_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/authProvider.dart';
+import '../widgets/drop_down_list.dart';
 
 class ExamsScreen extends StatefulWidget {
   static const routeName = '/exams-screen';
@@ -19,6 +20,15 @@ class _ExamsScreenState extends State<ExamsScreen> {
   final ScrollController scrollController = ScrollController();
   final TextEditingController searchController = TextEditingController();
   final av = 0;
+  final Map<String, String> dropDownOptions = {
+    '-': '-',
+    'starts_at': 'Ascending start',
+    'ends_at': 'Ascending end',
+    '-starts_at': 'Descending start',
+    '-ends_at': 'Descending end'
+  };
+
+  late String dropdownValue;
 
   @override
   void initState() {
@@ -64,7 +74,7 @@ class _ExamsScreenState extends State<ExamsScreen> {
               TextField(
                 controller: searchController,
                 onChanged: (value) {
-                  print(userResponse.getSearchedData(value));
+                  print(userResponse.getSearchedData(searchController.text));
                 },
                 decoration: InputDecoration(
                   fillColor: Colors.white,
@@ -88,12 +98,15 @@ class _ExamsScreenState extends State<ExamsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ElevatedButton(
-                      onPressed: () => userResponse.ascendingOrder(),
-                      child: Text('Ascending')),
-                  ElevatedButton(
-                      onPressed: () => userResponse.descendingOrder(),
-                      child: Text('Descending'))
+                  CustomDropdownButton(
+                    items: dropDownOptions,
+                    onChanged: (String? value) {
+                      userResponse.handleOrder(
+                        searchController.text,
+                        ordering: value,
+                      );
+                    },
+                  ),
                 ],
               )
             ],
