@@ -3,62 +3,82 @@ import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 
-import '../../models/exam.dart';
 import '../../my_config.dart';
 import '../shared/storage.dart';
 
 class UserService {
-  // String? search;
-  // String? orderBy;
-  // String? subjectId;
-
-  // Map<String, dynamic> queryParameters = {
-  //   'search': '',
-  //   'ordering': '',
-  //   'subject_id': '',
-  // };
-
+  var apiEndPoint = Config.exams;
   Storage storage = Storage();
 
-  Future<Map<String, dynamic>?> getSearchedData(String searchQuery) async {
-    // search = searchQuery;
-    // final apiEndPoint = Uri.https(Config.apiUrl, '/${Config.exams}', {
-    //   'search': search,
-    //   'ordering': orderBy,
-    //   'subject_id': subjectId,
-    // });
+  Future<Map<String, dynamic>?> fetchData(
+      {String? search, String? ordering}) async {
+    const baseUrl = Config.exams;
+    final queryParams = <String, String>{};
+    String? token;
+    await storage.getToken().then((value) {
+      token = value;
+    });
+    if (search != null) {
+      queryParams['search'] = search;
+    }
+    if (ordering != null) {
+      queryParams['ordering'] = ordering;
+    }
+    final url = Uri.parse('$baseUrl?${_getQueryString(queryParams)}');
+    final response = await http.get(
+      url,
+      headers: {
+        "content-type": "application/json",
+        "Authorization": "JWT $token",
+      },
+    );
+    final responseData = json.decode(response.body);
+    log('${json.decode(response.body)}');
+    if (responseData['details'] == null) {
+      return responseData;
+    }
+    return responseData;
+  }
 
-    final apiEndPoint = Uri.parse('${Config.exams}?search=$searchQuery');
+  String _getQueryString(Map<String, String> params) {
+    return params.entries
+        .map((e) => '${e.key}=${Uri.encodeQueryComponent(e.value)}')
+        .join('&');
+  }
+
+
+  Future<Map<String, dynamic>?> getSearchedData(String searchQuery) async {
+    final modifiedUrl = Uri.parse(Config.exams);
 
     String? token;
     await storage.getToken().then((value) {
       token = value;
     });
     final response = await http.get(
-      apiEndPoint,
+      modifiedUrl,
       headers: {
         "content-type": "application/json",
         "Authorization": "JWT $token",
       },
     );
 
-    // final responseData = json.decode(response.body);
+    final responseData = json.decode(response.body);
     log('${json.decode(response.body)}');
-    // if (responseData['details'] == null) {
-    //   return responseData;
-    // }
-    // return responseData;
-    // print(response);
+    if (responseData['details'] == null) {
+      return responseData;
+    }
+    return responseData;
   }
 
   Future<Map<String, dynamic>?> ascendingOrder() async {
-    final apiEndPoint = Uri.parse('${Config.exams}?ordering=starts_at');
+    final modifiedUrl = Uri.parse(Config.exams);
+
     String? token;
     await storage.getToken().then((value) {
       token = value;
     });
     final response = await http.get(
-      apiEndPoint,
+      modifiedUrl,
       headers: {
         "content-type": "application/json",
         "Authorization": "JWT $token",
@@ -71,17 +91,17 @@ class UserService {
       return responseData;
     }
     return responseData;
-    // print(response);
   }
 
   Future<Map<String, dynamic>?> descendingOrder() async {
-    final apiEndPoint = Uri.parse('${Config.exams}?ordering=-starts_at');
+    final modifiedUrl = Uri.parse(Config.exams);
+
     String? token;
     await storage.getToken().then((value) {
       token = value;
     });
     final response = await http.get(
-      apiEndPoint,
+      modifiedUrl,
       headers: {
         "content-type": "application/json",
         "Authorization": "JWT $token",
@@ -94,6 +114,5 @@ class UserService {
       return responseData;
     }
     return responseData;
-    // print(response);
   }
 }
