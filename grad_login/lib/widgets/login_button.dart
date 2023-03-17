@@ -14,7 +14,8 @@ class LoginButton extends StatelessWidget {
   final ExamProvider examResponse;
   final MediaQueryData mediaQuery;
 
-  const LoginButton({super.key, 
+  const LoginButton({
+    super.key,
     required this.authResponse,
     required this.nameController,
     required this.passwordController,
@@ -65,9 +66,7 @@ class LoginButton extends StatelessWidget {
         ),
       );
     }
-    if (authResponse.appState == AppState.loading) {
-      const CircularProgressIndicator.adaptive();
-    }
-    throw 'error';
+
+    return Container();
   }
 }
