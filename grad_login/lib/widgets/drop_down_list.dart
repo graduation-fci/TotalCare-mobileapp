@@ -1,23 +1,43 @@
 import 'package:flutter/material.dart';
 
-class CustomDropdownButton extends StatelessWidget {
-  final List<String> items;
-  final Function(String?) onChanged;
+class CustomDropdownButton extends StatefulWidget {
+  final Map<String, String> items;
+  final Function(String) onChanged;
 
-  const CustomDropdownButton(
-      {super.key,
-      required this.items,
-      required this.onChanged});
+  const CustomDropdownButton({
+    super.key,
+    required this.items,
+    required this.onChanged,
+  });
+
+  @override
+  _CustomDropdownButtonState createState() => _CustomDropdownButtonState();
+}
+
+class _CustomDropdownButtonState extends State<CustomDropdownButton> {
+  late String _dropdownValue;
+
+  @override
+  void initState() {
+    super.initState();
+    _dropdownValue = widget.items.entries.first.key;
+  }
 
   @override
   Widget build(BuildContext context) {
     return DropdownButton<String>(
-      value: items.first,
-      onChanged: onChanged,
-      items: items.map<DropdownMenuItem<String>>((String value) {
+      value: _dropdownValue,
+      onChanged: (String? newValue) {
+        setState(() {
+          _dropdownValue = newValue!;
+        });
+        widget.onChanged(newValue!);
+      },
+      items: widget.items.entries
+          .map<DropdownMenuItem<String>>((MapEntry<String, String> entry) {
         return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
+          value: entry.key,
+          child: Text(entry.value),
         );
       }).toList(),
     );
