@@ -5,7 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../screens/login_screen.dart';
 import '../screens/register_screen.dart';
 import '../screens/exams_screen.dart';
-import '../screens/signin_screen.dart';
+import 'screens/sign_screen.dart';
 import 'providers/examProvider.dart';
 import 'providers/userProvider.dart';
 import 'providers/authProvider.dart';
