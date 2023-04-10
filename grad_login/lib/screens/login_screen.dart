@@ -1,15 +1,16 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:grad_login/widgets/login_button.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'register_screen.dart';
 import '../app_state.dart';
 
 import '../providers/examProvider.dart';
 import '../providers/authProvider.dart';
 import '../widgets/input_field.dart';
+import '../widgets/login_button.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String routeName = '/login';
@@ -163,6 +164,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             TextButton(
                               onPressed: () {
+                                Navigator.of(context).pushReplacementNamed(
+                                    RegisterFormScreen.routeName);
                                 setState(() {
                                   Provider.of<AuthProvider>(context,
                                           listen: false)
