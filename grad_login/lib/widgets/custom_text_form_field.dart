@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class CustomTextFormField extends StatefulWidget {
+class CustomTextFormField extends StatelessWidget {
   final String labelText;
   final TextEditingController controller;
   final TextInputType keyboardType;
@@ -32,34 +32,29 @@ class CustomTextFormField extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<CustomTextFormField> createState() => _CustomTextFormFieldState();
-}
-
-class _CustomTextFormFieldState extends State<CustomTextFormField> {
-  @override
   Widget build(BuildContext context) {
     return TextFormField(
       autovalidateMode: AutovalidateMode.onUserInteraction,
       onEditingComplete: () {
-        if (widget.nextFocusNode != null) {
-          FocusScope.of(context).requestFocus(widget.nextFocusNode);
+        if (nextFocusNode != null) {
+          FocusScope.of(context).requestFocus(nextFocusNode);
         }
       },
-      controller: widget.controller,
-      keyboardType: widget.keyboardType,
-      validator: widget.validator,
-      onSaved: widget.onSaved,
-      obscureText: widget.obsecureText,
-      focusNode: widget.focusNode,
-      textInputAction: widget.textInputAction,
+      controller: controller,
+      keyboardType: keyboardType,
+      validator: validator,
+      onSaved: onSaved,
+      obscureText: obsecureText,
+      focusNode: focusNode,
+      textInputAction: textInputAction,
       decoration: InputDecoration(
-        prefixIcon: widget.prefixIcon,
-        suffixIcon: widget.suffixIcon,
+        prefixIcon: prefixIcon,
+        suffixIcon: suffixIcon,
         contentPadding: const EdgeInsets.all(5),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20.0),
         ),
-        labelText: widget.labelText,
+        labelText: labelText,
         labelStyle: labelStyle(),
       ),
     );
