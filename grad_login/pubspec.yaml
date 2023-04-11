@@ -106,7 +106,12 @@ flutter:
     - family: NotoSans
       fonts:
         - asset: assets/fonts/NotoSans-Bold.ttf
-        - asset: assets/fonts/NotoSans-Meduim.ttf
+        - asset: assets/fonts/NotoSans-Medium.ttf
+        - asset: assets/fonts/NotoSans-Regular.ttf
+
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/NotoSans-Medium.ttf
         - asset: assets/fonts/NotoSans-Regular.ttf
   #
   # For details regarding fonts from package dependencies,
