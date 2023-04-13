@@ -1,18 +1,18 @@
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
-import 'package:grad_login/infrastructure/exam/examService.dart';
+import 'package:grad_login/infrastructure/medicine/medicine_service.dart';
 import 'package:http/http.dart' as http;
 
 import '../app_state.dart';
 import '../models/exam.dart';
 import '../my_config.dart';
 
-class ExamProvider with ChangeNotifier {
+class MedicineProvider with ChangeNotifier {
   AppState appState = AppState.init;
   String? errorMessage;
   Map<String, dynamic>? response;
-  ExamService examService = ExamService();
+  MedicineService medicineService = MedicineService();
   int currentPage = 1;
 
   List<Exam> _exams = [];
@@ -21,10 +21,10 @@ class ExamProvider with ChangeNotifier {
     return [..._exams];
   }
 
-  Future<void> getExams() async {
+  Future<void> getMedicines() async {
     appState = AppState.loading;
     notifyListeners();
-    final responseData = await examService.getExams(currentPage);
+    final responseData = await medicineService.getSimpleMeds();
     if (responseData!['detail'] != null) {
       errorMessage = responseData['detail'];
       // print(responseData['detail']);
@@ -32,20 +32,20 @@ class ExamProvider with ChangeNotifier {
     } else {
       response = responseData;
       List<Exam> loadedData = [];
-      for (var examData in responseData['results']) {
-        loadedData.add(
-          Exam(
-            title: examData['title'],
-            id: examData['id'],
-            subject: examData['subject'],
-            startsAt: examData['starts_at'],
-            endsAt: examData['ends_at'],
-          ),
-        );
-      }
+      // for (var medicineData in responseData['results']) {
+      //   loadedData.add(
+      //     Exam(
+      //       title: medicineData['title'],
+      //       id: medicineData['id'],
+      //       subject: medicineData['subject'],
+      //       startsAt: medicineData['starts_at'],
+      //       endsAt: medicineData['ends_at'],
+      //     ),
+      //   );
+      // }
+      log("$response");
       _exams = _exams + loadedData;
       currentPage += 1;
-      log("$exams");
       // log('$response');
       appState = AppState.done;
     }
