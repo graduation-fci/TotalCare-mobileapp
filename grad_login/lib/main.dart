@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:grad_login/screens/tabs_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -6,7 +7,7 @@ import '../screens/login_screen.dart';
 import '../screens/register_screen.dart';
 import '../screens/exams_screen.dart';
 import 'screens/sign_screen.dart';
-import 'providers/examProvider.dart';
+import 'providers/medicineProvider.dart';
 import 'providers/userProvider.dart';
 import 'providers/authProvider.dart';
 
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
           value: AuthProvider(),
         ),
         ChangeNotifierProvider.value(
-          value: ExamProvider(),
+          value: MedicineProvider(),
         ),
       ],
       child: MaterialApp(
@@ -37,10 +38,10 @@ class MyApp extends StatelessWidget {
         title: 'first demo',
         theme: ThemeData(
             colorScheme: ColorScheme.fromSwatch().copyWith(
-          primary: const Color.fromARGB(255, 22, 36, 66),
+          primary: const Color.fromARGB(197, 238, 255, 255),
           secondary: const Color.fromRGBO(167, 252, 132, 0.7),
         )),
-        home: const SignInScreen(),
+        home: TabsScreen(),
         routes: {
           SignInScreen.routeName: (ctx) => const SignInScreen(),
           LoginScreen.routeName: (ctx) => const LoginScreen(),
