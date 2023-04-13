@@ -6,7 +6,7 @@ import '../../models/exam.dart';
 import '../../my_config.dart';
 import '../shared/storage.dart';
 
-class ExamService {
+class MedicineService {
   List<Exam> _exams = [];
 
   List<Exam> get exams {
@@ -18,28 +18,27 @@ class ExamService {
   int? count;
   Storage storage = Storage();
 
-  Future<Map<String, dynamic>?> getExams(int currentPage) async {
-    final examsEndpoint = Uri.parse(Config.exams);
+  Future<Map<String, dynamic>?> getSimpleMeds() async {
+    final simpleMedsEndpoint = Uri.parse(Config.simpleMeds);
 
-    String? token;
-    await storage.getToken().then((value) {
-      token = value;
-    });
+    // String? token;
+    // await storage.getToken().then((value) {
+    //   token = value;
+    // });
 
     final response = await http.get(
-      examsEndpoint,
+      simpleMedsEndpoint,
       headers: {
         "content-type": "application/json",
-        "Authorization": "JWT $token",
+        // "Authorization": "JWT $token",
       },
     );
 
     final responseData = json.decode(response.body);
 
-    
-    if (responseData['detail'] != null) {
-      return responseData;
-    }
+    // if (responseData['results'] != null) {
+    //   return responseData;
+    // }
     return responseData;
   }
 }
