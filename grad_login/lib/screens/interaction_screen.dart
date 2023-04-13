@@ -14,43 +14,58 @@ class _InteractionScreenState extends State<InteractionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context).size;
     return SafeArea(
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
           resizeToAvoidBottomInset: false,
-          backgroundColor: Colors.grey.shade200,
-          appBar: AppBar(
-              title: const Text(
-            'Interactions',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-          )),
+          backgroundColor: const Color(0xFFFCFCFC),
           body: Container(
-            padding: EdgeInsets.all(20),
-            color: Colors.grey.shade200,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.grey.shade300, width: 2),
+            ),
+            height: mediaQuery.height * 0.45,
+            margin: const EdgeInsets.only(
+              top: 10,
+              left: 10,
+              right: 10,
+            ),
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: searchController,
-                        decoration: InputDecoration(
-                          hintText: 'Enter a drug name ',
-                          border: OutlineInputBorder(),
+                SizedBox(
+                  height: 40,
+                  child: Row(
+                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.only(left: 15),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey, width: 1),
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                bottomLeft: Radius.circular(10),
+                              )),
+                          child: TextFormField(
+                            controller: searchController,
+                            decoration: const InputDecoration(
+                              labelText: 'Enter a drug name',
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      width: 8,
-                    ),
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: Text('Add'),
-                    ),
-                  ],
+                      SizedBox(
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          child: const Text('Add'),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 SizedBox(
                   height: 10,
@@ -62,7 +77,10 @@ class _InteractionScreenState extends State<InteractionScreen> {
                         onPressed: () {},
                         child: Text(
                           'unsaved interactions list',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
                         )),
                     SizedBox(
                       width: 20,
@@ -71,7 +89,10 @@ class _InteractionScreenState extends State<InteractionScreen> {
                       onPressed: () {},
                       child: Text(
                         'Start over',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
@@ -115,9 +136,6 @@ class _InteractionScreenState extends State<InteractionScreen> {
                       ),
                     ),
                   ],
-                ),
-                SizedBox(
-                  height: 10,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
