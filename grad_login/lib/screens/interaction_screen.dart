@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:grad_login/providers/medicineProvider.dart';
+import 'package:grad_login/providers/userProvider.dart';
+import '.././my_config.dart';
 
 class InteractionScreen extends StatefulWidget {
   static const routeName = '/interaction-screen';
@@ -11,6 +14,15 @@ class InteractionScreen extends StatefulWidget {
 class _InteractionScreenState extends State<InteractionScreen> {
   final TextEditingController searchController = TextEditingController();
   final TextEditingController searchController2 = TextEditingController();
+
+  final simpleMeds = Config.simpleMeds;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    MedicineProvider().getMedicines();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,11 +58,16 @@ class _InteractionScreenState extends State<InteractionScreen> {
                           padding: const EdgeInsets.only(left: 15),
                           decoration: BoxDecoration(
                               border: Border.all(color: Colors.grey, width: 1),
-                              borderRadius: BorderRadius.only(
+                              borderRadius: const BorderRadius.only(
                                 topLeft: Radius.circular(10),
                                 bottomLeft: Radius.circular(10),
                               )),
                           child: TextFormField(
+                            onChanged: (value) {
+                              UserProvider().getFilteredData(
+                                searchQuery: searchController.text,
+                              );
+                            },
                             controller: searchController,
                             decoration: const InputDecoration(
                               labelText: 'Enter a drug name',
