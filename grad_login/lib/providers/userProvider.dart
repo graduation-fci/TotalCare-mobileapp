@@ -1,14 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:grad_login/infrastructure/user/userService.dart';
 import 'package:http/http.dart' as http;
 
+import '../infrastructure/medicine/interactions_service.dart';
 import '../models/user.dart';
 import '../my_config.dart';
 
 class UserProvider with ChangeNotifier {
-  UserService userService = UserService();
+  InteractionsService userService = InteractionsService();
   final List<User> _users = [];
 
   List<User> get users {
@@ -29,11 +29,13 @@ class UserProvider with ChangeNotifier {
     await http.get(registerEndPoint);
   }
 
-  Future<void> getSearchedData(String searchQuery) {
-    return userService.fetchData(search: searchQuery);
+  Future<void> getFilteredData({searchQuery, ordering}) {
+    return userService.fetchInteractionSearchData(
+        search: searchQuery, ordering: ordering);
   }
 
   Future<void> handleOrder(String searchQuery, {ordering}) {
-    return userService.fetchData(search: searchQuery, ordering: ordering);
+    return userService.fetchInteractionSearchData(
+        search: searchQuery, ordering: ordering);
   }
 }
