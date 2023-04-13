@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grad_login/providers/examProvider.dart';
+import 'package:grad_login/providers/medicineProvider.dart';
 import 'package:grad_login/providers/userProvider.dart';
 import 'package:grad_login/screens/login_screen.dart';
 import 'package:provider/provider.dart';
@@ -42,7 +42,7 @@ class _ExamsScreenState extends State<ExamsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final examResponse = Provider.of<ExamProvider>(context);
+    final examResponse = Provider.of<MedicineProvider>(context);
     final authResponse = Provider.of<AuthProvider>(context);
     final userResponse = Provider.of<UserProvider>(context);
 
@@ -74,7 +74,8 @@ class _ExamsScreenState extends State<ExamsScreen> {
               TextField(
                 controller: searchController,
                 onChanged: (value) {
-                  print(userResponse.getSearchedData(searchController.text));
+                  print(userResponse.getFilteredData(
+                      searchQuery: searchController.text));
                 },
                 decoration: InputDecoration(
                   fillColor: Colors.white,
@@ -119,7 +120,7 @@ class _ExamsScreenState extends State<ExamsScreen> {
   void _scrollListener() {
     if (scrollController.position.pixels ==
         scrollController.position.maxScrollExtent) {
-      Provider.of<ExamProvider>(context, listen: false).getExams();
+      Provider.of<MedicineProvider>(context, listen: false).getMedicines();
     }
     print('not call');
   }

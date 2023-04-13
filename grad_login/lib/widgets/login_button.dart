@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../app_state.dart';
 import '../providers/authProvider.dart';
-import '../providers/examProvider.dart';
+import '../providers/medicineProvider.dart';
 import '../screens/exams_screen.dart';
 
 class LoginButton extends StatelessWidget {
@@ -11,7 +11,7 @@ class LoginButton extends StatelessWidget {
   final TextEditingController nameController;
   final TextEditingController passwordController;
   final GlobalKey<FormState> formKey;
-  final ExamProvider examResponse;
+  final MedicineProvider examResponse;
   final MediaQueryData mediaQuery;
 
   const LoginButton({
@@ -53,7 +53,7 @@ class LoginButton extends StatelessWidget {
               }
             }).then((_) => {
                       if (authResponse.appState == AppState.done)
-                        examResponse.getExams(),
+                        examResponse.getMedicines(),
                       Navigator.of(context)
                           .pushReplacementNamed(ExamsScreen.routeName),
                     });

@@ -8,7 +8,7 @@ import 'package:country_picker/country_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../providers/examProvider.dart';
+import '../providers/medicineProvider.dart';
 import '../providers/authProvider.dart';
 
 import '.././screens/login_screen.dart';
@@ -85,7 +85,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
     final mediaQuery = MediaQuery.of(context).size;
     final appLocalization = AppLocalizations.of(context)!;
     final authResponse = Provider.of<AuthProvider>(context);
-    final examResponse = Provider.of<ExamProvider>(context);
+    final examResponse = Provider.of<MedicineProvider>(context);
     String countryName = appLocalization.countryName;
 
     return Scaffold(
@@ -368,7 +368,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                                       username: _userData.username,
                                       password: _userData.password))
                                   .then((_) => {
-                                        examResponse.getExams(),
+                                        examResponse.getMedicines(),
                                         Navigator.of(context)
                                             .pushReplacementNamed(
                                                 ExamsScreen.routeName),

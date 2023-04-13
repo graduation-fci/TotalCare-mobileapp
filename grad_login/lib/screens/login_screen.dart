@@ -7,7 +7,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'register_screen.dart';
 import '../app_state.dart';
 
-import '../providers/examProvider.dart';
+import '../providers/medicineProvider.dart';
 import '../providers/authProvider.dart';
 import '../widgets/input_field.dart';
 import '../widgets/login_button.dart';
@@ -52,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final mainTopPadding =
         AppBar().preferredSize.height + mediaQuery.size.height * 0.07;
     final authResponse = Provider.of<AuthProvider>(context);
-    final examResponse = Provider.of<ExamProvider>(context);
+    final examResponse = Provider.of<MedicineProvider>(context);
     final appLocalization = AppLocalizations.of(context)!;
     final GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
 
