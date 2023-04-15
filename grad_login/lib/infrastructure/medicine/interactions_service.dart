@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:http/http.dart' as http;
 
 import '../../my_config.dart';
+import '../../models/simple_medicine.dart';
 import '../shared/storage.dart';
 
 class InteractionsService {
@@ -44,5 +45,24 @@ class InteractionsService {
     return params.entries
         .map((e) => '${e.key}=${Uri.encodeQueryComponent(e.value)}')
         .join('&');
+  }
+
+  Future<Map<String, dynamic>> medicineInteraction(
+      interactionMedicines) async {
+    final interactionsEndpoint = Uri.parse(Config.interactionMain);
+    // List<Map<String, dynamic>> medicineJsonList = [];
+    // for (SimpleMedicine medicine in interactionMedicines!) {
+    //   medicineJsonList.add(medicine.toJson());
+    // }
+
+    // interactionMedicines.map((e) => e.toJson()).toList();
+    final response = await http.post(
+      interactionsEndpoint,
+      body: json.encode({'medicine': interactionMedicines}),
+      headers: {'Content-Type': 'application/json'},
+    );
+    final responseData = json.decode(response.body);
+    log('$response');
+    return responseData;
   }
 }
