@@ -1,8 +1,12 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:grad_login/providers/medicineProvider.dart';
-import 'package:grad_login/providers/userProvider.dart';
+import 'package:grad_login/models/simple_medicine.dart';
+
+import '../providers/interactionsProvider.dart';
+import '../providers/medicineProvider.dart';
+import '../providers/userProvider.dart';
+
+import '.././app_state.dart';
 import '.././my_config.dart';
 
 class InteractionScreen extends StatefulWidget {
@@ -17,8 +21,9 @@ class _InteractionScreenState extends State<InteractionScreen> {
   final TextEditingController searchController = TextEditingController();
   final TextEditingController searchController2 = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-  bool _isVisible = true;
 
+  bool _isVisible = true;
+  AppState appState = AppState.init;
   Map<String, dynamic>? meds;
   Map<String, dynamic>? filteredMeds;
 
@@ -26,15 +31,10 @@ class _InteractionScreenState extends State<InteractionScreen> {
 
   List<dynamic>? results;
 
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   MedicineProvider().getMedicines();
-  //   super.initState();
-  // }
   @override
   void initState() {
     // TODO: implement initState
+    InteractionsProvider().getInteractions();
     _focusNode.addListener(() {
       setState(() {
         _isVisible = _focusNode.hasFocus;
@@ -49,20 +49,37 @@ class _InteractionScreenState extends State<InteractionScreen> {
     super.dispose();
   }
 
-  void _filterDataList(String searchValue) async {
-    filteredMeds = await UserProvider()
-        .getFilteredData(searchQuery: searchValue) as Map<String, dynamic>;
+  Future<Map<String, dynamic>?> _filterDataList(String searchValue) async {
+    filteredMeds =
+        await UserProvider().getFilteredData(searchQuery: searchValue);
     if (filteredMeds != null && filteredMeds!['results'] != null) {
       results = filteredMeds!['results'];
-      // use the results list as per your requirement
     }
     setState(() {
       if (filteredMeds != null && filteredMeds!['results'] != null) {
         results = filteredMeds!['results'];
-        // use the results list as per your requirement
       }
     });
+    return filteredMeds;
   }
+
+  Future<Map<String, dynamic>> _getSearchedMedicine(String medicineName) async {
+    Map<String, dynamic> newData =
+        await _filterDataList(medicineName) as Map<String, dynamic>;
+
+    List<dynamic> results = newData['results'];
+    List<dynamic> filteredResults = results
+        .where((result) =>
+            result['name'].toLowerCase().contains(medicineName.toLowerCase()))
+        .toList();
+
+    Map<String, dynamic> newMed = filteredResults[0];
+
+    log('$newMed');
+    return newMed;
+  }
+
+  bool hasContent = true;
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +140,16 @@ class _InteractionScreenState extends State<InteractionScreen> {
                           ),
                           SizedBox(
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                _getSearchedMedicine(searchController.text);
+                                setState(() {
+                                  appState = AppState.loading;
+                                  searchController.text.isNotEmpty
+                                      ? hasContent = true
+                                      : hasContent = false;
+                                  appState = AppState.done;
+                                });
+                              },
                               child: const Text('Add'),
                             ),
                           ),
@@ -133,126 +159,148 @@ class _InteractionScreenState extends State<InteractionScreen> {
                     SizedBox(
                       height: 10,
                     ),
-                    Stack(
-                      children: [
-                        Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                TextButton(
-                                    onPressed: () {},
-                                    child: Text(
-                                      'unsaved interactions list',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
+                    hasContent
+                        ? appState == AppState.loading
+                            ? const CircularProgressIndicator.adaptive()
+                            : Stack(
+                                children: [
+                                  Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          TextButton(
+                                              onPressed: () {},
+                                              child: Text(
+                                                'unsaved interactions list',
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              )),
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          TextButton(
+                                            onPressed: () {},
+                                            child: Text(
+                                              'Start over',
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    )),
-                                SizedBox(
-                                  width: 20,
-                                ),
-                                TextButton(
-                                  onPressed: () {},
-                                  child: Text(
-                                    'Start over',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: <Widget>[
-                                Expanded(
-                                  child: TextFormField(
-                                    controller: searchController2,
-                                    decoration: InputDecoration(
-                                      hintText: 'Drug 1 (example)',
-                                      border: OutlineInputBorder(),
-                                      suffixIcon: IconButton(
-                                        icon: Icon(Icons.clear),
-                                        onPressed: () {
-                                          searchController2.clear();
-                                        },
+                                      SizedBox(
+                                        height: 10,
                                       ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: ElevatedButton(
-                                    onPressed: () {},
-                                    child: Text(
-                                      'Check interactions',
-                                      // style: ElevatedButton.styleFrom(backgroundColor: Colors.greenAccent),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: ElevatedButton(
-                                    onPressed: () {},
-                                    child: Text(
-                                      'Save',
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        results != null
-                            ? results!.isNotEmpty
-                                ? Visibility(
-                                    visible: _isVisible,
-                                    child: Container(
-                                      constraints: const BoxConstraints(
-                                          minHeight: 50, maxHeight: 180),
-                                      padding: const EdgeInsets.all(8),
-                                      margin: const EdgeInsets.only(top: 3),
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          border: Border.all(
-                                            color: Colors.grey.shade400,
-                                            width: 1,
-                                          )),
-                                      child: ListView.builder(
-                                        itemBuilder: (context, index) {
-                                          return ListTile(
-                                            title: Text(
-                                                '${results![index]['name']}'),
-                                            onTap: () {
-                                              searchController.text =
-                                                  results![index]['name'];
-                                            },
-                                          );
-                                        },
-                                        itemCount: results!.length,
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: TextFormField(
+                                              controller: searchController2,
+                                              decoration: InputDecoration(
+                                                hintText: 'Drug 1 (example)',
+                                                border: OutlineInputBorder(),
+                                                suffixIcon: IconButton(
+                                                  icon: Icon(Icons.clear),
+                                                  onPressed: () {
+                                                    searchController2.clear();
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                  )
-                                : Container()
-                            : Container(),
-                      ],
-                    ),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Expanded(
+                                            child: ElevatedButton(
+                                              onPressed: () {},
+                                              child: Text(
+                                                'Check interactions',
+                                                // style: ElevatedButton.styleFrom(backgroundColor: Colors.greenAccent),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Expanded(
+                                            child: ElevatedButton(
+                                              onPressed: () {},
+                                              child: Text(
+                                                'Save',
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  results != null
+                                      ? results!.isNotEmpty
+                                          ? Visibility(
+                                              visible: _isVisible,
+                                              child: Container(
+                                                constraints:
+                                                    const BoxConstraints(
+                                                        minHeight: 50,
+                                                        maxHeight: 180),
+                                                padding:
+                                                    const EdgeInsets.all(8),
+                                                margin: const EdgeInsets.only(
+                                                    top: 3),
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    border: Border.all(
+                                                      color:
+                                                          Colors.grey.shade400,
+                                                      width: 1,
+                                                    )),
+                                                child: ListView.builder(
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    return ListTile(
+                                                        // title: Text(
+                                                        //     '${results![index]['name']}'),
+                                                        // onTap: () {
+                                                        //   searchController.text =
+                                                        //       results![index]
+                                                        //           ['name'];
+                                                        // },
+                                                        );
+                                                  },
+                                                  itemCount: results!.length,
+                                                ),
+                                              ),
+                                            )
+                                          : Container()
+                                      : Container(),
+                                ],
+                              )
+                        : const Text(
+                            'Type a drug name in the box above to get started.',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                            ),
+                            textAlign: TextAlign.justify,
+                          ),
                   ],
                 ),
               ),
