@@ -29,7 +29,7 @@ class UserProvider with ChangeNotifier {
     await http.get(registerEndPoint);
   }
 
-  Future<void> getFilteredData({searchQuery, ordering}) {
+  Future<Map<String,dynamic>?> getFilteredData({searchQuery, ordering}) {
     return userService.fetchInteractionSearchData(
         search: searchQuery, ordering: ordering);
   }
