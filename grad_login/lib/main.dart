@@ -1,7 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:grad_login/infrastructure/exam/ordering.dart';
+import 'package:grad_login/providers/categories.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -31,6 +29,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider.value(
           value: ExamProvider(),
+        ),
+        ChangeNotifierProvider.value(
+          value: Categories(),
         ),
       ],
       child: MaterialApp(
