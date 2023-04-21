@@ -34,7 +34,7 @@ class InteractionsService {
       },
     );
     final responseData = json.decode(response.body);
-    log('${json.decode(response.body)}');
+
     // if (responseData['details'] == null) {
     //   return responseData;
     // }
@@ -48,21 +48,16 @@ class InteractionsService {
   }
 
   Future<Map<String, dynamic>> medicineInteraction(
-      interactionMedicines) async {
+      List<Map<String, dynamic>> interactionMedicines) async {
     final interactionsEndpoint = Uri.parse(Config.interactionMain);
-    // List<Map<String, dynamic>> medicineJsonList = [];
-    // for (SimpleMedicine medicine in interactionMedicines!) {
-    //   medicineJsonList.add(medicine.toJson());
-    // }
-
-    // interactionMedicines.map((e) => e.toJson()).toList();
+  
     final response = await http.post(
       interactionsEndpoint,
       body: json.encode({'medicine': interactionMedicines}),
       headers: {'Content-Type': 'application/json'},
     );
     final responseData = json.decode(response.body);
-    log('$response');
+    // log('$response');
     return responseData;
   }
 }
