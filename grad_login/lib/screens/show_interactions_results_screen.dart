@@ -7,7 +7,7 @@ import 'package:grad_login/providers/interactionsProvider.dart';
 
 class ShowInteractionsResultsScreen extends StatefulWidget {
   static const routeName = 'show-interactions-results-screen';
-  ShowInteractionsResultsScreen({super.key});
+  const ShowInteractionsResultsScreen({super.key});
 
   @override
   State<ShowInteractionsResultsScreen> createState() =>
