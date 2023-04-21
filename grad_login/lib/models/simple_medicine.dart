@@ -1,4 +1,11 @@
 import './drug.dart';
+import 'dart:convert';
+
+List<SimpleMedicine> medicineListFromJson(String jsonString) {
+  final jsonData = json.decode(jsonString);
+  return List<SimpleMedicine>.from(jsonData.map((item) => SimpleMedicine.fromJson(item)));
+}
+
 
 class SimpleMedicine {
   int? id;
@@ -7,8 +14,13 @@ class SimpleMedicine {
   List<Drug>? drugs;
   List? medicineImages;
 
-  SimpleMedicine(
-      {this.id, this.name, this.nameAr, this.drugs, this.medicineImages});
+  SimpleMedicine({
+    this.id,
+    this.name,
+    this.nameAr,
+    this.drugs,
+    this.medicineImages,
+  });
 
   SimpleMedicine.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -17,7 +29,7 @@ class SimpleMedicine {
     if (json['drug'] != null) {
       drugs = <Drug>[];
       json['drug'].forEach((drug) {
-        drug!.add(Drug.fromJson(drug));
+        drugs!.add(Drug.fromJson(drug));
       });
     }
     if (json['medicine_images'] != null) {
