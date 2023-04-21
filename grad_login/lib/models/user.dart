@@ -4,7 +4,7 @@ class User {
   String lastName;
   String email;
   String password;
-  String profile_type;
+  String profileType;
 
   User({
     required this.username,
@@ -12,6 +12,6 @@ class User {
     required this.lastName,
     required this.email,
     required this.password,
-    required this.profile_type,
+    required this.profileType,
   });
 }
