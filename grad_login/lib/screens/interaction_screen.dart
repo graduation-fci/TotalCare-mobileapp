@@ -1,6 +1,8 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:grad_login/models/simple_medicine.dart';
+import 'package:grad_login/screens/show_interactions_results_screen.dart';
+import 'package:provider/provider.dart';
 
 import '../providers/interactionsProvider.dart';
 import '../providers/medicineProvider.dart';
@@ -21,20 +23,19 @@ class _InteractionScreenState extends State<InteractionScreen> {
   final TextEditingController searchController = TextEditingController();
   final TextEditingController searchController2 = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+  final List<Map<String, dynamic>> _interactionMedicines = [];
+  final simpleMeds = Config.simpleMeds;
 
   bool _isVisible = true;
   AppState appState = AppState.init;
-  Map<String, dynamic>? meds;
   Map<String, dynamic>? filteredMeds;
-
-  final simpleMeds = Config.simpleMeds;
+  Map<String, dynamic>? meds;
 
   List<dynamic>? results;
 
   @override
   void initState() {
     // TODO: implement initState
-    InteractionsProvider().getInteractions();
     _focusNode.addListener(() {
       setState(() {
         _isVisible = _focusNode.hasFocus;
@@ -50,8 +51,8 @@ class _InteractionScreenState extends State<InteractionScreen> {
   }
 
   Future<Map<String, dynamic>?> _filterDataList(String searchValue) async {
-    filteredMeds =
-        await UserProvider().getFilteredData(searchQuery: searchValue);
+    filteredMeds = await Provider.of<UserProvider>(context, listen: false)
+        .getFilteredData(searchQuery: searchValue);
     if (filteredMeds != null && filteredMeds!['results'] != null) {
       results = filteredMeds!['results'];
     }
@@ -63,7 +64,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
     return filteredMeds;
   }
 
-  Future<Map<String, dynamic>> _getSearchedMedicine(String medicineName) async {
+  Future<Map<String, dynamic>> _addSearchedMedicine(String medicineName) async {
     Map<String, dynamic> newData =
         await _filterDataList(medicineName) as Map<String, dynamic>;
 
@@ -74,16 +75,22 @@ class _InteractionScreenState extends State<InteractionScreen> {
         .toList();
 
     Map<String, dynamic> newMed = filteredResults[0];
+    // Make each object unique in the new list of interactionMedicines.
+    if (!_interactionMedicines.contains(newMed)) {
+      _interactionMedicines.add(newMed);
+    }
 
-    log('$newMed');
+    log('$_interactionMedicines');
     return newMed;
   }
 
-  bool hasContent = true;
+  bool hasContent = false;
 
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
+    final interactionsProvider = Provider.of<InteractionsProvider>(context);
+
     return SafeArea(
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -141,14 +148,16 @@ class _InteractionScreenState extends State<InteractionScreen> {
                           SizedBox(
                             child: ElevatedButton(
                               onPressed: () {
-                                _getSearchedMedicine(searchController.text);
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                _addSearchedMedicine(searchController.text);
                                 setState(() {
                                   appState = AppState.loading;
                                   searchController.text.isNotEmpty
-                                      ? hasContent = true
-                                      : hasContent = false;
+                                      ? hasContent = false
+                                      : hasContent = true;
                                   appState = AppState.done;
                                 });
+                                searchController.text = '';
                               },
                               child: const Text('Add'),
                             ),
@@ -197,27 +206,42 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                       SizedBox(
                                         height: 10,
                                       ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: TextFormField(
-                                              controller: searchController2,
-                                              decoration: InputDecoration(
-                                                hintText: 'Drug 1 (example)',
-                                                border: OutlineInputBorder(),
-                                                suffixIcon: IconButton(
-                                                  icon: Icon(Icons.clear),
-                                                  onPressed: () {
-                                                    searchController2.clear();
-                                                  },
-                                                ),
-                                              ),
-                                            ),
+                                      // Row(
+                                      //   mainAxisAlignment:
+                                      //       MainAxisAlignment.spaceAround,
+                                      //   children: <Widget>[
+                                      //     Expanded(
+                                      //       child: TextFormField(
+                                      //         controller: searchController2,
+                                      //         decoration: InputDecoration(
+                                      //           hintText: 'Drug 1 (example)',
+                                      //           border: OutlineInputBorder(),
+                                      //           suffixIcon: IconButton(
+                                      //             icon: Icon(Icons.clear),
+                                      //             onPressed: () {
+                                      //               searchController2.clear();
+                                      //             },
+                                      //           ),
+                                      //         ),
+                                      //       ),
+                                      //     ),
+                                      //   ],
+                                      // ),
+                                      if (_interactionMedicines.isNotEmpty)
+                                        Container(
+                                          height: 90,
+                                          child: ListView.builder(
+                                            itemBuilder: (context, index) {
+                                              return ListTile(
+                                                title: Text(
+                                                    '${_interactionMedicines[index]['name']}'),
+                                              );
+                                            },
+                                            itemCount:
+                                                _interactionMedicines.length,
                                           ),
-                                        ],
-                                      ),
+                                        ),
+
                                       SizedBox(
                                         height: 20,
                                       ),
@@ -227,7 +251,21 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                         children: [
                                           Expanded(
                                             child: ElevatedButton(
-                                              onPressed: () {},
+                                              onPressed: () async {
+                                                await interactionsProvider
+                                                    .getInteractions(
+                                                        _interactionMedicines)
+                                                    .then((_) => {
+                                                          Navigator.of(context)
+                                                              .pushNamed(
+                                                            ShowInteractionsResultsScreen
+                                                                .routeName,
+                                                          ),
+                                                          log('${interactionsProvider.response}'),
+                                                        });
+
+                                                // log('$_interactionMedicines');
+                                              },
                                               child: Text(
                                                 'Check interactions',
                                                 // style: ElevatedButton.styleFrom(backgroundColor: Colors.greenAccent),
@@ -276,14 +314,31 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                                   itemBuilder:
                                                       (context, index) {
                                                     return ListTile(
-                                                        // title: Text(
-                                                        //     '${results![index]['name']}'),
-                                                        // onTap: () {
-                                                        //   searchController.text =
-                                                        //       results![index]
-                                                        //           ['name'];
-                                                        // },
-                                                        );
+                                                      title: Text(
+                                                          '${results![index]['name']}'),
+                                                      onTap: () {
+                                                        FocusManager.instance
+                                                            .primaryFocus
+                                                            ?.unfocus();
+                                                        _addSearchedMedicine(
+                                                            searchController
+                                                                .text);
+                                                        setState(() {
+                                                          appState =
+                                                              AppState.loading;
+                                                          searchController.text
+                                                                  .isNotEmpty
+                                                              ? hasContent =
+                                                                  true
+                                                              : hasContent =
+                                                                  false;
+                                                          appState =
+                                                              AppState.done;
+                                                        });
+                                                        searchController.text =
+                                                            '';
+                                                      },
+                                                    );
                                                   },
                                                   itemCount: results!.length,
                                                 ),
@@ -293,13 +348,63 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                       : Container(),
                                 ],
                               )
-                        : const Text(
-                            'Type a drug name in the box above to get started.',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                            ),
-                            textAlign: TextAlign.justify,
+                        : Stack(
+                            children: [
+                              const Text(
+                                'Type a drug name in the box above to get started.',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                ),
+                                textAlign: TextAlign.justify,
+                              ),
+                              results != null
+                                  ? results!.isNotEmpty
+                                      ? Visibility(
+                                          visible: _isVisible,
+                                          child: Container(
+                                            constraints: const BoxConstraints(
+                                                minHeight: 50, maxHeight: 180),
+                                            padding: const EdgeInsets.all(8),
+                                            margin:
+                                                const EdgeInsets.only(top: 3),
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                border: Border.all(
+                                                  color: Colors.grey.shade400,
+                                                  width: 1,
+                                                )),
+                                            child: ListView.builder(
+                                              itemBuilder: (context, index) {
+                                                return ListTile(
+                                                  title: Text(
+                                                      '${results![index]['name']}'),
+                                                  onTap: () {
+                                                    FocusManager
+                                                        .instance.primaryFocus
+                                                        ?.unfocus();
+                                                    _addSearchedMedicine(
+                                                        searchController.text);
+                                                    setState(() {
+                                                      appState =
+                                                          AppState.loading;
+                                                      searchController
+                                                              .text.isNotEmpty
+                                                          ? hasContent = true
+                                                          : hasContent = false;
+                                                      appState = AppState.done;
+                                                    });
+                                                    searchController.text = '';
+                                                  },
+                                                );
+                                              },
+                                              itemCount: results!.length,
+                                            ),
+                                          ),
+                                        )
+                                      : Container()
+                                  : Container(),
+                            ],
                           ),
                   ],
                 ),
