@@ -14,7 +14,6 @@ class AuthService {
     String username,
     String password,
   ) async {
-    // final loginEndPoint = getEndPoint(context, '/auth/jwt/create/');
     final loginEndPoint = Uri.parse(Config.login);
 
     final response = await http.post(
@@ -52,8 +51,7 @@ class AuthService {
           'email': user.email,
           'firstName': user.firstName,
           'lastName': user.lastName,
-          'profile_type': user.profile_type,
-          // 'birthdate': user.birthdate,
+          'profile_type': user.profileType,
         },
       ),
     );
