@@ -32,7 +32,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
     lastName: '',
     email: '',
     password: '',
-    profile_type: 'STD',
+    profileType: 'PAT',
   );
   Locale? locale;
 
@@ -64,11 +64,6 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
   bool passwordVisible = true;
   bool rePasswordVisible = true;
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
   final formKey = GlobalKey<FormState>();
 
   // void loginNav(BuildContext context) {
@@ -85,7 +80,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
     final mediaQuery = MediaQuery.of(context).size;
     final appLocalization = AppLocalizations.of(context)!;
     final authResponse = Provider.of<AuthProvider>(context);
-    final examResponse = Provider.of<MedicineProvider>(context);
+    final medicineResponse = Provider.of<MedicineProvider>(context);
     String countryName = appLocalization.countryName;
 
     return Scaffold(
@@ -288,9 +283,9 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                           }
                           return null;
                         },
-                        // onSaved: (value) {
-                        //   _userData.phone = value!;
-                        // },
+                        onSaved: (value) {
+                          _userData.password = value!;
+                        },
                         obsecureText: passwordVisible,
                         suffixIcon: IconButton(
                           onPressed: () {
@@ -357,24 +352,8 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                                 Theme.of(context).colorScheme.primary),
                             backgroundColor: MaterialStateProperty.all(
                                 Theme.of(context).colorScheme.secondary)),
-                        onPressed: () => {
-                          if (formKey.currentState!.validate())
-                            {
-                              formKey.currentState!.save(),
-                              log('$_userData'),
-                              authResponse
-                                  .register(_userData)
-                                  .then((_) => authResponse.login(
-                                      username: _userData.username,
-                                      password: _userData.password))
-                                  .then((_) => {
-                                        examResponse.getMedicines(),
-                                        Navigator.of(context)
-                                            .pushReplacementNamed(
-                                                ExamsScreen.routeName),
-                                      }),
-                            },
-                        },
+                        onPressed: () =>
+                            regBtn(authResponse, medicineResponse, context),
                         child: Text(
                           appLocalization.register,
                           style: const TextStyle(
@@ -460,5 +439,25 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
         ),
       ),
     );
+  }
+
+  Set<Set<void>> regBtn(AuthProvider authResponse,
+      MedicineProvider medicineResponse, BuildContext context) {
+    return {
+      if (formKey.currentState!.validate())
+        {
+          formKey.currentState!.save(),
+          log('$_userData'),
+          authResponse
+              .register(_userData)
+              .then((_) => authResponse.login(
+                  username: _userData.username, password: _userData.password))
+              .then((_) => {
+                    medicineResponse.getMedicines(),
+                    Navigator.of(context)
+                        .pushReplacementNamed(ExamsScreen.routeName),
+                  }),
+        },
+    };
   }
 }
