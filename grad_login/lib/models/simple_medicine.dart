@@ -26,9 +26,9 @@ class SimpleMedicine {
     id = json['id'];
     name = json['name'];
     nameAr = json['name_ar'];
-    if (json['drug'] != null) {
+    if (json['drugs'] != null) {
       drugs = <Drug>[];
-      json['drug'].forEach((drug) {
+      json['drugs'].forEach((drug) {
         drugs!.add(Drug.fromJson(drug));
       });
     }
@@ -46,7 +46,7 @@ class SimpleMedicine {
     data['name'] = name;
     data['name_ar'] = nameAr;
     if (drugs != null) {
-      data['drug'] = drugs!.map((drug) => drug.toJson()).toList();
+      data['drugs'] = drugs!.map((drug) => drug.toJson()).toList();
     }
     if (medicineImages != null) {
       data['medicine_images'] =
