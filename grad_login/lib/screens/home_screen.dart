@@ -4,6 +4,8 @@ import 'category_item.dart';
 import 'notification_widget.dart';
 
 class HomeScreen extends StatefulWidget {
+  static const routeName = '/home-screen';
+
   const HomeScreen({super.key});
 
   @override
@@ -58,32 +60,36 @@ class _HomeScreenState extends State<HomeScreen> {
                         actions: [
                           Padding(
                             padding: EdgeInsets.only(
-                                top: mediaquery * 0.015,
-                                right: mediaquery * 0.12),
+                              top: mediaquery * 0.015,
+                              right: mediaquery * 0.09,
+                            ),
                             child: Column(
                               children: [
                                 const Text(
                                   'Hi Jenny!',
                                   style: TextStyle(
-                                      fontSize: 14,
+                                      fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black),
                                 ),
                                 Padding(
                                   padding:
-                                      EdgeInsets.only(left: mediaquery * 0.08),
+                                      EdgeInsets.only(left: mediaquery * 0.09),
                                   child: const Text(
                                     'How are you feeling today?',
                                     style: TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w300,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
                                         color: Colors.black38),
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          const NotificationIcon(),
+                          Padding(
+                            padding: EdgeInsets.all(mediaquery * 0.01),
+                            child: const NotificationIcon(),
+                          ),
                         ],
                         elevation: 0,
                         backgroundColor: Colors.white10,
@@ -209,16 +215,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       // ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
+                        children: [
                           Text(
                             'Categories',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: mediaquery * 0.02),
                           ),
                         ],
                       ),
-                      SizedBox(
-                        height: mediaquery * 0.03,
-                      ),
+
                       SizedBox(
                         height: mediaquery * .29,
                         width: double.infinity,

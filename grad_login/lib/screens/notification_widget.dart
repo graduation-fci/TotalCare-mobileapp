@@ -8,39 +8,39 @@ class NotificationIcon extends StatefulWidget {
 }
 
 class _NotificationIconState extends State<NotificationIcon> {
-  var _counter;
+  final _counter = 0;
 
   @override
   Widget build(BuildContext context) {
+    final mediaquery = MediaQuery.of(context).size.height;
+
     return SizedBox(
-      width: 30,
-      height: 30,
+      width: mediaquery * 0.04,
+      height: mediaquery * 0.04,
       child: Stack(
         children: [
-          const Icon(
+          Icon(
             Icons.notifications,
             color: Colors.black,
-            size: 30,
+            size: mediaquery * 0.04,
           ),
           Container(
-            width: 30,
-            height: 30,
+            width: mediaquery * 0.04,
+            height: mediaquery * 0.04,
             alignment: Alignment.topRight,
-            margin: const EdgeInsets.only(top: 5),
+            margin: EdgeInsets.only(top: mediaquery * 0.003),
             child: Container(
-              width: 15,
-              height: 15,
+              width: mediaquery * 0.02,
+              height: mediaquery * 0.02,
               decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: const Color(0xffc32c37),
                   border: Border.all(color: Colors.white, width: 1)),
-              child: Padding(
-                padding: const EdgeInsets.all(0.0),
-                child: Center(
-                  child: Text(
-                    _counter.toString(),
-                    style: const TextStyle(fontSize: 10),
-                  ),
+              child: Center(
+                child: Text(
+                  _counter.toString(),
+                  style: TextStyle(
+                      fontSize: mediaquery * 0.015, color: Colors.white),
                 ),
               ),
             ),

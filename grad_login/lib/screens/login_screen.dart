@@ -12,6 +12,7 @@ import '../widgets/input_field.dart';
 
 import './exams_screen.dart';
 import './register_screen.dart';
+import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String routeName = '/login';
@@ -157,10 +158,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 }).then((_) => {
                                           if (authResponse.appState ==
                                               AppState.done)
-                                            examResponse.getExams(),
-                                          Navigator.of(context)
-                                              .pushReplacementNamed(
-                                                  ExamsScreen.routeName),
+                                            Navigator.of(context)
+                                                .pushReplacementNamed(
+                                                    HomeScreen.routeName),
                                         });
                               }
                               FocusManager.instance.primaryFocus?.unfocus();

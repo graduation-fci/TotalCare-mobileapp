@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import '../providers/categories.dart';
+
 import 'package:provider/provider.dart';
+
+import '../providers/categoriesProvider.dart';
 
 class CategoryItem extends StatefulWidget {
   const CategoryItem({super.key});
@@ -8,8 +10,6 @@ class CategoryItem extends StatefulWidget {
   @override
   State<CategoryItem> createState() => _CategoryItemState();
 }
-
-final List<dynamic> l = [];
 
 class _CategoryItemState extends State<CategoryItem> {
   @override
@@ -29,34 +29,38 @@ class _CategoryItemState extends State<CategoryItem> {
         height: mediaquery.height * 0.1,
         child: GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 3 / 2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
+              crossAxisCount: 3,
+              childAspectRatio: 4 / 5,
+              crossAxisSpacing: 5,
+              mainAxisSpacing: 5,
             ),
             itemCount: categories.length,
-            itemBuilder: (context, index) => ChangeNotifierProvider.value(
-                  value: categories[index],
+            itemBuilder: (context, index) => InkWell(
+                  onTap: () {
+                    print('Navigating');
+                  },
                   child: GridTile(
                     footer: SizedBox(
                       width: double.infinity,
-                      height: mediaquery.height * 0.04,
+                      height: mediaquery.height * 0.05,
                       child: GridTileBar(
                         backgroundColor: Colors.white,
                         // backgroundColor: Colors.black45,
                         title: Text(
                           categories[index].name,
-                          style: const TextStyle(color: Colors.black),
+                          maxLines: null,
+                          overflow: TextOverflow.visible,
+                          softWrap: true,
+                          style: const TextStyle(
+                            color: Colors.black,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                       ),
                     ),
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: Image.network(
-                        categories[index].imgURL,
-                        fit: BoxFit.cover,
-                      ),
+                    child: Image.network(
+                      categories[index].imgURL,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ))
