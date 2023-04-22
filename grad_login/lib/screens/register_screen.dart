@@ -11,9 +11,11 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../providers/medicineProvider.dart';
 import '../providers/authProvider.dart';
 
-import '.././screens/login_screen.dart';
-import '.././screens/exams_screen.dart';
-import '.././models/user.dart';
+import '../screens/tabs_screen.dart';
+import '../screens/login_screen.dart';
+
+import '../models/user.dart';
+
 import '../widgets/custom_text_form_field.dart';
 
 class RegisterFormScreen extends StatefulWidget {
@@ -455,7 +457,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
               .then((_) => {
                     medicineResponse.getMedicines(),
                     Navigator.of(context)
-                        .pushReplacementNamed(ExamsScreen.routeName),
+                        .pushReplacementNamed(TabsScreen.routeName),
                   }),
         },
     };
