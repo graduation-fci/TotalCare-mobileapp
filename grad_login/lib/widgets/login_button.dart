@@ -4,7 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../app_state.dart';
 import '../providers/authProvider.dart';
 import '../providers/medicineProvider.dart';
-import '../screens/exams_screen.dart';
+import '../screens/tabs_screen.dart';
 
 class LoginButton extends StatelessWidget {
   final AuthProvider authResponse;
@@ -55,7 +55,7 @@ class LoginButton extends StatelessWidget {
                       if (authResponse.appState == AppState.done)
                         examResponse.getMedicines(),
                       Navigator.of(context)
-                          .pushReplacementNamed(ExamsScreen.routeName),
+                          .pushReplacementNamed(TabsScreen.routeName),
                     });
           }
           FocusManager.instance.primaryFocus?.unfocus();
