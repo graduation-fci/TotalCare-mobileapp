@@ -5,6 +5,7 @@ import 'home_screen.dart';
 import 'interaction_screen.dart';
 
 class TabsScreen extends StatefulWidget {
+  static const String routeName = 'tabs-screen';
   const TabsScreen({super.key});
 
   @override
