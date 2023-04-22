@@ -34,8 +34,4 @@ class UserProvider with ChangeNotifier {
         search: searchQuery, ordering: ordering);
   }
 
-  Future<void> handleOrder(String searchQuery, {ordering}) {
-    return userService.fetchInteractionSearchData(
-        search: searchQuery, ordering: ordering);
-  }
 }
