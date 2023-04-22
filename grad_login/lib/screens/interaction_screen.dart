@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:grad_login/models/drug.dart';
 import 'package:grad_login/models/simple_medicine.dart';
 import 'package:grad_login/screens/show_interactions_results_screen.dart';
 import 'package:provider/provider.dart';
@@ -23,9 +24,9 @@ class _InteractionScreenState extends State<InteractionScreen> {
   final TextEditingController searchController = TextEditingController();
   final TextEditingController searchController2 = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-  final List<Map<String, dynamic>> _interactionMedicines = [];
   final simpleMeds = Config.simpleMeds;
 
+  List<SimpleMedicine> _interactionMedicines = [];
   bool _isVisible = true;
   AppState appState = AppState.init;
   Map<String, dynamic>? filteredMeds;
@@ -50,38 +51,33 @@ class _InteractionScreenState extends State<InteractionScreen> {
     super.dispose();
   }
 
-  Future<Map<String, dynamic>?> _filterDataList(String searchValue) async {
+  Future<List<dynamic>?> _filterDataList(String searchValue) async {
     filteredMeds = await Provider.of<UserProvider>(context, listen: false)
         .getFilteredData(searchQuery: searchValue);
     if (filteredMeds != null && filteredMeds!['results'] != null) {
       results = filteredMeds!['results'];
     }
-    setState(() {
-      if (filteredMeds != null && filteredMeds!['results'] != null) {
-        results = filteredMeds!['results'];
-      }
-    });
-    return filteredMeds;
+    setState(() {});
+    return results;
   }
 
-  Future<Map<String, dynamic>> _addSearchedMedicine(String medicineName) async {
-    Map<String, dynamic> newData =
-        await _filterDataList(medicineName) as Map<String, dynamic>;
+  Future<void> _addSearchedMedicine(String? medicineName) async {
+    List<dynamic> newData =
+        await _filterDataList(medicineName!) as List<dynamic>;
 
-    List<dynamic> results = newData['results'];
-    List<dynamic> filteredResults = results
-        .where((result) =>
-            result['name'].toLowerCase().contains(medicineName.toLowerCase()))
-        .toList();
-
-    Map<String, dynamic> newMed = filteredResults[0];
+    SimpleMedicine newMed = SimpleMedicine.fromJson(newData[0]);
     // Make each object unique in the new list of interactionMedicines.
     if (!_interactionMedicines.contains(newMed)) {
       _interactionMedicines.add(newMed);
     }
 
-    log('$_interactionMedicines');
-    return newMed;
+    log('${_interactionMedicines[0].name}');
+  }
+
+  void startOver() {
+    _interactionMedicines = [];
+    hasContent = false;
+    setState(() {});
   }
 
   bool hasContent = false;
@@ -165,7 +161,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
                         ],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     hasContent
@@ -181,19 +177,19 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                         children: [
                                           TextButton(
                                               onPressed: () {},
-                                              child: Text(
+                                              child: const Text(
                                                 'unsaved interactions list',
                                                 style: TextStyle(
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               )),
-                                          SizedBox(
+                                          const SizedBox(
                                             width: 20,
                                           ),
                                           TextButton(
-                                            onPressed: () {},
-                                            child: Text(
+                                            onPressed: startOver,
+                                            child: const Text(
                                               'Start over',
                                               style: TextStyle(
                                                 color: Colors.black,
@@ -203,7 +199,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 10,
                                       ),
                                       // Row(
@@ -228,13 +224,16 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                       //   ],
                                       // ),
                                       if (_interactionMedicines.isNotEmpty)
-                                        Container(
+                                        SizedBox(
                                           height: 90,
                                           child: ListView.builder(
                                             itemBuilder: (context, index) {
                                               return ListTile(
                                                 title: Text(
-                                                    '${_interactionMedicines[index]['name']}'),
+                                                    '${_interactionMedicines[index].name}'),
+                                                onTap: () => {
+                                                  log('${_interactionMedicines[index].name}')
+                                                },
                                               );
                                             },
                                             itemCount:
@@ -242,7 +241,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                           ),
                                         ),
 
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 20,
                                       ),
                                       Row(
@@ -266,7 +265,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
 
                                                 // log('$_interactionMedicines');
                                               },
-                                              child: Text(
+                                              child: const Text(
                                                 'Check interactions',
                                                 // style: ElevatedButton.styleFrom(backgroundColor: Colors.greenAccent),
                                               ),
@@ -281,7 +280,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                           Expanded(
                                             child: ElevatedButton(
                                               onPressed: () {},
-                                              child: Text(
+                                              child: const Text(
                                                 'Save',
                                               ),
                                             ),
@@ -321,8 +320,9 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                                             .primaryFocus
                                                             ?.unfocus();
                                                         _addSearchedMedicine(
-                                                            searchController
-                                                                .text);
+                                                            results![index]
+                                                                ['name']);
+                                                        log('${results![index]['name']}');
                                                         setState(() {
                                                           appState =
                                                               AppState.loading;
@@ -384,7 +384,8 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                                         .instance.primaryFocus
                                                         ?.unfocus();
                                                     _addSearchedMedicine(
-                                                        searchController.text);
+                                                        results![index]
+                                                            ['name']);
                                                     setState(() {
                                                       appState =
                                                           AppState.loading;
