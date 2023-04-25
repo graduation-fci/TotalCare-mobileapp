@@ -41,8 +41,16 @@ class _InputFieldState extends State<InputField> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(40),
                 ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(40),
+                  borderSide: const BorderSide(color: Colors.grey),
+                ),
                 labelText: widget.labelText,
-                prefixIcon: Icon(widget.prefixIcon),
+                labelStyle: const TextStyle(color: Colors.grey),
+                prefixIcon: Icon(
+                  widget.prefixIcon,
+                  color: Colors.grey,
+                ),
                 suffixIcon: IconButton(
                   onPressed: () {
                     setState(() {
@@ -52,11 +60,12 @@ class _InputFieldState extends State<InputField> {
                   icon: visible
                       ? const Icon(
                           Icons.visibility_off,
+                          color: Colors.grey,
                           size: 22,
                         )
-                      : Icon(
+                      : const Icon(
                           Icons.visibility,
-                          color: Colors.black.withOpacity(0.8),
+                          color: Colors.grey,
                           size: 22,
                         ),
                 ),
@@ -74,14 +83,20 @@ class _InputFieldState extends State<InputField> {
                 return null;
               },
               decoration: InputDecoration(
-                contentPadding: const EdgeInsets.all(5),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(40),
                 ),
-                prefixIcon: Icon(widget.prefixIcon),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(40),
+                  borderSide: const BorderSide(color: Colors.grey),
+                ),
+                contentPadding: const EdgeInsets.all(5),
+                prefixIcon: Icon(
+                  widget.prefixIcon,
+                  color: Colors.grey,
+                ),
                 labelText: widget.labelText,
-                // labelStyle: TextStyle(fontStyle: )
-                // labelStyle:
+                labelStyle: const TextStyle(color: Colors.grey),
               ),
             ),
           );
