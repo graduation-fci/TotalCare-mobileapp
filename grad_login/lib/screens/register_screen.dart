@@ -16,7 +16,7 @@ import '../screens/login_screen.dart';
 
 import '../models/user.dart';
 
-import '../widgets/custom_text_form_field.dart';
+import '../widgets/register_text_form_field.dart';
 
 class RegisterFormScreen extends StatefulWidget {
   static const routeName = '/register';
@@ -30,11 +30,11 @@ class RegisterFormScreen extends StatefulWidget {
 class _RegisterFormScreenState extends State<RegisterFormScreen> {
   final User _userData = User(
     username: '',
-    firstName: '',
-    lastName: '',
+    first_name: '',
+    last_name: '',
     email: '',
     password: '',
-    profileType: 'PAT',
+    profileType: '',
   );
   Locale? locale;
 
@@ -65,17 +65,13 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
 
   bool passwordVisible = true;
   bool rePasswordVisible = true;
+  String? _selectedItem;
 
   final formKey = GlobalKey<FormState>();
-
-  // void loginNav(BuildContext context) {
-  void register() {
-    // if (formKey.currentState!.validate()) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(content: Text('Processing Data')),
-    //   );
-    // }
-  }
+  final Map<String, String> _dropDownItems = {
+    'PAT': 'Patient',
+    'DOC': 'Doctor'
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +113,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       SizedBox(
                         height: mediaQuery.height * 0.02,
                       ),
-                      CustomTextFormField(
+                      RegisterTextFormField(
                         labelText: appLocalization.email,
                         controller: emailController,
                         keyboardType: TextInputType.emailAddress,
@@ -145,7 +141,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       SizedBox(
                         height: mediaQuery.height * 0.02,
                       ),
-                      CustomTextFormField(
+                      RegisterTextFormField(
                         labelText: appLocalization.firstName,
                         controller: firstNameController,
                         keyboardType: TextInputType.name,
@@ -157,7 +153,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                           return null;
                         },
                         onSaved: (value) {
-                          _userData.firstName = value!;
+                          _userData.first_name = value!;
                         },
                         focusNode: firstNameFocus,
                         nextFocusNode: lastNameFocus,
@@ -171,7 +167,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       SizedBox(
                         height: mediaQuery.height * 0.02,
                       ),
-                      CustomTextFormField(
+                      RegisterTextFormField(
                         labelText: appLocalization.lastName,
                         controller: lastNameController,
                         keyboardType: TextInputType.name,
@@ -183,7 +179,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                           return null;
                         },
                         onSaved: (value) {
-                          _userData.lastName = value!;
+                          _userData.last_name = value!;
                         },
                         focusNode: lastNameFocus,
                         nextFocusNode: userNameFocus,
@@ -197,7 +193,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       SizedBox(
                         height: mediaQuery.height * 0.02,
                       ),
-                      CustomTextFormField(
+                      RegisterTextFormField(
                         labelText: appLocalization.username,
                         controller: userNameController,
                         keyboardType: TextInputType.text,
@@ -244,7 +240,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       SizedBox(
                         height: mediaQuery.height * 0.02,
                       ),
-                      CustomTextFormField(
+                      RegisterTextFormField(
                         labelText: appLocalization.phoneNumber,
                         controller: mobileController,
                         keyboardType: TextInputType.phone,
@@ -270,7 +266,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       SizedBox(
                         height: mediaQuery.height * 0.02,
                       ),
-                      CustomTextFormField(
+                      RegisterTextFormField(
                         labelText: appLocalization.password,
                         controller: passwordController,
                         keyboardType: TextInputType.text,
@@ -309,7 +305,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       SizedBox(
                         height: mediaQuery.height * 0.02,
                       ),
-                      CustomTextFormField(
+                      RegisterTextFormField(
                         labelText: appLocalization.password,
                         controller: rePasswordController,
                         keyboardType: TextInputType.text,
@@ -342,25 +338,58 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       SizedBox(
                         height: mediaQuery.height * 0.03,
                       ),
-                      TextButton(
-                        style: ButtonStyle(
-                            shape: MaterialStatePropertyAll(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20))),
-                            fixedSize: MaterialStateProperty.all(Size(
-                                mediaQuery.width * 0.77,
-                                mediaQuery.height * 0.06)),
-                            foregroundColor: MaterialStateProperty.all(
-                                Theme.of(context).colorScheme.primary),
-                            backgroundColor: MaterialStateProperty.all(
-                                Theme.of(context).colorScheme.secondary)),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 18,
+                          vertical: 12,
+                        ),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey, width: 1),
+                            borderRadius: BorderRadius.circular(40)),
+                        child: DropdownButtonFormField<String>(
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            labelText: 'Select',
+                            labelStyle: TextStyle(color: Colors.grey),
+                          ),
+                          onSaved: ((value) => _userData.profileType = value!),
+                          hint: const Text(
+                            'You are a ...',
+                            style: TextStyle(fontSize: 13),
+                          ),
+                          value: _selectedItem,
+                          items: _dropDownItems.entries
+                              .map<DropdownMenuItem<String>>((value) {
+                            return DropdownMenuItem(
+                              value: value.key,
+                              child: Text(value.value),
+                            );
+                          }).toList(),
+                          onChanged: (newValue) {
+                            setState(() {
+                              _selectedItem = newValue;
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          fixedSize: Size(
+                            mediaQuery.width * 0.85,
+                            mediaQuery.height * 0.06,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(40),
+                          ),
+                        ),
                         onPressed: () =>
                             regBtn(authResponse, medicineResponse, context),
                         child: Text(
                           appLocalization.register,
-                          style: const TextStyle(
-                            fontSize: 18,
-                          ),
+                          style: Theme.of(context).textTheme.button,
                         ),
                       ),
                       SizedBox(
@@ -399,14 +428,10 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                                 height: 20,
                                 width: 20,
                               ),
-                              const SizedBox(
-                                width: 10,
-                              ),
+                              const SizedBox(width: 10),
                               Text(
-                                appLocalization.signInWithGoogle,
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
+                                appLocalization.signUpWithGoogle,
+                                style: Theme.of(context).textTheme.button,
                               ),
                             ],
                           ),
@@ -418,7 +443,10 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(appLocalization.alreadyHaveAnAccount),
+                          Text(
+                            appLocalization.alreadyHaveAnAccount,
+                            style: Theme.of(context).textTheme.button,
+                          ),
                           TextButton(
                               onPressed: () => {
                                     Navigator.of(context).pushReplacementNamed(
@@ -429,7 +457,10 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                                           .isRegister = false;
                                     }),
                                   },
-                              child: Text(appLocalization.login))
+                              child: Text(
+                                appLocalization.login,
+                                style: Theme.of(context).textTheme.button,
+                              ))
                         ],
                       )
                     ],
