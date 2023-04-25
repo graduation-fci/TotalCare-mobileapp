@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:grad_login/models/simple_medicine.dart';
 import 'package:provider/provider.dart';
 
 import 'package:grad_login/providers/interactionsProvider.dart';
@@ -20,19 +21,25 @@ class _ShowInteractionsResultsScreenState
 
   final List<Map<String, String>> medicines = [];
   bool isProfessional = false;
+  int numOfDrugs = 0;
 
   @override
   Widget build(BuildContext context) {
     final interactionsResponse =
         Provider.of<InteractionsProvider>(context, listen: false).response;
+    final List<Map<String, dynamic>> medicineList = ModalRoute.of(context)!
+        .settings
+        .arguments as List<Map<String, dynamic>>;
+    List<String> uniqueMedicineList = [];
 
-    final List interactionDrugs =
-        interactionsResponse['interactions'][0]['drugs'];
-    final severity = interactionsResponse['interactions'][0]['severity'];
-    final consumerEffect =
-        interactionsResponse['interactions'][0]['consumerEffect'];
-    final professionalEffect =
-        interactionsResponse['interactions'][0]['professionalEffect'];
+    for (int i = 0; i < medicineList.length; i++) {
+      for (int j = 0; j < medicineList[i]['drug'].length; j++) {
+        if (!uniqueMedicineList.contains(medicineList[i]['drug'][j]['name'])) {
+          uniqueMedicineList.add(medicineList[i]['drug'][j]['name']);
+          numOfDrugs++;
+        }
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -42,46 +49,55 @@ class _ShowInteractionsResultsScreenState
           style: TextStyle(color: Colors.black87),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          children: [
-            Text(
-              'Interactions found for the following drugs: ',
-              style: customTextStyle(16, weight: FontWeight.w600),
+      body: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight,
             ),
-            SizedBox(
-              height: 80,
-              child: ListView.builder(
-                itemExtent: 25,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: const SizedBox(
-                      height: 30,
-                      width: 30,
-                      child: Center(
-                        child: Icon(
-                          Icons.circle,
-                          color: Colors.black87,
-                          size: 10,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 12,
+                    top: 12,
+                    right: 12,
+                  ),
+                  child: Text(
+                    '${interactionsResponse.length} Interactions found for the following ${uniqueMedicineList.length} drugs: ',
+                    style: customTextStyle(
+                      16,
+                      weight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                ListView.builder(
+                  itemExtent: 25,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, drugIndex) {
+                    return ListTile(
+                      leading: const SizedBox(
+                        height: 30,
+                        width: 30,
+                        child: Center(
+                          child: Icon(
+                            Icons.circle,
+                            color: Colors.black87,
+                            size: 10,
+                          ),
                         ),
                       ),
-                    ),
-                    title: Text(
-                      '${interactionDrugs[index]}',
-                      style: const TextStyle(fontSize: 15),
-                    ),
-                  );
-                },
-                itemCount: 2,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ToggleButtons(
+                      title: Text(uniqueMedicineList[drugIndex]),
+                    );
+                  },
+                  itemCount: uniqueMedicineList.length,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 30, left: 21, bottom: 21),
+                  child: ToggleButtons(
                     borderRadius: BorderRadius.circular(6),
                     selectedColor: Colors.white,
                     fillColor: const Color.fromARGB(255, 2, 17, 29),
@@ -110,63 +126,132 @@ class _ShowInteractionsResultsScreenState
                       ),
                     ],
                   ),
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        margin: const EdgeInsets.only(top: 10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: Colors.red.shade700,
-                            width: 2,
-                          ),
+                ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: interactionsResponse.length,
+                  itemBuilder: (context, index) {
+                    final List interactionList =
+                        interactionsResponse[index]['interactions'];
+                    List interactionDrugs = [];
+                    List severity = [];
+                    List consumerEffect = [];
+                    List professionalEffect = [];
+
+                    for (int i = 0; i < interactionList.length; i++) {
+                      interactionDrugs.add(interactionList[i]['drugs']);
+                      severity.add(interactionList[i]['severity']);
+                      consumerEffect.add(interactionList[i]['consumerEffect']);
+                      professionalEffect
+                          .add(interactionList[i]['professionalEffect']);
+
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                            left: 21, bottom: 21, right: 21),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: Colors.red.shade700,
+                                  width: 2,
+                                ),
+                              ),
+                              child: Text(
+                                '${severity[0]}',
+                                style: const TextStyle(
+                                  color: Color.fromARGB(255, 64, 26, 23),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Wrap(
+                              children: [
+                                Text(
+                                  'Applies to: ',
+                                  style: customTextStyle(15),
+                                ),
+                                Text(
+                                  interactionDrugs[0].join(', '),
+                                  style: customTextStyle(18,
+                                      weight: FontWeight.w400),
+                                  softWrap: true,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            isProfessional
+                                ? Text(
+                                    '${professionalEffect[0]}',
+                                    textAlign: TextAlign.justify,
+                                    style: customTextStyle(
+                                      16,
+                                    ),
+                                  )
+                                : Text(
+                                    '${consumerEffect[0]}',
+                                    textAlign: TextAlign.justify,
+                                    style: customTextStyle(
+                                      16,
+                                    ),
+                                  ),
+                            const SizedBox(height: 24),
+                            const Divider(
+                              thickness: 1,
+                              color: Colors.black87,
+                            ),
+                          ],
                         ),
-                        child: Text(
-                          '$severity',
-                          style: const TextStyle(
-                            color: Color.fromARGB(255, 181, 45, 35),
-                          ),
+                      );
+                    }
+
+                    return Container();
+                  },
+                ),
+                Row(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(left: 12, right: 6),
+                      height: 20,
+                      width: 20,
+                      child: const Center(
+                        child: Icon(
+                          Icons.circle,
+                          color: Colors.black87,
+                          size: 10,
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        'Applies to: ',
-                        style: customTextStyle(16),
-                      ),
-                      Text('$interactionDrugs'),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  isProfessional
-                      ? Text(
-                          '$professionalEffect',
-                          textAlign: TextAlign.justify,
-                          style: customTextStyle(
-                            16,
+                    ),
+                    TextButton(
+                        onPressed: null,
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                width: 1,
+                                color: Colors.blueAccent,
+                              ),
+                            ),
                           ),
-                        )
-                      : Text(
-                          '$consumerEffect',
-                          textAlign: TextAlign.justify,
-                          style: customTextStyle(
-                            16,
+                          child: const Text(
+                            'Save interactions report',
+                            style: TextStyle(
+                              color: Colors.blueAccent,
+                              fontSize: 14,
+                            ),
                           ),
-                        ),
-                ],
-              ),
+                        ))
+                  ],
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      }),
     );
   }
 }
