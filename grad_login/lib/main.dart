@@ -45,6 +45,19 @@ class MyApp extends StatelessWidget {
             primary: const Color(0xFFC5EEFF),
             secondary: const Color.fromRGBO(167, 252, 132, 0.7),
           ),
+          primaryTextTheme: TextTheme(
+            titleLarge: TextStyle(
+              color: Colors.grey.shade800,
+              fontWeight: FontWeight.w600,
+              fontSize: 32,
+            ),
+            titleMedium: TextStyle(
+              color: Colors.grey.shade800,
+              fontWeight: FontWeight.w600,
+              fontSize: 20,
+            ),
+            bodySmall: TextStyle(color: Colors.grey.shade800, fontSize: 12,)
+          ),
           textTheme: const TextTheme(
             button: TextStyle(
               fontFamily: 'NotoSans',
