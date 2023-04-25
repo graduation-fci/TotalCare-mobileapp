@@ -64,7 +64,6 @@ class _InteractionScreenState extends State<InteractionScreen> {
     List<dynamic> newData =
         await _filterDataList(medicineName!) as List<dynamic>;
 
-    SimpleMedicine newMed = SimpleMedicine.fromJson(newData[0]);
     // Make each object unique in the new list of interactionMedicines.
     if (!_interactionMedicines.contains(newData[0])) {
       _interactionMedicines.add(newData[0]);
@@ -83,7 +82,6 @@ class _InteractionScreenState extends State<InteractionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context).size;
     final interactionsProvider = Provider.of<InteractionsProvider>(context);
 
     return SafeArea(
@@ -99,7 +97,6 @@ class _InteractionScreenState extends State<InteractionScreen> {
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: Colors.grey.shade300, width: 2),
                 ),
-                height: mediaQuery.height * 0.45,
                 margin: const EdgeInsets.only(
                   top: 10,
                   left: 10,
@@ -112,7 +109,6 @@ class _InteractionScreenState extends State<InteractionScreen> {
                     SizedBox(
                       height: 40,
                       child: Row(
-                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
                             child: Container(
@@ -167,6 +163,8 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                   Column(
                                     children: [
                                       Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
@@ -198,13 +196,30 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                         height: 10,
                                       ),
                                       if (_interactionMedicines.isNotEmpty)
-                                        SizedBox(
-                                          height: mediaQuery.height * 0.114,
+                                        Container(
+                                          padding: const EdgeInsets.only(
+                                              left: 8, right: 8),
                                           child: ListView.builder(
+                                            shrinkWrap: true,
+                                            physics:
+                                                const NeverScrollableScrollPhysics(),
                                             itemBuilder: (context, index) {
-                                              return ListTile(
-                                                title: Text(
-                                                    '${_interactionMedicines[index]['name']}'),
+                                              return Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  index == 0
+                                                      ? Container()
+                                                      : const Divider(
+                                                          thickness: 0.6,
+                                                          color:
+                                                              Colors.black87),
+                                                  Text(
+                                                    '${_interactionMedicines[index]['name']}',
+                                                    style: const TextStyle(
+                                                        fontSize: 15),
+                                                  ),
+                                                ],
                                               );
                                             },
                                             itemCount:
@@ -261,8 +276,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                       ? Visibility(
                                           visible: _isVisible,
                                           child: Container(
-                                            constraints: const BoxConstraints(
-                                                minHeight: 50, maxHeight: 180),
+                                            height: 200,
                                             padding: const EdgeInsets.all(8),
                                             margin:
                                                 const EdgeInsets.only(top: 3),
@@ -273,10 +287,14 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                                   width: 1,
                                                 )),
                                             child: ListView.builder(
+                                              itemExtent: 50,
                                               itemBuilder: (context, index) {
                                                 return ListTile(
                                                   title: Text(
-                                                      '${results![index]['name']}'),
+                                                    '${results![index]['name']}',
+                                                    style: const TextStyle(
+                                                        fontSize: 15),
+                                                  ),
                                                   onTap: () {
                                                     FocusManager
                                                         .instance.primaryFocus
