@@ -31,7 +31,7 @@ class LoginButton extends StatelessWidget {
     if (authResponse.appState != AppState.loading) {
       return ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).colorScheme.secondary,
+          backgroundColor: Theme.of(context).colorScheme.primary,
           fixedSize: Size(
             mediaQuery.size.width * 0.85,
             mediaQuery.size.height * 0.06,
@@ -62,7 +62,7 @@ class LoginButton extends StatelessWidget {
         },
         child: Text(
           appLocalization.login,
-          style: TextStyle(color: Theme.of(context).colorScheme.primary),
+          style: Theme.of(context).textTheme.button,
         ),
       );
     }

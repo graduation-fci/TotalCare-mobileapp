@@ -76,21 +76,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: EdgeInsets.all(10),
                     child: Text(
                       'Total Care',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 32,
-                      ),
+                      style: Theme.of(context).primaryTextTheme.titleLarge,
                     ),
                   ),
                   Container(
                     padding: const EdgeInsets.all(10),
                     child: Text(
                       appLocalization.signIn,
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
+                      style: Theme.of(context).primaryTextTheme.titleMedium,
                     ),
                   ),
                   InputField(
@@ -108,19 +101,20 @@ class _LoginScreenState extends State<LoginScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Container(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {},
+                      TextButton(
+                        onPressed: () {},
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                color: Colors.grey.shade600,
+                                width: 1,
+                              ),
+                            ),
+                          ),
                           child: Text(
                             appLocalization.forgetPassword,
-                            style: TextStyle(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .primary
-                                  .withOpacity(0.9),
-                              fontSize: 12,
-                            ),
+                            style: Theme.of(context).primaryTextTheme.bodySmall,
                           ),
                         ),
                       ),
@@ -157,10 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           children: [
                             Text(
                               '${appLocalization.dontHaveAnAccount} ',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
+                              style: Theme.of(context).textTheme.button,
                             ),
                             TextButton(
                               onPressed: () {
@@ -174,13 +165,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                               child: Text(
                                 appLocalization.register,
-                                style: TextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .primary
-                                        .withOpacity(0.9),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold),
+                                style: Theme.of(context).textTheme.button,
                               ),
                             ),
                           ],
@@ -242,9 +227,7 @@ class SignWithGoogleButton extends StatelessWidget {
             ),
             Text(
               appLocalization.signInWithGoogle,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-              ),
+              style: Theme.of(context).textTheme.button,
             ),
           ],
         ),
