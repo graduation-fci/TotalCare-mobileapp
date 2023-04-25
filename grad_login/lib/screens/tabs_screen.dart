@@ -92,12 +92,12 @@ class _TabsScreenState extends State<TabsScreen> {
                       width: MediaQuery.of(context).size.width * 0.18,
                       height: MediaQuery.of(context).size.height * 0.04,
                       child: const Icon(
-                        Icons.home,
+                        Icons.home_outlined,
                         size: 28,
                       ),
                     )
                   : const Icon(
-                      Icons.home,
+                      Icons.home_outlined,
                       size: 28,
                     ),
               label: 'Home',
