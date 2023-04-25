@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class CustomTextFormField extends StatelessWidget {
+class RegisterTextFormField extends StatelessWidget {
   final String labelText;
   final TextEditingController controller;
   final TextInputType keyboardType;
@@ -15,7 +15,7 @@ class CustomTextFormField extends StatelessWidget {
   final IconButton? suffixIcon;
   bool? passwordVis;
 
-  CustomTextFormField({
+  RegisterTextFormField({
     Key? key,
     required this.labelText,
     required this.controller,
@@ -52,7 +52,7 @@ class CustomTextFormField extends StatelessWidget {
         suffixIcon: suffixIcon,
         contentPadding: const EdgeInsets.all(5),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0),
+          borderRadius: BorderRadius.circular(40),
         ),
         labelText: labelText,
         labelStyle: labelStyle(),
