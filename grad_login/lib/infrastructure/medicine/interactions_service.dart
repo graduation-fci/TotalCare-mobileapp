@@ -8,17 +8,16 @@ import '../../models/simple_medicine.dart';
 import '../shared/storage.dart';
 
 class InteractionsService {
-  var apiEndPoint = Config.simpleMeds;
   Storage storage = Storage();
 
   Future<Map<String, dynamic>?> fetchInteractionSearchData(
       {String? search, String? ordering}) async {
     const baseUrl = Config.simpleMeds;
     final queryParams = <String, String>{};
-    // String? token;
-    // await storage.getToken().then((value) {
-    //   token = value;
-    // });
+    String? token;
+    await storage.getToken().then((value) {
+      token = value;
+    });
     if (search != null) {
       queryParams['search'] = search;
     }
@@ -30,14 +29,14 @@ class InteractionsService {
       url,
       headers: {
         "content-type": "application/json",
-        // "Authorization": "JWT $token",
+        "Authorization": "JWT $token",
       },
     );
     final responseData = json.decode(response.body);
 
-    // if (responseData['details'] == null) {
-    //   return responseData;
-    // }
+    if (responseData['results'] == null) {
+      return responseData;
+    }
     return responseData;
   }
 
@@ -50,14 +49,20 @@ class InteractionsService {
   Future<Map<String, dynamic>> medicineInteraction(
       List<Map<String, dynamic>> interactionMedicines) async {
     final interactionsEndpoint = Uri.parse(Config.interactionMain);
-  
+    String? token;
+    await storage.getToken().then((value) {
+      token = value;
+    });
     final response = await http.post(
       interactionsEndpoint,
       body: json.encode({'medicine': interactionMedicines}),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        "Authorization": "JWT $token",
+      },
     );
     final responseData = json.decode(response.body);
-    // log('$response');
+    // log('$responseData');
     return responseData;
   }
 }
