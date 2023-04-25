@@ -26,10 +26,10 @@ class _InteractionScreenState extends State<InteractionScreen> {
   final FocusNode _focusNode = FocusNode();
 
   List<Map<String, dynamic>> _interactionMedicines = [];
-  bool _isVisible = true;
   AppState appState = AppState.init;
   Map<String, dynamic>? filteredMeds;
   Map<String, dynamic>? meds;
+  bool _isVisible = true;
 
   List<dynamic>? results;
 
@@ -128,6 +128,10 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                   labelText: searchController.text.isNotEmpty
                                       ? ''
                                       : 'Enter a drug name',
+                                  labelStyle: const TextStyle(
+                                    color: Colors.grey,
+                                  ),
+                                  border: InputBorder.none,
                                 ),
                               ),
                             ),
@@ -146,7 +150,10 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                 });
                                 searchController.text = '';
                               },
-                              child: const Text('Add'),
+                              child: Text(
+                                'Add',
+                                style: Theme.of(context).textTheme.button,
+                              ),
                             ),
                           ),
                         ],
@@ -248,9 +255,11 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                                                       _interactionMedicines),
                                                         });
                                               },
-                                              child: const Text(
+                                              child: Text(
                                                 'Check interactions',
-                                                // style: ElevatedButton.styleFrom(backgroundColor: Colors.greenAccent),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .button,
                                               ),
                                             ),
                                           ),
@@ -263,8 +272,11 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                           Expanded(
                                             child: ElevatedButton(
                                               onPressed: () {},
-                                              child: const Text(
+                                              child: Text(
                                                 'Save',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .button,
                                               ),
                                             ),
                                           ),
