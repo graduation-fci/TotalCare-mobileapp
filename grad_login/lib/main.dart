@@ -42,8 +42,15 @@ class MyApp extends StatelessWidget {
         title: 'first demo',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSwatch().copyWith(
-            primary: const Color.fromARGB(197, 238, 255, 255),
+            primary: const Color(0xFFC5EEFF),
             secondary: const Color.fromRGBO(167, 252, 132, 0.7),
+          ),
+          textTheme: const TextTheme(
+            button: TextStyle(
+              fontFamily: 'NotoSans',
+              fontSize: 14,
+              color: Color(0xFF003B4A),
+            ),
           ),
         ),
         home: const LoginScreen(),
