@@ -3,10 +3,10 @@ import 'package:grad_login/providers/interactionsProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../screens/show_interactions_results_screen.dart';
-import '../screens/login_screen.dart';
-import '../screens/register_screen.dart';
-import '../screens/exams_screen.dart';
+import 'screens/tabs_screen.dart';
+import 'screens/show_interactions_results_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/register_screen.dart';
 import 'screens/sign_screen.dart';
 import 'providers/medicineProvider.dart';
 import 'providers/userProvider.dart';
@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
               const ShowInteractionsResultsScreen(),
           LoginScreen.routeName: (ctx) => const LoginScreen(),
           RegisterFormScreen.routeName: (ctx) => const RegisterFormScreen(),
-          ExamsScreen.routeName: (ctx) => const ExamsScreen(),
+          TabsScreen.routeName: (ctx) => const TabsScreen(),
         },
       ),
     );
