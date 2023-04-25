@@ -24,9 +24,8 @@ class _InteractionScreenState extends State<InteractionScreen> {
   final TextEditingController searchController = TextEditingController();
   final TextEditingController searchController2 = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-  final simpleMeds = Config.simpleMeds;
 
-  List<SimpleMedicine> _interactionMedicines = [];
+  List<Map<String, dynamic>> _interactionMedicines = [];
   bool _isVisible = true;
   AppState appState = AppState.init;
   Map<String, dynamic>? filteredMeds;
@@ -67,11 +66,11 @@ class _InteractionScreenState extends State<InteractionScreen> {
 
     SimpleMedicine newMed = SimpleMedicine.fromJson(newData[0]);
     // Make each object unique in the new list of interactionMedicines.
-    if (!_interactionMedicines.contains(newMed)) {
-      _interactionMedicines.add(newMed);
+    if (!_interactionMedicines.contains(newData[0])) {
+      _interactionMedicines.add(newData[0]);
     }
 
-    log('${_interactionMedicines[0].name}');
+    log('$_interactionMedicines');
   }
 
   void startOver() {
@@ -128,10 +127,6 @@ class _InteractionScreenState extends State<InteractionScreen> {
                               child: TextFormField(
                                 focusNode: _focusNode,
                                 onChanged: _filterDataList,
-                                // onTap: () async => {
-                                //   meds =
-                                //       await UserProvider().getFilteredData() as Map,
-                                // },
                                 controller: searchController,
                                 decoration: InputDecoration(
                                   labelText: searchController.text.isNotEmpty
@@ -202,45 +197,20 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                       const SizedBox(
                                         height: 10,
                                       ),
-                                      // Row(
-                                      //   mainAxisAlignment:
-                                      //       MainAxisAlignment.spaceAround,
-                                      //   children: <Widget>[
-                                      //     Expanded(
-                                      //       child: TextFormField(
-                                      //         controller: searchController2,
-                                      //         decoration: InputDecoration(
-                                      //           hintText: 'Drug 1 (example)',
-                                      //           border: OutlineInputBorder(),
-                                      //           suffixIcon: IconButton(
-                                      //             icon: Icon(Icons.clear),
-                                      //             onPressed: () {
-                                      //               searchController2.clear();
-                                      //             },
-                                      //           ),
-                                      //         ),
-                                      //       ),
-                                      //     ),
-                                      //   ],
-                                      // ),
                                       if (_interactionMedicines.isNotEmpty)
                                         SizedBox(
-                                          height: 90,
+                                          height: mediaQuery.height * 0.114,
                                           child: ListView.builder(
                                             itemBuilder: (context, index) {
                                               return ListTile(
                                                 title: Text(
-                                                    '${_interactionMedicines[index].name}'),
-                                                onTap: () => {
-                                                  log('${_interactionMedicines[index].name}')
-                                                },
+                                                    '${_interactionMedicines[index]['name']}'),
                                               );
                                             },
                                             itemCount:
                                                 _interactionMedicines.length,
                                           ),
                                         ),
-
                                       const SizedBox(
                                         height: 20,
                                       ),
@@ -257,13 +227,11 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                                     .then((_) => {
                                                           Navigator.of(context)
                                                               .pushNamed(
-                                                            ShowInteractionsResultsScreen
-                                                                .routeName,
-                                                          ),
-                                                          log('${interactionsProvider.response}'),
+                                                                  ShowInteractionsResultsScreen
+                                                                      .routeName,
+                                                                  arguments:
+                                                                      _interactionMedicines),
                                                         });
-
-                                                // log('$_interactionMedicines');
                                               },
                                               child: const Text(
                                                 'Check interactions',
@@ -289,77 +257,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                       ),
                                     ],
                                   ),
-                                  results != null
-                                      ? results!.isNotEmpty
-                                          ? Visibility(
-                                              visible: _isVisible,
-                                              child: Container(
-                                                constraints:
-                                                    const BoxConstraints(
-                                                        minHeight: 50,
-                                                        maxHeight: 180),
-                                                padding:
-                                                    const EdgeInsets.all(8),
-                                                margin: const EdgeInsets.only(
-                                                    top: 3),
-                                                decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    border: Border.all(
-                                                      color:
-                                                          Colors.grey.shade400,
-                                                      width: 1,
-                                                    )),
-                                                child: ListView.builder(
-                                                  itemBuilder:
-                                                      (context, index) {
-                                                    return ListTile(
-                                                      title: Text(
-                                                          '${results![index]['name']}'),
-                                                      onTap: () {
-                                                        FocusManager.instance
-                                                            .primaryFocus
-                                                            ?.unfocus();
-                                                        _addSearchedMedicine(
-                                                            results![index]
-                                                                ['name']);
-                                                        log('${results![index]['name']}');
-                                                        setState(() {
-                                                          appState =
-                                                              AppState.loading;
-                                                          searchController.text
-                                                                  .isNotEmpty
-                                                              ? hasContent =
-                                                                  true
-                                                              : hasContent =
-                                                                  false;
-                                                          appState =
-                                                              AppState.done;
-                                                        });
-                                                        searchController.text =
-                                                            '';
-                                                      },
-                                                    );
-                                                  },
-                                                  itemCount: results!.length,
-                                                ),
-                                              ),
-                                            )
-                                          : Container()
-                                      : Container(),
-                                ],
-                              )
-                        : Stack(
-                            children: [
-                              const Text(
-                                'Type a drug name in the box above to get started.',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                ),
-                                textAlign: TextAlign.justify,
-                              ),
-                              results != null
-                                  ? results!.isNotEmpty
+                                  results != null && results!.isNotEmpty
                                       ? Visibility(
                                           visible: _isVisible,
                                           child: Container(
@@ -403,7 +301,60 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                             ),
                                           ),
                                         )
-                                      : Container()
+                                      : Container(),
+                                ],
+                              )
+                        : Stack(
+                            children: [
+                              const Text(
+                                'Type a drug name in the box above to get started.',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                ),
+                                textAlign: TextAlign.justify,
+                              ),
+                              results != null && results!.isNotEmpty
+                                  ? Visibility(
+                                      visible: _isVisible,
+                                      child: Container(
+                                        constraints: const BoxConstraints(
+                                            minHeight: 50, maxHeight: 180),
+                                        padding: const EdgeInsets.all(8),
+                                        margin: const EdgeInsets.only(top: 3),
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            border: Border.all(
+                                              color: Colors.grey.shade400,
+                                              width: 1,
+                                            )),
+                                        child: ListView.builder(
+                                          itemBuilder: (context, index) {
+                                            return ListTile(
+                                              title: Text(
+                                                  '${results![index]['name']}'),
+                                              onTap: () {
+                                                FocusManager
+                                                    .instance.primaryFocus
+                                                    ?.unfocus();
+                                                _addSearchedMedicine(
+                                                    results![index]['name']);
+                                                setState(() {
+                                                  appState = AppState.loading;
+                                                  searchController
+                                                          .text.isNotEmpty
+                                                      ? hasContent = true
+                                                      : hasContent = false;
+                                                  appState = AppState.done;
+                                                });
+                                                searchController.text = '';
+                                              },
+                                            );
+                                          },
+                                          itemCount: results!.length,
+                                        ),
+                                      ),
+                                    )
                                   : Container(),
                             ],
                           ),
