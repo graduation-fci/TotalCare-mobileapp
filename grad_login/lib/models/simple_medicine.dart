@@ -3,9 +3,9 @@ import 'dart:convert';
 
 List<SimpleMedicine> medicineListFromJson(String jsonString) {
   final jsonData = json.decode(jsonString);
-  return List<SimpleMedicine>.from(jsonData.map((item) => SimpleMedicine.fromJson(item)));
+  return List<SimpleMedicine>.from(
+      jsonData.map((item) => SimpleMedicine.fromJson(item)));
 }
-
 
 class SimpleMedicine {
   int? id;
@@ -49,8 +49,7 @@ class SimpleMedicine {
       data['drugs'] = drugs!.map((drug) => drug.toJson()).toList();
     }
     if (medicineImages != null) {
-      data['medicine_images'] =
-          medicineImages!.map((image) => image.toJson()).toList();
+      data['medicine_images'] = medicineImages;
     }
     return data;
   }
