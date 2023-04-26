@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:grad_login/providers/categoriesProvider.dart';
+import 'package:grad_login/providers/drugProvider.dart';
 import 'package:grad_login/screens/home_screen.dart';
+import 'package:grad_login/screens/medicine_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -34,6 +36,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(
           value: Categories(),
         ),
+        ChangeNotifierProvider.value(
+          value: Drugs(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -51,6 +56,7 @@ class MyApp extends StatelessWidget {
           RegisterFormScreen.routeName: (ctx) => const RegisterFormScreen(),
           ExamsScreen.routeName: (ctx) => const ExamsScreen(),
           HomeScreen.routeName: (ctx) => const HomeScreen(),
+          MedicinesScreen.routeName: (context) => const MedicinesScreen(),
         },
       ),
     );

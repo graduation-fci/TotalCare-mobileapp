@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:grad_login/screens/medicine_screen.dart';
 
 import 'package:provider/provider.dart';
 
@@ -37,7 +38,9 @@ class _CategoryItemState extends State<CategoryItem> {
             itemCount: categories.length,
             itemBuilder: (context, index) => InkWell(
                   onTap: () {
-                    print('Navigating');
+                    Navigator.of(context).pushNamed(MedicinesScreen.routeName,
+                        arguments: categories[index].id);
+                    //print('category id: ${categories[index].id}');
                   },
                   child: GridTile(
                     footer: SizedBox(

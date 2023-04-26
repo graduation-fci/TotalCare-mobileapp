@@ -20,9 +20,6 @@ class Categories with ChangeNotifier {
   final loginEndPoint = Uri.parse(Config.categories);
 
   List<CatItem> get items {
-    // if (_showFavouritesOnly) {
-    //   return _items.where((element) => element.isFavourite).toList();
-    // }
     return [..._list];
   }
 
@@ -31,7 +28,7 @@ class Categories with ChangeNotifier {
         Uri.parse('http://192.168.1.5:8000/medicine/categories/?page=1');
     final respone = await http.get(url);
     final extractedData = json.decode(respone.body)['count'];
-    final pageCount = (extractedData / 10).round();
+    final pageCount = (extractedData / 10).ceil();
     //print(pageCount);
     final List<CatItem> loadedCat = [];
     for (var z = 1; z <= pageCount; z++) {
@@ -58,7 +55,7 @@ class Categories with ChangeNotifier {
       // print(_list[0].imgURL);
       // print(_list.length);
       // print(_list[3].imgURL);
-      notifyListeners();
     }
+    notifyListeners();
   }
 }
