@@ -54,4 +54,28 @@ class UserService {
     }
     return responseData;
   }
+  
+  Future<void> deleteMedication(int id) async {
+    final url = Uri.parse('${Config.userMedications}$id/');
+    String? token;
+    await storage.getToken().then((value) {
+      token = value;
+    });
+
+    final response = await http.delete(
+      url,
+      headers: {
+        "content-type": "application/json",
+        "Authorization": "JWT $token",
+      },
+    );
+
+    final responseData = json.decode(response.body);
+    log('$responseData');
+    if (responseData['details'] == null) {
+      return responseData;
+    }
+    return responseData;
+  }
+  
 }
