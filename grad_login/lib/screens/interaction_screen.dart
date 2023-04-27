@@ -1,11 +1,10 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:grad_login/screens/show_interactions_results_screen.dart';
 import 'package:provider/provider.dart';
 
+import '../screens/show_interactions_results_screen.dart';
 import '../providers/interactionsProvider.dart';
 import '../providers/medicineProvider.dart';
-import '../providers/userProvider.dart';
 
 import '.././app_state.dart';
 
@@ -48,8 +47,8 @@ class _InteractionScreenState extends State<InteractionScreen> {
   }
 
   Future<List<dynamic>?> _filterDataList(String searchValue) async {
-    filteredMeds = await Provider.of<UserProvider>(context, listen: false)
-        .getFilteredData(searchQuery: searchValue);
+    filteredMeds = await Provider.of<MedicineProvider>(context, listen: false)
+        .getFilteredMedsData(searchQuery: searchValue);
     if (filteredMeds != null && filteredMeds!['results'] != null) {
       results = filteredMeds!['results'];
     }

@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import '../infrastructure/medicine/interactions_service.dart';
+import '../infrastructure/medicine/medicine_service.dart';
 import '../models/user.dart';
 import '../my_config.dart';
 
 class UserProvider with ChangeNotifier {
-  InteractionsService userService = InteractionsService();
+  MedicineService medicineService = MedicineService();
   final List<User> _users = [];
 
   List<User> get users {
@@ -29,9 +29,5 @@ class UserProvider with ChangeNotifier {
     await http.get(registerEndPoint);
   }
 
-  Future<Map<String,dynamic>?> getFilteredData({searchQuery, ordering}) {
-    return userService.fetchInteractionSearchData(
-        search: searchQuery, ordering: ordering);
-  }
-
+  
 }

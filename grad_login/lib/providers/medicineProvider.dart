@@ -31,10 +31,8 @@ class MedicineProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getSingleExam() async {
-    const dynamic apiEndPoint = Config.apiUrl;
-    final examsEndPoint = Uri.parse(apiEndPoint + '/exam/exams/');
-
-    await http.get(examsEndPoint);
+  Future<Map<String, dynamic>?> getFilteredMedsData({searchQuery, ordering}) {
+    return medicineService.filterSimpleMedsData(
+        search: searchQuery, ordering: ordering);
   }
 }
