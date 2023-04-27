@@ -16,7 +16,7 @@ import '../screens/login_screen.dart';
 
 import '../models/user.dart';
 
-import '../widgets/register_text_form_field.dart';
+import '../widgets/input_field.dart';
 
 class RegisterFormScreen extends StatefulWidget {
   static const routeName = '/register';
@@ -91,8 +91,9 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                 key: formKey,
                 child: Padding(
                   padding: EdgeInsets.symmetric(
-                      horizontal: mediaQuery.width * 0.13,
-                      vertical: mediaQuery.height * 0.08),
+                    horizontal: mediaQuery.width * 0.05,
+                    vertical: mediaQuery.height * 0.08,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -107,17 +108,14 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       SizedBox(
                         height: mediaQuery.height * 0.02,
                       ),
-                      Text(
-                        appLocalization.email,
-                      ),
-                      SizedBox(
-                        height: mediaQuery.height * 0.02,
-                      ),
-                      RegisterTextFormField(
+                      InputField(
                         labelText: appLocalization.email,
                         controller: emailController,
                         keyboardType: TextInputType.emailAddress,
-                        prefixIcon: const Icon(MdiIcons.email),
+                        prefixIcon: const Icon(
+                          MdiIcons.email,
+                          color: Colors.grey,
+                        ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return appLocalization.emailNotEmpty;
@@ -137,15 +135,14 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       SizedBox(
                         height: mediaQuery.height * 0.02,
                       ),
-                      Text(appLocalization.firstName),
-                      SizedBox(
-                        height: mediaQuery.height * 0.02,
-                      ),
-                      RegisterTextFormField(
+                      InputField(
                         labelText: appLocalization.firstName,
                         controller: firstNameController,
                         keyboardType: TextInputType.name,
-                        prefixIcon: const Icon(Icons.account_box),
+                        prefixIcon: const Icon(
+                          Icons.account_box,
+                          color: Colors.grey,
+                        ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return appLocalization.firstNameNotEmpty;
@@ -163,15 +160,14 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       SizedBox(
                         height: mediaQuery.height * 0.02,
                       ),
-                      Text(appLocalization.lastName),
-                      SizedBox(
-                        height: mediaQuery.height * 0.02,
-                      ),
-                      RegisterTextFormField(
+                      InputField(
                         labelText: appLocalization.lastName,
                         controller: lastNameController,
                         keyboardType: TextInputType.name,
-                        prefixIcon: const Icon(Icons.account_box),
+                        prefixIcon: const Icon(
+                          Icons.account_box,
+                          color: Colors.grey,
+                        ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return appLocalization.lastNameNotEmpty;
@@ -189,15 +185,14 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       SizedBox(
                         height: mediaQuery.height * 0.02,
                       ),
-                      Text(appLocalization.username),
-                      SizedBox(
-                        height: mediaQuery.height * 0.02,
-                      ),
-                      RegisterTextFormField(
+                      InputField(
                         labelText: appLocalization.username,
                         controller: userNameController,
                         keyboardType: TextInputType.text,
-                        prefixIcon: const Icon(Icons.person_add_alt_1),
+                        prefixIcon: const Icon(
+                          Icons.person_add_alt_1,
+                          color: Colors.grey,
+                        ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return appLocalization.usernameNotEmpty;
@@ -215,10 +210,14 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       SizedBox(
                         height: mediaQuery.height * 0.02,
                       ),
-                      Text(appLocalization.country),
                       TextButton.icon(
                         focusNode: countryFocus,
-                        label: Text(countryName),
+                        label: Text(
+                          countryName,
+                          style: const TextStyle(
+                            color: Colors.grey,
+                          ),
+                        ),
                         onPressed: () => showCountryPicker(
                           context: context,
                           showPhoneCode: true,
@@ -231,29 +230,28 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                             setState(() {});
                           },
                         ),
-                        icon: const Icon(Icons.arrow_drop_down),
+                        icon: const Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.grey,
+                        ),
                       ),
                       SizedBox(
                         height: mediaQuery.height * 0.02,
                       ),
-                      Text(appLocalization.phoneNumber),
-                      SizedBox(
-                        height: mediaQuery.height * 0.02,
-                      ),
-                      RegisterTextFormField(
+                      InputField(
                         labelText: appLocalization.phoneNumber,
                         controller: mobileController,
                         keyboardType: TextInputType.phone,
-                        prefixIcon: const Icon(Icons.phone),
+                        prefixIcon: const Icon(
+                          Icons.phone,
+                          color: Colors.grey,
+                        ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return appLocalization.phoneNumberNotEmpty;
                           }
                           return null;
                         },
-                        // onSaved: (value) {
-                        //   _userData.phone = value!;
-                        // },
                         focusNode: phoneFocus,
                         nextFocusNode: passwordFocus,
                         textInputAction: TextInputAction.next,
@@ -262,15 +260,14 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       SizedBox(
                         height: mediaQuery.height * 0.02,
                       ),
-                      Text(appLocalization.password),
-                      SizedBox(
-                        height: mediaQuery.height * 0.02,
-                      ),
-                      RegisterTextFormField(
+                      InputField(
                         labelText: appLocalization.password,
                         controller: passwordController,
                         keyboardType: TextInputType.text,
-                        prefixIcon: const Icon(Icons.lock),
+                        prefixIcon: const Icon(
+                          Icons.lock,
+                          color: Colors.grey,
+                        ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return appLocalization.passwordNotEmpty;
@@ -291,8 +288,14 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                             setState(() {});
                           },
                           icon: passwordVisible
-                              ? const Icon(Icons.visibility_off)
-                              : const Icon(Icons.visibility),
+                              ? const Icon(
+                                  Icons.visibility_off,
+                                  color: Colors.grey,
+                                )
+                              : const Icon(
+                                  Icons.visibility,
+                                  color: Colors.grey,
+                                ),
                         ),
                         focusNode: passwordFocus,
                         nextFocusNode: rePasswordFocus,
@@ -301,15 +304,14 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       SizedBox(
                         height: mediaQuery.height * 0.02,
                       ),
-                      Text(appLocalization.confirmPassword),
-                      SizedBox(
-                        height: mediaQuery.height * 0.02,
-                      ),
-                      RegisterTextFormField(
-                        labelText: appLocalization.password,
+                      InputField(
+                        labelText: appLocalization.confirmPassword,
                         controller: rePasswordController,
                         keyboardType: TextInputType.text,
-                        prefixIcon: const Icon(Icons.lock),
+                        prefixIcon: const Icon(
+                          Icons.lock,
+                          color: Colors.grey,
+                        ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return appLocalization.confirmPasswordNotEmpty;
@@ -318,9 +320,6 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                           }
                           return null;
                         },
-                        // onSaved: (value) {
-                        //   _userData.phone = value!;
-                        // },
                         obsecureText: rePasswordVisible,
                         focusNode: rePasswordFocus,
                         nextFocusNode: rePasswordFocus,
@@ -330,32 +329,37 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                             setState(() {});
                           },
                           icon: rePasswordVisible
-                              ? const Icon(Icons.visibility_off)
-                              : const Icon(Icons.visibility),
+                              ? const Icon(
+                                  Icons.visibility_off,
+                                  color: Colors.grey,
+                                )
+                              : const Icon(
+                                  Icons.visibility,
+                                  color: Colors.grey,
+                                ),
                         ),
                         textInputAction: TextInputAction.next,
                       ),
                       SizedBox(
-                        height: mediaQuery.height * 0.03,
+                        height: mediaQuery.height * 0.02,
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 18,
-                          vertical: 12,
+                          // vertical: 12,
                         ),
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey, width: 1),
-                            borderRadius: BorderRadius.circular(40)),
+                          border: Border.all(color: Colors.grey, width: 1),
+                          borderRadius: BorderRadius.circular(40),
+                        ),
                         child: DropdownButtonFormField<String>(
                           decoration: const InputDecoration(
                             border: InputBorder.none,
-                            labelText: 'Select',
-                            labelStyle: TextStyle(color: Colors.grey),
                           ),
                           onSaved: ((value) => _userData.profileType = value!),
                           hint: const Text(
-                            'You are a ...',
-                            style: TextStyle(fontSize: 13),
+                            'Select ...',
+                            style: TextStyle(fontSize: 14),
                           ),
                           value: _selectedItem,
                           items: _dropDownItems.entries
