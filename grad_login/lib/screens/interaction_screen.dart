@@ -1,5 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:grad_login/providers/userProvider.dart';
+import 'package:grad_login/screens/user_medications.dart';
 import 'package:provider/provider.dart';
 
 import '../screens/show_interactions_results_screen.dart';
@@ -79,6 +81,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
   @override
   Widget build(BuildContext context) {
     final interactionsProvider = Provider.of<InteractionsProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
 
     return SafeArea(
       child: GestureDetector(
@@ -409,6 +412,22 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                 ],
                               ),
                       ],
+                    ),
+                  ),
+                  Center(
+                    child: ElevatedButton(
+                      child: Text(
+                        'My Medications',
+                      ),
+                      onPressed: (() {
+                        userProvider
+                            .getUserMedications()
+                            .then((value) => userProvider.getUserProfile())
+                            .then(
+                              (value) => Navigator.of(context)
+                                  .pushNamed(UserMedicationsScreen.routeName),
+                            );
+                      }),
                     ),
                   ),
                 ],
