@@ -160,7 +160,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                               AppState.done)
                                             Navigator.of(context)
                                                 .pushReplacementNamed(
-                                                    HomeScreen.routeName),
+                                                    HomeScreen.routeName,
+                                                    arguments:
+                                                        nameController.text),
                                         });
                               }
                               FocusManager.instance.primaryFocus?.unfocus();

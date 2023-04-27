@@ -66,6 +66,9 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
                                     Text(
                                       drugs[index].name,
                                       //softWrap: true,
+                                      maxLines: null,
+                                      overflow: TextOverflow.visible,
+                                      softWrap: true,
                                       style: const TextStyle(
                                         color: Colors.black,
                                       ),
