@@ -1,12 +1,9 @@
 import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:grad_login/infrastructure/medicine/medicine_service.dart';
-import 'package:http/http.dart' as http;
 
 import '../app_state.dart';
-import '../models/exam.dart';
-import '../my_config.dart';
 
 class MedicineProvider with ChangeNotifier {
   AppState appState = AppState.init;
