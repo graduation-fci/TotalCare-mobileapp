@@ -50,15 +50,15 @@ class _TabsScreenState extends State<TabsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          _pages[_selectedPageIndex]['title'],
-          style: const TextStyle(
-            fontFamily: 'Anton-Regular',
-          ),
-        ),
-        backgroundColor: Theme.of(context).primaryColor,
-      ),
+      // appBar: AppBar(
+      //   title: Text(
+      //     _pages[_selectedPageIndex]['title'],
+      //     style: const TextStyle(
+      //       fontFamily: 'Anton-Regular',
+      //     ),
+      //   ),
+      //   backgroundColor: Theme.of(context).primaryColor,
+      // ),
       // drawer: MainDrawer(),
       body: _pages[_selectedPageIndex]['page'],
 
