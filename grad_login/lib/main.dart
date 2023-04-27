@@ -50,7 +50,8 @@ class MyApp extends StatelessWidget {
           ShowInteractionsResultsScreen.routeName: (ctx) =>
               const ShowInteractionsResultsScreen(),
           LoginScreen.routeName: (ctx) => const LoginScreen(),
-          UserMedicationsScreen.routeName: (ctx) => const UserMedicationsScreen(),
+          UserMedicationsScreen.routeName: (ctx) =>
+              const UserMedicationsScreen(),
           RegisterFormScreen.routeName: (ctx) => const RegisterFormScreen(),
           TabsScreen.routeName: (ctx) => const TabsScreen(),
         },
@@ -85,6 +86,12 @@ class MyApp extends StatelessWidget {
           fontFamily: 'NotoSans',
           fontSize: 14,
           color: Color(0xFF003B4A),
+        ),
+        headlineLarge: TextStyle(
+          fontFamily: 'NotoSans',
+          fontSize: 16,
+          color: Color(0xFF003B4A),
+          fontWeight: FontWeight.bold,
         ),
       ),
       appBarTheme: const AppBarTheme(
