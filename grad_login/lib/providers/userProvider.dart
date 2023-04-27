@@ -9,7 +9,8 @@ import '../models/user.dart';
 class UserProvider with ChangeNotifier {
   UserService userService = UserService();
   String? errorMessage;
-  Map<String, dynamic>? response;
+  Map<String, dynamic> userProfileData = {};
+  Map<String, dynamic> userMedications = {};
   AppState appState = AppState.init;
   final List<User> _users = [];
 
@@ -27,8 +28,31 @@ class UserProvider with ChangeNotifier {
     } else {
       appState = AppState.done;
     }
-    response = responseData;
-    log("$response");
+    userProfileData = responseData;
+    // log("$userProfileData");
+    notifyListeners();
+  }
+
+  Future<void> getUserMedications() async {
+    appState = AppState.loading;
+    notifyListeners();
+    final responseData = await userService.getMedications();
+    if (responseData['detail'] != null) {
+      errorMessage = responseData['detail'];
+      appState = AppState.error;
+    } else {
+      appState = AppState.done;
+    }
+    userMedications = responseData;
+    // log("$userMedications");
+    notifyListeners();
+  }
+
+  Future<void> delMedication(int id) async {
+    appState = AppState.loading;
+    notifyListeners();
+    await userService.deleteMedication(id);
+    appState = AppState.done;
     notifyListeners();
   }
 }
