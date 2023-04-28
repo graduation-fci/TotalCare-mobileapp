@@ -25,7 +25,7 @@ class UserService {
     );
 
     final responseData = json.decode(response.body);
-    log('$responseData');
+    // log('$responseData');
     if (responseData['details'] == null) {
       return responseData;
     }
@@ -48,13 +48,13 @@ class UserService {
     );
 
     final responseData = json.decode(response.body);
-    log('$responseData');
+    // log('$responseData');
     if (responseData['details'] == null) {
       return responseData;
     }
     return responseData;
   }
-  
+
   Future<void> deleteMedication(int id) async {
     final url = Uri.parse('${Config.userMedications}$id/');
     String? token;
@@ -69,13 +69,5 @@ class UserService {
         "Authorization": "JWT $token",
       },
     );
-
-    final responseData = json.decode(response.body);
-    log('$responseData');
-    if (responseData['details'] == null) {
-      return responseData;
-    }
-    return responseData;
   }
-  
 }
