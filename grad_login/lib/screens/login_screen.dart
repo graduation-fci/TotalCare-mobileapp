@@ -22,22 +22,11 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  var isActive = false;
   var visible = true;
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   String errorMessage = '';
 
-  bool isButtonActive() {
-    isActive =
-        nameController.text.isNotEmpty && passwordController.text.isNotEmpty
-            ? true
-            : false;
-    setState(() {
-      isActive;
-    });
-    return isActive;
-  }
 
   @override
   void dispose() {
@@ -136,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       return null;
                     },
                     textInputAction: TextInputAction.next,
-                    obsecureText: true,
+                    obsecureText: visible,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
