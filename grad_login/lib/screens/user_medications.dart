@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:grad_login/widgets/edit_user_medication.dart';
 import 'package:provider/provider.dart';
 
 import '../app_state.dart';
@@ -28,6 +29,17 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
     super.initState();
   }
 
+  void _showEditMedication(BuildContext ctx, medication) {
+    showModalBottomSheet(
+      context: ctx,
+      builder: (_) {
+        return GestureDetector(
+          child: EditUserMedication(medication: medication),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
@@ -39,10 +51,8 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
     for (int i = 0; i < userMedications['count']; i++) {
       List medicineNames = [];
 
-      for (int k = 0;
-          k < userMedications['results'][i]['medicine'].length;
-          k++) {
-        medicineNames.add(userMedications['results'][i]['medicine'][k]['name']);
+      for (int k = 0; k < medicationResults[i]['medicine'].length; k++) {
+        medicineNames.add(medicationResults[i]['medicine'][k]['name']);
       }
       medications[i] = medicineNames;
     }
@@ -131,14 +141,8 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
                                           Icons.edit,
                                           color: Colors.grey,
                                         ),
-                                        onPressed: () {
-                                          userProvider.delMedication(
-                                            userMedications['results'][index]
-                                                ['id'],
-                                          );
-                                          // userProvider.getUserMedications();
-                                          setState(() {});
-                                        },
+                                        onPressed: () => _showEditMedication(
+                                            context, medicationResults[index]),
                                       ),
                                     ),
                                   ],
