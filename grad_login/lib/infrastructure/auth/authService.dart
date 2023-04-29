@@ -49,8 +49,8 @@ class AuthService {
           'username': user.username,
           'password': user.password,
           'email': user.email,
-          'firstName': user.first_name,
-          'lastName': user.last_name,
+          'first_name': user.first_name,
+          'last_name': user.last_name,
           'profile_type': user.profileType,
         },
       ),
@@ -59,6 +59,7 @@ class AuthService {
     if (responseData['detail'] != null) {
       return responseData;
     }
+    log('$responseData');
     return responseData;
   }
 
