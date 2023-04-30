@@ -1,9 +1,9 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:grad_login/models/medication.dart';
 import 'package:provider/provider.dart';
 
+import '../models/medication.dart';
 import '../providers/userProvider.dart';
 import '../widgets/input_field.dart';
 
@@ -18,19 +18,27 @@ class EditMedicationScreen extends StatefulWidget {
 class _EditMedicationScreenState extends State<EditMedicationScreen> {
   final TextEditingController _titleController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-  final Medication _med = Medication(title: '', medicines: []);
+  final Medication _med = Medication(medicines: [], title: '');
   final _formKey = GlobalKey<FormState>();
+  Map<String, dynamic> medication = {};
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      medication =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+      _titleController.text = medication['title'];
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final Map medication = ModalRoute.of(context)!.settings.arguments as Map;
     final mediaQuery = MediaQuery.of(context).size;
+    medication =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
     log('$medication');
-    setState(() {
-      _titleController.text = medication['title'];
-    });
-
     return SafeArea(
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -67,6 +75,7 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                         Icons.title_outlined,
                         color: Colors.grey,
                       ),
+                      focusNode: _focusNode,
                       labelText: 'Title',
                       controller: _titleController,
                       keyboardType: TextInputType.name,
