@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:grad_login/screens/edit_medication.dart';
 import 'package:grad_login/widgets/edit_user_medication.dart';
 import 'package:provider/provider.dart';
 
@@ -141,8 +142,10 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
                                           Icons.edit,
                                           color: Colors.grey,
                                         ),
-                                        onPressed: () => _showEditMedication(
-                                            context, medicationResults[index]),
+                                        onPressed: () => Navigator.of(context)
+                                            .pushNamed(EditMedication.routeName,
+                                                arguments:
+                                                    medicationResults[index]),
                                       ),
                                     ),
                                   ],
