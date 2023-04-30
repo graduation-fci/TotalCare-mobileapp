@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:grad_login/screens/add_medication.dart';
 import 'package:grad_login/screens/edit_medication.dart';
 import 'package:grad_login/widgets/edit_user_medication.dart';
 import 'package:provider/provider.dart';
@@ -30,17 +31,6 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
     super.initState();
   }
 
-  void _showEditMedication(BuildContext ctx, medication) {
-    showModalBottomSheet(
-      context: ctx,
-      builder: (_) {
-        return GestureDetector(
-          child: EditUserMedication(medication: medication),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
@@ -61,108 +51,146 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'My medications',
+          'Medication profiles',
           style: Theme.of(context).appBarTheme.titleTextStyle,
         ),
       ),
       resizeToAvoidBottomInset: false,
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-          return SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: constraints.maxHeight,
-              ),
-              child: Column(
-                children: [
-                  // ignore: avoid_unnecessary_containers
-                  Center(
-                    child: Column(
-                      children: [
-                        Image.asset(
-                          'assets/images/TotalCare.png',
-                          height: mediaQuery.height * 0.24,
-                          width: mediaQuery.width * 0.3,
-                        ),
-                        Text(
-                          '${userProfileData['first_name']} ${userProfileData['last_name']}',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    child: ListView.builder(
-                      key: GlobalKey(),
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return Card(
-                          elevation: 5,
-                          child: Padding(
-                            padding: const EdgeInsets.all(6),
-                            child: ListTile(
-                              title: Text(
-                                '${medicationResults[index]['title']}',
-                                style:
-                                    Theme.of(context).textTheme.headlineLarge,
-                              ),
-                              subtitle: Text(
-                                medications[index]!.join(', '),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              trailing: SizedBox(
-                                width: 80,
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: IconButton(
-                                        icon: const Icon(
-                                          Icons.delete,
-                                          color: Colors.red,
-                                        ),
-                                        onPressed: () async {
-                                          await userProvider.delMedication(
-                                            medicationResults[index]['id'],
-                                          );
-                                          setState(() {
-                                            medicationResults.remove(
-                                                medicationResults[index]);
-                                          });
-                                          log('$medicationResults');
-                                        },
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: IconButton(
-                                        icon: const Icon(
-                                          Icons.edit,
-                                          color: Colors.grey,
-                                        ),
-                                        onPressed: () => Navigator.of(context)
-                                            .pushNamed(EditMedication.routeName,
-                                                arguments:
-                                                    medicationResults[index]),
-                                      ),
-                                    ),
-                                  ],
+          return Stack(children: [
+            Column(
+              children: [
+                SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // ignore: avoid_unnecessary_containers
+
+                      Image.asset(
+                        'assets/images/TotalCare.png',
+                        height: mediaQuery.height * 0.24,
+                        width: mediaQuery.width * 0.3,
+                        alignment: Alignment.center,
+                      ),
+                      Text(
+                        '${userProfileData['first_name']} ${userProfileData['last_name']}',
+                        style: Theme.of(context).textTheme.titleMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 20),
+                      medicationResults.isEmpty
+                          ? Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: Text(
+                                'You have no medication profiles.',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey.shade700,
                                 ),
                               ),
+                            )
+                          : Container(
+                              padding: const EdgeInsets.all(12),
+                              child: ListView.builder(
+                                key: GlobalKey(),
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  return Card(
+                                    elevation: 5,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(6),
+                                      child: ListTile(
+                                        title: Text(
+                                          '${medicationResults[index]['title']}',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headlineLarge,
+                                        ),
+                                        subtitle: Text(
+                                          medications[index]!.join(', '),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        trailing: SizedBox(
+                                          width: 80,
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: IconButton(
+                                                  icon: const Icon(
+                                                    Icons.delete,
+                                                    color: Colors.red,
+                                                  ),
+                                                  onPressed: () async {
+                                                    await userProvider
+                                                        .delMedication(
+                                                          medicationResults[
+                                                              index]['id'],
+                                                        )
+                                                        .then((value) =>
+                                                            medicationResults.remove(
+                                                                medicationResults[
+                                                                    index]));
+                                                    setState(() {});
+                                                    log('$medicationResults');
+                                                  },
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: IconButton(
+                                                  icon: const Icon(
+                                                    Icons.edit,
+                                                    color: Colors.grey,
+                                                  ),
+                                                  onPressed: () => Navigator.of(
+                                                          context)
+                                                      .pushNamed(
+                                                          EditMedicationScreen
+                                                              .routeName,
+                                                          arguments:
+                                                              medicationResults[
+                                                                  index]),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                itemCount: medicationResults.length,
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                      itemCount: medicationResults.length,
-                    ),
-                  )
-                ],
-              ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          );
+          ]);
         },
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.only(bottom: 16, left: 10, right: 10),
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).pushNamed(AddMedicationScreen.routeName);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            fixedSize: Size(
+              mediaQuery.width * 0.85,
+              mediaQuery.height * 0.06,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(40),
+            ),
+          ),
+          child: Text('Add profile', style: Theme.of(context).textTheme.button),
+        ),
       ),
     );
   }
