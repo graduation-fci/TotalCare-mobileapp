@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'dart:developer';
 
+import 'package:grad_login/models/medication.dart';
 import 'package:http/http.dart' as http;
 
 import '../../my_config.dart';
@@ -23,6 +23,31 @@ class UserService {
         "Authorization": "JWT $token",
       },
     );
+
+    final responseData = json.decode(response.body);
+    // log('$responseData');
+    if (responseData['details'] == null) {
+      return responseData;
+    }
+    return responseData;
+  }
+
+  Future<Map<String, dynamic>> addMedicationProfile(Medication med) async {
+    final url = Uri.parse(Config.userMedications);
+    String? token;
+    await storage.getToken().then((value) {
+      token = value;
+    });
+
+    final response = await http.post(url,
+        headers: {
+          "content-type": "application/json",
+          "Authorization": "JWT $token",
+        },
+        body: json.encode({
+          "title": med.title,
+          "medicines": med.medicines,
+        }));
 
     final responseData = json.decode(response.body);
     // log('$responseData');
