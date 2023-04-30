@@ -33,8 +33,8 @@ class InputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10),
+    return Container(
+      margin: const EdgeInsets.all(10),
       child: TextFormField(
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onEditingComplete: () {
@@ -52,12 +52,14 @@ class InputField extends StatelessWidget {
         decoration: InputDecoration(
           prefixIcon: prefixIcon,
           suffixIcon: suffixIcon,
-          contentPadding: const EdgeInsets.all(5),
+          contentPadding: prefixIcon != null
+              ? const EdgeInsets.all(5)
+              : const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(40),
+            borderRadius: BorderRadius.circular(12),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(40),
+            borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(color: Colors.grey),
           ),
           labelText: labelText,

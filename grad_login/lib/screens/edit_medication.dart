@@ -20,6 +20,7 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
   final FocusNode _focusNode = FocusNode();
   final Medication _med = Medication(medicines: [], title: '');
   final _formKey = GlobalKey<FormState>();
+
   Map<String, dynamic> medication = {};
 
   @override
@@ -71,9 +72,10 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     InputField(
-                      prefixIcon: const Icon(
-                        Icons.title_outlined,
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.title_outlined),
                         color: Colors.grey,
+                        onPressed: () {},
                       ),
                       focusNode: _focusNode,
                       labelText: 'Title',
