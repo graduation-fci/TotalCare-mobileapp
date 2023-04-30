@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:grad_login/providers/userProvider.dart';
@@ -28,6 +29,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
   Map<String, dynamic>? filteredMeds;
   Map<String, dynamic>? meds;
   bool _isVisible = true;
+  Timer? _debounce;
 
   List<dynamic>? results;
 
@@ -49,12 +51,16 @@ class _InteractionScreenState extends State<InteractionScreen> {
   }
 
   Future<List<dynamic>?> _filterDataList(String searchValue) async {
-    filteredMeds = await Provider.of<MedicineProvider>(context, listen: false)
-        .getFilteredMedsData(searchQuery: searchValue);
-    if (filteredMeds != null && filteredMeds!['results'] != null) {
-      results = filteredMeds!['results'];
-    }
-    setState(() {});
+    _debounce?.cancel(); // Cancel previous debounce timer
+    _debounce = Timer(const Duration(milliseconds: 500), () async {
+      // Perform search/filtering here
+      filteredMeds = await Provider.of<MedicineProvider>(context, listen: false)
+          .getFilteredMedsData(searchQuery: searchValue);
+      if (filteredMeds != null && filteredMeds!['results'] != null) {
+        results = filteredMeds!['results'];
+      }
+      setState(() {});
+    });
     return results;
   }
 

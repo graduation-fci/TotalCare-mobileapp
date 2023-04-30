@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -23,13 +24,14 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
   final Medication _med = Medication(title: '', medicines: []);
   final List<Map<String, dynamic>> _medicineList = [];
   final FocusNode _focusNode = FocusNode();
+  final formKey = GlobalKey<FormState>();
 
   Map<String, dynamic>? filteredMeds;
   List<dynamic>? results;
   bool hasContent = false;
   bool _isVisible = true;
   AppState appState = AppState.init;
-  final formKey = GlobalKey<FormState>();
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -42,12 +44,16 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
   }
 
   Future<List<dynamic>?> _filterDataList(String searchValue) async {
-    filteredMeds = await Provider.of<MedicineProvider>(context, listen: false)
-        .getFilteredMedsData(searchQuery: searchValue);
-    if (filteredMeds != null && filteredMeds!['results'] != null) {
-      results = filteredMeds!['results'];
-    }
-    setState(() {});
+    _debounce?.cancel(); // Cancel previous debounce timer
+    _debounce = Timer(const Duration(milliseconds: 500), () async {
+      // Perform search/filtering here
+      filteredMeds = await Provider.of<MedicineProvider>(context, listen: false)
+          .getFilteredMedsData(searchQuery: searchValue);
+      if (filteredMeds != null && filteredMeds!['results'] != null) {
+        results = filteredMeds!['results'];
+      }
+      setState(() {});
+    });
     return results;
   }
 
