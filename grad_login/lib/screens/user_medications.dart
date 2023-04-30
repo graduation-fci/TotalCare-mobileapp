@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:grad_login/providers/interactionsProvider.dart';
+import 'package:grad_login/screens/show_interactions_results_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../app_state.dart';
@@ -17,6 +19,33 @@ class UserMedicationsScreen extends StatefulWidget {
 }
 
 class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
+  final List<Map<String, dynamic>> myList = [
+    {
+      "id": 41,
+      "name": "abrammune 100 mg 50 capsules(n/a yet)",
+      "name_ar": "Ø§Ø¨Ø±Ø§ÙÙÙÙ 100 ÙØ¬Ù 50 ÙØ¨Ø³ÙÙ",
+      "drug": [
+        {"id": 6, "name": "cyclosporine"}
+      ],
+      "medicine_images": [
+        "http://192.168.1.8:8001/media/medicines/images/category_T42ggCH.jpg",
+        "http://192.168.1.8:8001/media/medicines/images/drug_YcJ8SYl.jpg"
+      ]
+    },
+    {
+      "id": 928,
+      "name": "tramacet 20 f.c. tabs.",
+      "name_ar": "ØªØ±Ø§ÙØ§Ø³ÙØª 20 ÙØ±Øµ",
+      "drug": [
+        {"id": 3, "name": "paracetamol"},
+        {"id": 276, "name": "tramadol"}
+      ],
+      "medicine_images": [
+        "http://192.168.1.8:8001/media/medicines/images/category_GUzYNi5.jpg",
+        "http://192.168.1.8:8001/media/medicines/images/drug_udo8dt5.jpg"
+      ]
+    }
+  ];
   List<Map<String, dynamic>> medication = [];
   AppState appState = AppState.init;
   // Map medications = {};
@@ -34,6 +63,8 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
     final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final interactionsProvider =
+        Provider.of<InteractionsProvider>(context, listen: false);
     final userProfileData = userProvider.userProfileData;
     final userMedications = userProvider.userMedications;
     final medicationResults = userMedications['results'];
@@ -65,6 +96,19 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       // ignore: avoid_unnecessary_containers
+                      Container(
+                        width: mediaQuery.width,
+                        margin: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 5),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.grey.shade300),
+                        child: const Text(
+                          'You can press on a profile to check the interaction between its medicines.',
+                          style: TextStyle(color: Colors.black54, fontSize: 10),
+                        ),
+                      ),
 
                       Image.asset(
                         'assets/images/TotalCare.png',
@@ -97,11 +141,37 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
                                 itemBuilder: (context, index) {
+                                  List<Map<String, dynamic>>
+                                      interactionMedicines = [];
+                                      
+                                  for (int i = 0;
+                                      i <
+                                          medicationResults[index]['medicine']
+                                              .length;
+                                      i++) {
+                                    interactionMedicines.add(
+                                        medicationResults[index]['medicine']
+                                            [i]);
+                                  }
+
                                   return Card(
                                     elevation: 5,
                                     child: Padding(
                                       padding: const EdgeInsets.all(6),
                                       child: ListTile(
+                                        onTap: () async {
+                                          await interactionsProvider
+                                              .getInteractions(
+                                                  interactionMedicines)
+                                              .then(
+                                                (_) => Navigator.of(context)
+                                                    .pushNamed(
+                                                        ShowInteractionsResultsScreen
+                                                            .routeName,
+                                                        arguments:
+                                                            interactionMedicines),
+                                              );
+                                        },
                                         title: Text(
                                           '${medicationResults[index]['title']}',
                                           style: Theme.of(context)
