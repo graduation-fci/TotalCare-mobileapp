@@ -134,24 +134,43 @@ class _ShowInteractionsResultsScreenState
                   itemBuilder: (context, index) {
                     final List interactionList =
                         interactionsResponse[index]['interactions'];
-                    List interactionDrugs = [];
-                    List severity = [];
-                    List consumerEffect = [];
-                    List professionalEffect = [];
+                    final List medicinesOfInteraction =
+                        interactionsResponse[index]['medecines'];
+                    final List namesOfMedicines = [];
+
+                    for (int k = 0; k < medicinesOfInteraction.length; k++) {
+                      namesOfMedicines.add(medicinesOfInteraction[k]['nameEn']);
+                    }
 
                     for (int i = 0; i < interactionList.length; i++) {
-                      interactionDrugs.add(interactionList[i]['drugs']);
-                      severity.add(interactionList[i]['severity']);
-                      consumerEffect.add(interactionList[i]['consumerEffect']);
-                      professionalEffect
-                          .add(interactionList[i]['professionalEffect']);
-
                       return Padding(
                         padding: const EdgeInsets.only(
                             left: 21, bottom: 21, right: 21),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            for (int k = 0; k < namesOfMedicines.length; k++)
+                              Column(
+                                children: [
+                                  Text(
+                                    namesOfMedicines[k],
+                                    style: customTextStyle(18,
+                                        weight: FontWeight.w700),
+                                  ),
+                                  k == namesOfMedicines.length - 1
+                                      ? Container()
+                                      : Center(
+                                          child: Text(
+                                            '×',
+                                            style: customTextStyle(18,
+                                                weight: FontWeight.w700),
+                                          ),
+                                        )
+                                ],
+                              ),
+                            const SizedBox(
+                              height: 8,
+                            ),
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
@@ -162,7 +181,7 @@ class _ShowInteractionsResultsScreenState
                                 ),
                               ),
                               child: Text(
-                                '${severity[0]}',
+                                '${interactionList[i]['severity']}',
                                 style: const TextStyle(
                                   color: Color.fromARGB(255, 64, 26, 23),
                                 ),
@@ -176,7 +195,7 @@ class _ShowInteractionsResultsScreenState
                                   style: customTextStyle(15),
                                 ),
                                 Text(
-                                  interactionDrugs[0].join(', '),
+                                  interactionList[i]['drugs'].join(', '),
                                   style: customTextStyle(18,
                                       weight: FontWeight.w400),
                                   softWrap: true,
@@ -186,14 +205,14 @@ class _ShowInteractionsResultsScreenState
                             const SizedBox(height: 12),
                             isProfessional
                                 ? Text(
-                                    '${professionalEffect[0]}',
+                                    '${interactionList[i]['professionalEffect']}',
                                     textAlign: TextAlign.justify,
                                     style: customTextStyle(
                                       16,
                                     ),
                                   )
                                 : Text(
-                                    '${consumerEffect[0]}',
+                                    '${interactionList[i]['consumerEffect']}',
                                     textAlign: TextAlign.justify,
                                     style: customTextStyle(
                                       16,
