@@ -136,7 +136,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                       labelText:
                                           searchController.text.isNotEmpty
                                               ? ''
-                                              : 'Enter a drug name',
+                                              : 'Enter a medicine name',
                                       labelStyle: const TextStyle(
                                         color: Colors.grey,
                                       ),
@@ -416,9 +416,6 @@ class _InteractionScreenState extends State<InteractionScreen> {
                   ),
                   Center(
                     child: ElevatedButton(
-                      child: Text(
-                        'My Medications',
-                      ),
                       onPressed: (() {
                         userProvider
                             .getUserMedications()
@@ -428,6 +425,9 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                   .pushNamed(UserMedicationsScreen.routeName),
                             );
                       }),
+                      child: const Text(
+                        'My Medications',
+                      ),
                     ),
                   ),
                 ],
