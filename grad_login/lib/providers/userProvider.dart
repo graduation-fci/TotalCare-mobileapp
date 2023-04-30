@@ -48,6 +48,20 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> editUserMedication(Medication med, int id) async {
+    appState = AppState.loading;
+    notifyListeners();
+    final responseData = await userService.editMedicationProfile(med, id);
+    if (responseData['detail'] != null) {
+      errorMessage = responseData['detail'];
+      appState = AppState.error;
+    } else {
+      appState = AppState.done;
+    }
+    log("$responseData");
+    notifyListeners();
+  }
+
   Future<void> getUserMedications() async {
     appState = AppState.loading;
     notifyListeners();
