@@ -57,6 +57,32 @@ class UserService {
     return responseData;
   }
 
+  Future<Map<String, dynamic>> editMedicationProfile(
+      Medication med, int id) async {
+    final url = Uri.parse('${Config.userMedications}$id/');
+    String? token;
+    await storage.getToken().then((value) {
+      token = value;
+    });
+
+    final response = await http.patch(url,
+        headers: {
+          "content-type": "application/json",
+          "Authorization": "JWT $token",
+        },
+        body: json.encode({
+          "title": med.title,
+          "medicines": med.medicines,
+        }));
+
+    final responseData = json.decode(response.body);
+    // log('$responseData');
+    if (responseData['details'] == null) {
+      return responseData;
+    }
+    return responseData;
+  }
+
   Future<Map<String, dynamic>> getMedications() async {
     final url = Uri.parse(Config.userMedications);
     String? token;
