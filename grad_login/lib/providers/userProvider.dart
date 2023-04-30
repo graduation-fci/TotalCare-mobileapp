@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:grad_login/models/medication.dart';
 
 import '../app_state.dart';
 import '../infrastructure/user/user_service.dart';
@@ -30,6 +31,20 @@ class UserProvider with ChangeNotifier {
     }
     userProfileData = responseData;
     // log("$userProfileData");
+    notifyListeners();
+  }
+
+  Future<void> addUserMedication(Medication med) async {
+    appState = AppState.loading;
+    notifyListeners();
+    final responseData = await userService.addMedicationProfile(med);
+    if (responseData['detail'] != null) {
+      errorMessage = responseData['detail'];
+      appState = AppState.error;
+    } else {
+      appState = AppState.done;
+    }
+    log("$responseData");
     notifyListeners();
   }
 
