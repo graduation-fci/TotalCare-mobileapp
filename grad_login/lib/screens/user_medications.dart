@@ -1,12 +1,11 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:grad_login/screens/add_medication.dart';
-import 'package:grad_login/screens/edit_medication.dart';
-import 'package:grad_login/widgets/edit_user_medication.dart';
 import 'package:provider/provider.dart';
 
 import '../app_state.dart';
+import '../screens/add_medication.dart';
+import '../screens/edit_medication.dart';
 import '../providers/userProvider.dart';
 
 class UserMedicationsScreen extends StatefulWidget {
