@@ -22,7 +22,6 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
   final TextEditingController _searchController = TextEditingController();
   final Medication _med = Medication(title: '', medicines: []);
   final List<Map<String, dynamic>> _medicineList = [];
-  final List _drugsList = [];
   final FocusNode _focusNode = FocusNode();
 
   Map<String, dynamic>? filteredMeds;
@@ -75,6 +74,15 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
           resizeToAvoidBottomInset: false,
           backgroundColor: const Color(0xFFFCFCFC),
           appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(
+                Icons.arrow_back,
+                color: Color(0xFF003745),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
             title: Text(
               'Add profile',
               style: Theme.of(context).appBarTheme.titleTextStyle,
@@ -151,19 +159,20 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                                         physics:
                                             const NeverScrollableScrollPhysics(),
                                         itemBuilder: (context, index) {
+                                          List drugsList = [];
                                           for (int i = 0;
                                               i <
                                                   _medicineList[index]['drug']
                                                       .length;
                                               i++) {
-                                            _drugsList.add(_medicineList[index]
+                                            drugsList.add(_medicineList[index]
                                                 ['drug'][i]['name']);
                                           }
                                           return ListTile(
                                             title: Text(
                                                 _medicineList[index]['name']),
                                             subtitle:
-                                                Text(_drugsList.join(', ')),
+                                                Text(drugsList.join(', ')),
                                           );
                                         },
                                         itemCount: _medicineList.length,
