@@ -113,6 +113,24 @@ flutter:
       fonts:
         - asset: assets/fonts/NotoSans-Medium.ttf
         - asset: assets/fonts/NotoSans-Regular.ttf
+
+    - family: Kanit
+      fonts:
+        - asset: assets/fonts/Kanit-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Kanit-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Kanit-Regular.ttf
+          weight: 400
+
+    - family: Heebo
+      fonts:
+        - asset: assets/fonts/Heebo-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Heebo-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Heebo-Regular.ttf
+          weight: 400
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
