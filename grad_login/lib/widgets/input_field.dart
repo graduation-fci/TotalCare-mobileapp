@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
 class InputField extends StatelessWidget {
-  final String labelText;
+  final String? labelText;
   final TextEditingController controller;
   final TextInputType keyboardType;
   final String? Function(String?) validator;
@@ -17,10 +17,10 @@ class InputField extends StatelessWidget {
 
   InputField({
     Key? key,
-    required this.labelText,
-    required this.controller,
+    this.labelText,
     required this.keyboardType,
     required this.validator,
+    required this.controller,
     required this.obsecureText,
     this.onSaved,
     this.focusNode,
