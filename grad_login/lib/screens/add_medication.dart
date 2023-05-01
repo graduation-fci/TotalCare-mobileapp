@@ -96,10 +96,14 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
               IconButton(
                   padding: const EdgeInsets.only(right: 10),
                   iconSize: 30,
-                  onPressed: () {
-                    Provider.of<UserProvider>(context, listen: false)
-                        .addUserMedication(_med);
-                    Navigator.pop(context);
+                  onPressed: () async {
+                    if (formKey.currentState!.validate()) {
+                      formKey.currentState!.save();
+                      await Provider.of<UserProvider>(context, listen: false)
+                          .addUserMedication(_med);
+                      // ignore: use_build_context_synchronously
+                      Navigator.pop(context);
+                    }
                   },
                   icon: Icon(
                     Icons.save_as,
