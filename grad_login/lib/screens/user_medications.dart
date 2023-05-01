@@ -19,45 +19,9 @@ class UserMedicationsScreen extends StatefulWidget {
 }
 
 class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
-  final List<Map<String, dynamic>> myList = [
-    {
-      "id": 41,
-      "name": "abrammune 100 mg 50 capsules(n/a yet)",
-      "name_ar": "Ø§Ø¨Ø±Ø§ÙÙÙÙ 100 ÙØ¬Ù 50 ÙØ¨Ø³ÙÙ",
-      "drug": [
-        {"id": 6, "name": "cyclosporine"}
-      ],
-      "medicine_images": [
-        "http://192.168.1.8:8001/media/medicines/images/category_T42ggCH.jpg",
-        "http://192.168.1.8:8001/media/medicines/images/drug_YcJ8SYl.jpg"
-      ]
-    },
-    {
-      "id": 928,
-      "name": "tramacet 20 f.c. tabs.",
-      "name_ar": "ØªØ±Ø§ÙØ§Ø³ÙØª 20 ÙØ±Øµ",
-      "drug": [
-        {"id": 3, "name": "paracetamol"},
-        {"id": 276, "name": "tramadol"}
-      ],
-      "medicine_images": [
-        "http://192.168.1.8:8001/media/medicines/images/category_GUzYNi5.jpg",
-        "http://192.168.1.8:8001/media/medicines/images/drug_udo8dt5.jpg"
-      ]
-    }
-  ];
   List<Map<String, dynamic>> medication = [];
   AppState appState = AppState.init;
-  // Map medications = {};
   Map<int, List> medications = {};
-  @override
-  void initState() {
-    Future.delayed(Duration.zero).then((value) async {
-      Provider.of<UserProvider>(context, listen: false).getUserProfile();
-      Provider.of<UserProvider>(context, listen: false).getUserMedications();
-    });
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,13 +33,16 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
     final userMedications = userProvider.userMedications;
     final medicationResults = userMedications['results'];
 
-    for (int i = 0; i < userMedications['count']; i++) {
-      List medicineNames = [];
-
-      for (int k = 0; k < medicationResults[i]['medicine'].length; k++) {
-        medicineNames.add(medicationResults[i]['medicine'][k]['name']);
+    if (medicationResults != null || medicationResults.isNotEmpty) {
+      for (int i = 0; i < userMedications['count']; i++) {
+        List medicineNames = [];
+        if (i < medicationResults.length) {
+          for (int k = 0; k < medicationResults[i]['medicine'].length; k++) {
+            medicineNames.add(medicationResults[i]['medicine'][k]['name']);
+          }
+        }
+        medications[i] = medicineNames;
       }
-      medications[i] = medicineNames;
     }
 
     return Scaffold(
@@ -109,7 +76,6 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
                           style: TextStyle(color: Colors.black54, fontSize: 10),
                         ),
                       ),
-
                       Image.asset(
                         'assets/images/TotalCare.png',
                         height: mediaQuery.height * 0.24,
@@ -143,15 +109,20 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
                                 itemBuilder: (context, index) {
                                   List<Map<String, dynamic>>
                                       interactionMedicines = [];
-                                      
-                                  for (int i = 0;
-                                      i <
+
+                                  // add medicine objects to the interactionMedicines list
+                                  // so that I can use them to get the interactions
+                                  if (medicationResults != null ||
+                                      medicationResults.isNotEmpty) {
+                                    for (int i = 0;
+                                        i <
+                                            medicationResults[index]['medicine']
+                                                .length;
+                                        i++) {
+                                      interactionMedicines.add(
                                           medicationResults[index]['medicine']
-                                              .length;
-                                      i++) {
-                                    interactionMedicines.add(
-                                        medicationResults[index]['medicine']
-                                            [i]);
+                                              [i]);
+                                    }
                                   }
 
                                   return Card(
@@ -196,14 +167,13 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
                                                   onPressed: () async {
                                                     await userProvider
                                                         .delMedication(
-                                                          medicationResults[
-                                                              index]['id'],
-                                                        )
-                                                        .then((value) =>
-                                                            medicationResults.remove(
-                                                                medicationResults[
-                                                                    index]));
-                                                    setState(() {});
+                                                      medicationResults[index]
+                                                          ['id'],
+                                                    );
+                                                    setState(() {
+                                                      medicationResults
+                                                          .removeAt(index);
+                                                    });
                                                     log('$medicationResults');
                                                   },
                                                 ),
@@ -212,7 +182,7 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
                                                 child: IconButton(
                                                   icon: const Icon(
                                                     Icons.edit,
-                                                    color: Colors.grey,
+                                                    color: Colors.blue,
                                                   ),
                                                   onPressed: () => Navigator.of(
                                                           context)
