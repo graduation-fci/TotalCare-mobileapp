@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:grad_login/providers/categories.dart';
 
+import 'providers/categories.dart';
 import 'providers/interactionsProvider.dart';
 import 'providers/medicineProvider.dart';
 import 'providers/authProvider.dart';
 import 'providers/userProvider.dart';
 import 'screens/tabs_screen.dart';
+import 'screens/add_medication.dart';
+import 'screens/edit_medication.dart';
 import 'screens/user_medications.dart';
 import 'screens/show_interactions_results_screen.dart';
 import 'screens/login_screen.dart';
@@ -52,6 +54,8 @@ class MyApp extends StatelessWidget {
           LoginScreen.routeName: (ctx) => const LoginScreen(),
           UserMedicationsScreen.routeName: (ctx) =>
               const UserMedicationsScreen(),
+          EditMedicationScreen.routeName: (ctx) => const EditMedicationScreen(),
+          AddMedicationScreen.routeName: (ctx) => const AddMedicationScreen(),
           RegisterFormScreen.routeName: (ctx) => const RegisterFormScreen(),
           TabsScreen.routeName: (ctx) => const TabsScreen(),
         },
@@ -96,9 +100,9 @@ class MyApp extends StatelessWidget {
       ),
       appBarTheme: const AppBarTheme(
         titleTextStyle: TextStyle(
-          fontFamily: 'Anton-Regular',
+          fontFamily: 'Heebo',
           color: Color(0xFF003745),
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w600,
           fontSize: 20,
         ),
         elevation: 1,
