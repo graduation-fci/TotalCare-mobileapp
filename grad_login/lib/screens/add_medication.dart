@@ -43,7 +43,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
     super.initState();
   }
 
-  Future<List<dynamic>?> _filterDataList(String searchValue) async {
+  Future<dynamic> _filterDataList(String searchValue) async {
     _debounce?.cancel(); // Cancel previous debounce timer
     _debounce = Timer(const Duration(milliseconds: 500), () async {
       // Perform search/filtering here
@@ -54,16 +54,15 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
       }
       setState(() {});
     });
-    return results;
+    return results != null && results!.isNotEmpty ? results![0] : null;
   }
 
   Future<void> _addSearchedMedicine(String medicineName) async {
-    List<dynamic> newData =
-        await _filterDataList(medicineName) as List<dynamic>;
+    dynamic newData = await _filterDataList(medicineName) as dynamic;
 
     // Make each object unique in the new list of interactionMedicines.
-    if (!_medicineList.contains(newData[0])) {
-      _medicineList.add(newData[0]);
+    if (!_medicineList.contains(newData)) {
+      _medicineList.add(newData);
     }
 
     log('$_medicineList');
@@ -95,23 +94,35 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
             ),
             actions: [
               IconButton(
+                  padding: const EdgeInsets.only(right: 10),
+                  iconSize: 30,
                   onPressed: () {
                     Provider.of<UserProvider>(context, listen: false)
                         .addUserMedication(_med);
                     Navigator.pop(context);
                   },
-                  icon: const Icon(Icons.save_alt_outlined))
+                  icon: Icon(
+                    Icons.save_as,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ))
             ],
           ),
           body: Form(
             key: formKey,
             child: SingleChildScrollView(
               child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 20),
+                margin:
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
                 child: Column(
                   children: [
                     InputField(
-                      prefixIcon: const Icon(Icons.title_outlined),
+                      suffixIcon: IconButton(
+                        icon: const Icon(
+                          Icons.title_outlined,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {},
+                      ),
                       labelText: 'title',
                       controller: _titleController,
                       keyboardType: TextInputType.name,
@@ -127,14 +138,12 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                       obsecureText: false,
                     ),
                     Container(
-                      height: 40,
-                      padding: const EdgeInsets.only(left: 15),
+                      height: 50,
+                      margin: const EdgeInsets.symmetric(horizontal: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey, width: 1),
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          bottomLeft: Radius.circular(10),
-                        ),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: TextFormField(
                         focusNode: _focusNode,
@@ -150,6 +159,9 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                           border: InputBorder.none,
                         ),
                       ),
+                    ),
+                    const SizedBox(
+                      height: 12,
                     ),
                     hasContent
                         ? appState == AppState.loading
@@ -208,22 +220,16 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                                                     style: const TextStyle(
                                                         fontSize: 15),
                                                   ),
-                                                  onTap: () {
+                                                  onTap: () async {
                                                     FocusManager
                                                         .instance.primaryFocus
                                                         ?.unfocus();
-                                                    _addSearchedMedicine(
-                                                            results![index]
-                                                                ['name'])
-                                                        .then(
-                                                      (_) => {
-                                                        log('${_medicineList[index]['id']}'),
-                                                      },
-                                                    );
+                                                    await _addSearchedMedicine(
+                                                        results![index]
+                                                            ['name']);
 
                                                     _med.medicines.add(
-                                                        _medicineList[index]
-                                                            ['id']);
+                                                        results![index]['id']);
                                                     log('${_med.medicines}');
                                                     setState(
                                                       () {
@@ -271,21 +277,18 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                                           '${results![index]['name']}',
                                           style: const TextStyle(fontSize: 15),
                                         ),
-                                        onTap: () {
+                                        onTap: () async {
                                           FocusManager.instance.primaryFocus
                                               ?.unfocus();
-                                          _addSearchedMedicine(
-                                                  results![index]['name'])
-                                              .then((_) => {
-                                                    log('${_medicineList[index]['id']}'),
-                                                  });
+                                          await _addSearchedMedicine(
+                                              results![index]['name']);
 
                                           // log('${_med.medicines}');
                                           _med.medicines
-                                              .add(_medicineList[index]['id']);
+                                              .add(results![index]['id']);
+                                          log('${_med.medicines}');
                                           setState(
                                             () {
-                                              log('${_med.medicines}');
                                               appState = AppState.loading;
                                               _searchController.text.isNotEmpty
                                                   ? hasContent = true
