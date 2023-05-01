@@ -39,7 +39,10 @@ class _CategoryItemState extends State<CategoryItem> {
             itemBuilder: (context, index) => InkWell(
                   onTap: () {
                     Navigator.of(context).pushNamed(MedicinesScreen.routeName,
-                        arguments: categories[index].id);
+                        arguments: [
+                          categories[index].id,
+                          categories[index].name
+                        ]);
                     //print('category id: ${categories[index].id}');
                   },
                   child: GridTile(

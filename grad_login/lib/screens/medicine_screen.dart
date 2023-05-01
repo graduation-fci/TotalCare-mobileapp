@@ -8,7 +8,7 @@ class MedicinesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mediaquery = MediaQuery.of(context).size.height;
-    final args = ModalRoute.of(context)!.settings.arguments as int;
+    final args = ModalRoute.of(context)!.settings.arguments as List;
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
@@ -22,21 +22,18 @@ class MedicinesScreen extends StatelessWidget {
                     slivers: [
                       SliverAppBar(
                         actions: [
-                          Column(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    right: mediaquery * 0.26,
-                                    top: mediaquery * 0.02),
-                                child: const Text(
-                                  'Category',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                right: mediaquery * 0.09,
+                                top: mediaquery * 0.02),
+                            child: Text(
+                              args[1].toString(),
+                              style: const TextStyle(
+                                overflow: TextOverflow.ellipsis,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
-                            ],
+                            ),
                           ),
                         ],
                         elevation: 0,
@@ -84,7 +81,7 @@ class MedicinesScreen extends StatelessWidget {
                   height: mediaquery,
                   width: double.infinity,
                   child: DrugItemScreen(
-                    catID: args,
+                    catID: args[0],
                   ),
                 ),
               ],
