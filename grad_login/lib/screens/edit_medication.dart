@@ -36,6 +36,7 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
+    final userProvider = Provider.of<UserProvider>(context);
     medication =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
@@ -67,10 +68,20 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
             key: _formKey,
             child: SingleChildScrollView(
               child: Container(
-                padding: const EdgeInsets.all(10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const Text(
+                      'PROFILE TITLE',
+                      style: TextStyle(
+                        fontFamily: 'Heebo',
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1,
+                        // height: 1.5,
+                      ),
+                    ),
                     InputField(
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.title_outlined),
@@ -78,7 +89,6 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                         onPressed: () {},
                       ),
                       focusNode: _focusNode,
-                      labelText: 'Title',
                       controller: _titleController,
                       keyboardType: TextInputType.name,
                       validator: (value) {
@@ -93,7 +103,7 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                       obsecureText: false,
                     ),
                     ListView.builder(
-                      itemExtent: 100,
+                      // itemExtent: 80,
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       itemBuilder: ((context, index) {
@@ -104,12 +114,63 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                           drugsList.add(
                               medication['medicine'][index]['drug'][i]['name']);
                         }
-                        return Card(
-                          margin: const EdgeInsets.only(top: 8),
-                          elevation: 3,
-                          child: ListTile(
-                            title: Text(medication['medicine'][index]['name']),
-                            subtitle: Text(drugsList.join(', ')),
+                        return Dismissible(
+                          key: Key(
+                              medication['medicine'][index]['id'].toString()),
+                          direction: DismissDirection.endToStart,
+                          background: Container(
+                            color: Colors.red,
+                            alignment: Alignment.centerRight,
+                            child: const Padding(
+                              padding: EdgeInsets.only(right: 20),
+                              child: Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                                size: 32,
+                              ),
+                            ),
+                          ),
+                          onDismissed: (direction) {
+                            setState(() {
+                              userProvider.delMedication(
+                                  medication['medicine'][index]['id']);
+                              medication['medicine'].removeAt(index);
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content:
+                                    Text('${medication['title']} dismissed'),
+                                action: SnackBarAction(
+                                  label: 'Undo',
+                                  onPressed: () {
+                                    setState(() {
+                                      userProvider.addUserMedication(_med);
+                                      medication['medicine'].insert(
+                                          index, medication['medicine'][index]);
+                                    });
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                          child: Card(
+                            elevation: 6,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 8),
+                              child: ListTile(
+                                title:
+                                    Text(medication['medicine'][index]['name']),
+                                subtitle: Text(
+                                  drugsList.join(', '),
+                                ),
+                                contentPadding:
+                                    const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                              ),
+                            ),
                           ),
                         );
                       }),
@@ -141,7 +202,7 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                   borderRadius: BorderRadius.circular(40),
                 ),
               ),
-              child: Text('Add', style: Theme.of(context).textTheme.button),
+              child: Text('Save', style: Theme.of(context).textTheme.button),
             ),
           ),
         ),
