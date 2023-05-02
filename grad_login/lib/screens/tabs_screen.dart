@@ -14,12 +14,18 @@ class TabsScreen extends StatefulWidget {
 
 class _TabsScreenState extends State<TabsScreen> {
   List<Map<String, dynamic>> _pages = [];
+  String? settings;
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      settings = ModalRoute.of(context)!.settings.arguments as String;
+    });
     _pages = [
       {
-        'page': const HomeScreen(),
+        'page': HomeScreen(
+          username: settings,
+        ),
         'title': 'Home',
       },
       {
@@ -49,6 +55,7 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final settings = ModalRoute.of(context)!.settings.arguments;
     return Scaffold(
       // appBar: AppBar(
       //   title: Text(
@@ -89,8 +96,8 @@ class _TabsScreenState extends State<TabsScreen> {
                         color: const Color.fromARGB(255, 218, 216, 219),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      width: MediaQuery.of(context).size.width * 0.18,
-                      height: MediaQuery.of(context).size.height * 0.04,
+                      width: 70,
+                      height: 35,
                       child: const Icon(
                         Icons.home_outlined,
                         size: 28,
@@ -109,8 +116,8 @@ class _TabsScreenState extends State<TabsScreen> {
                         color: const Color.fromARGB(255, 218, 216, 219),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      width: MediaQuery.of(context).size.width * 0.18,
-                      height: MediaQuery.of(context).size.height * 0.04,
+                      width: 70,
+                      height: 35,
                       child: const Icon(
                         MdiIcons.triangleOutline,
                         size: 22,
@@ -129,8 +136,8 @@ class _TabsScreenState extends State<TabsScreen> {
                         color: const Color.fromARGB(255, 218, 216, 219),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      width: MediaQuery.of(context).size.width * 0.18,
-                      height: MediaQuery.of(context).size.height * 0.04,
+                      width: 70,
+                      height: 35,
                       child: FractionallySizedBox(
                         heightFactor: 0.75,
                         widthFactor: 0.4,
@@ -155,8 +162,8 @@ class _TabsScreenState extends State<TabsScreen> {
                         color: const Color.fromARGB(255, 218, 216, 219),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      width: MediaQuery.of(context).size.width * 0.18,
-                      height: MediaQuery.of(context).size.height * 0.04,
+                      width: 70,
+                      height: 35,
                       child: const Icon(
                         MdiIcons.cartOutline,
                         size: 28,
