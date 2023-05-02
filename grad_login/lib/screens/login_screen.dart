@@ -27,7 +27,6 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController passwordController = TextEditingController();
   String errorMessage = '';
 
-
   @override
   void dispose() {
     nameController.dispose();
@@ -192,9 +191,19 @@ class _LoginScreenState extends State<LoginScreen> {
                                       .isRegister = true;
                                 });
                               },
-                              child: Text(
-                                appLocalization.register,
-                                style: Theme.of(context).textTheme.button,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color: Colors.grey.shade600,
+                                      width: 1,
+                                    ),
+                                  ),
+                                ),
+                                child: Text(
+                                  appLocalization.register,
+                                  style: Theme.of(context).textTheme.button,
+                                ),
                               ),
                             ),
                           ],
