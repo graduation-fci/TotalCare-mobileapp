@@ -15,7 +15,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    final userName = ModalRoute.of(context)!.settings.arguments as String;
+    // final userName = ModalRoute.of(context)!.settings.arguments as String;
     final mediaquery = MediaQuery.of(context).size.height;
     return SafeArea(
       child: Scaffold(
@@ -52,7 +52,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Hi $userName!',
+                                        'Hi',
+                                        // 'Hi $userName!',
                                         style: TextStyle(
                                             fontSize: mediaquery * 0.02,
                                             fontWeight: FontWeight.bold,

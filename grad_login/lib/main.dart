@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
           primary: const Color.fromARGB(255, 22, 36, 66),
           secondary: const Color.fromRGBO(167, 252, 132, 0.7),
         )),
-        home: const AddressScreen(),
+        home: const LoginScreen(),
         routes: {
           LoginScreen.routeName: (ctx) => const LoginScreen(),
           RegisterFormScreen.routeName: (ctx) => const RegisterFormScreen(),
@@ -69,6 +69,7 @@ class MyApp extends StatelessWidget {
           DrugDetailScreen.routeName: (context) => const DrugDetailScreen(),
           AddAddressScreen.routeName: (context) => const AddAddressScreen(),
           EditAddressScreen.routeName: (context) => const EditAddressScreen(),
+          AddressScreen.routeName: (context) => const AddressScreen(),
         },
       ),
     );

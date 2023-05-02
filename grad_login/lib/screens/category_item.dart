@@ -13,77 +13,100 @@ class CategoryItem extends StatefulWidget {
 }
 
 class _CategoryItemState extends State<CategoryItem> {
+  int _page = 1;
+
+  bool _isLoading = false;
+
   @override
   void initState() {
-    Future.delayed(Duration.zero).then((value) {
-      Provider.of<Categories>(context, listen: false).fetchCat();
-    });
     super.initState();
+    _loadCategories();
+  }
+
+  void _loadCategories() {
+    setState(() {
+      _isLoading = true;
+    });
+    Provider.of<Categories>(context, listen: false).fetchCat(_page).then((_) {
+      setState(() {
+        _isLoading = false;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final categories = Provider.of<Categories>(context).items;
     final mediaquery = MediaQuery.of(context).size;
-    return SizedBox(
-        width: mediaquery.width * 0.3,
-        height: mediaquery.height * 0.1,
-        child: GridView.builder(
+    return RefreshIndicator(
+      onRefresh: () async {
+        setState(() {
+          _page = 1;
+        });
+        _loadCategories();
+      },
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (scrollInfo) {
+          if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+            setState(() {
+              _page++;
+            });
+            _loadCategories();
+          }
+          return true;
+        },
+        child: SizedBox(
+          width: double.infinity,
+          height: mediaquery.height * 0.5,
+          child: GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
+              crossAxisCount: 2,
               childAspectRatio: 4 / 5,
               crossAxisSpacing: 5,
               mainAxisSpacing: 5,
             ),
             itemCount: categories.length,
-            itemBuilder: (context, index) => InkWell(
-                  onTap: () {
-                    Navigator.of(context).pushNamed(MedicinesScreen.routeName,
+            itemBuilder: (context, index) => _isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : InkWell(
+                    onTap: () {
+                      Navigator.of(context).pushNamed(
+                        MedicinesScreen.routeName,
                         arguments: [
                           categories[index].id,
-                          categories[index].name
-                        ]);
-                    //print('category id: ${categories[index].id}');
-                  },
-                  child: GridTile(
-                    footer: SizedBox(
-                      width: double.infinity,
-                      height: mediaquery.height * 0.05,
-                      child: GridTileBar(
-                        backgroundColor: Colors.white,
-                        // backgroundColor: Colors.black45,
-                        title: Text(
                           categories[index].name,
-                          maxLines: null,
-                          overflow: TextOverflow.visible,
-                          softWrap: true,
-                          style: const TextStyle(
-                            color: Colors.black,
+                        ],
+                      );
+                    },
+                    child: GridTile(
+                      footer: SizedBox(
+                        width: double.infinity,
+                        height: mediaquery.height * 0.05,
+                        child: GridTileBar(
+                          backgroundColor: Colors.white,
+                          title: Text(
+                            categories[index].name,
+                            maxLines: null,
+                            overflow: TextOverflow.visible,
+                            softWrap: true,
+                            style: const TextStyle(
+                              color: Colors.black,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
                         ),
                       ),
-                    ),
-                    child: Image.network(
-                      categories[index].imgURL,
-                      fit: BoxFit.cover,
+                      child: Image.network(
+                        categories[index].imgURL,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
-                ))
-        // GridTile(
-        //   footer: Container(
-        //     height: mediaquery.height * 0.03,
-        //     color: Colors.white10,
-        //     child: const Center(
-        //       child: Text('Category'),
-        //     ),
-        //   ),
-        //   child: Image.asset(
-        //     'assets/images/pill.png',
-        //     fit: BoxFit.contain,
-        //   ),
-        // ),
-        // ),
-        );
+          ),
+        ),
+      ),
+    );
   }
 }

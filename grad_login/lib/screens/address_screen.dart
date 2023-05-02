@@ -5,6 +5,7 @@ import 'package:grad_login/screens/edit_address_screen.dart';
 import 'package:provider/provider.dart';
 
 class AddressScreen extends StatefulWidget {
+  static const routeName = '/address-screen';
   const AddressScreen({super.key});
 
   @override
