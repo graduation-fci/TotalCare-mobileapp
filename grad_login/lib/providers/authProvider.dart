@@ -4,26 +4,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:grad_login/app_state.dart';
 import 'package:grad_login/infrastructure/auth/authService.dart';
-import 'package:grad_login/infrastructure/shared/storage.dart';
 
 import '../models/user.dart';
 import '../models/exam.dart';
 
 class AuthProvider with ChangeNotifier {
-  final List<Exam> _exams = [];
-  Map<String, dynamic>? error;
   bool isRegister = false;
   AppState appState = AppState.init;
   AuthService authService = AuthService();
-  Storage storage = Storage();
   String? errorMessage;
   Map<String, dynamic>? response;
-
-  // final List<User> _users = [];
-
-  // List<User> get users {
-  //   return [..._users];
-  // }
 
   Future<void> login(
       {required String username, required String password}) async {
@@ -46,22 +36,35 @@ class AuthProvider with ChangeNotifier {
     appState = AppState.loading;
     notifyListeners();
     final responseData = await authService.register(user);
-    if (responseData!['detail'] != null) {
-      errorMessage = responseData['detail'];
-      log(responseData['detail']);
-      appState = AppState.error;
-    } else {
-      response = responseData;
-      log('$response');
-      appState = AppState.done;
+    switch (responseData!.keys.first) {
+      case 'username':
+        errorMessage = responseData['username'][0];
+        log(responseData['username'][0]);
+        appState = AppState.error;
+        break;
+      case 'password':
+        errorMessage = responseData['password'][0];
+        log(responseData['password'][0]);
+        appState = AppState.error;
+        break;
+      default:
+        response = responseData;
+        log('$response');
+        appState = AppState.done;
+        break;
+      // handle other cases if necessary
     }
+    // if (responseData!['username'] != null) {
+    //   errorMessage = responseData['username'][0];
+    //   log(responseData['username'][0]);
+    //   appState = AppState.error;
+    // } else {
+    //   response = responseData;
+    //   log('$response');
+    //   appState = AppState.done;
+    // }
     notifyListeners();
   }
-
-  List<Exam> get exams {
-    return [..._exams];
-  }
-
 
   // Future<void> loginWithJwt(jwt) async {
   //   await storage.write(key: tokenKey, value: jwt);

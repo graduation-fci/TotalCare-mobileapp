@@ -56,11 +56,16 @@ class AuthService {
       ),
     );
     final responseData = json.decode(response.body);
-    if (responseData['detail'] != null) {
-      return responseData;
-    }
     log('$responseData');
-    return responseData;
+    switch (responseData.keys.first) {
+      case 'username':
+        return responseData;
+      case 'password':
+        return responseData;
+      default:
+        return responseData;
+      // handle other cases if necessary
+    }
   }
 
   Future<void> logout() async {
