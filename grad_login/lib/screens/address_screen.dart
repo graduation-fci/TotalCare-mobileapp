@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:grad_login/providers/addressProvider.dart';
 import 'package:grad_login/screens/add_address_screen.dart';
+import 'package:grad_login/screens/edit_address_screen.dart';
 import 'package:provider/provider.dart';
 
 class AddressScreen extends StatefulWidget {
@@ -34,33 +35,116 @@ class _AddressScreenState extends State<AddressScreen> {
               itemBuilder: (context, index) {
                 return Column(
                   children: [
-                    Ink(
-                      height: 100,
-                      decoration: ShapeDecoration(
-                        shape: RoundedRectangleBorder(
-                            side: const BorderSide(
-                              width: 2,
-                              color: Colors.blueGrey,
+                    Dismissible(
+                      key: UniqueKey(),
+                      background: Container(
+                        color: Colors.red,
+                        child: const Align(
+                          alignment: Alignment.centerRight,
+                          child: Padding(
+                            padding: EdgeInsets.only(right: 20),
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                              size: 30,
                             ),
-                            borderRadius: BorderRadius.circular(20)),
+                          ),
+                        ),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: ListTile(
-                          leading: const Icon(
-                            Icons.home_outlined,
-                            size: 50,
+                      direction: DismissDirection.endToStart,
+                      onDismissed: (direction) {
+                        print('Deleting');
+                        try {
+                          Provider.of<Address>(context, listen: false)
+                              .deleteAddress(addresses[index].id);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Address Deleted Successfully!'),
+                            ),
+                          );
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Deleting Failed',
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      child: Ink(
+                        height: 100,
+                        decoration: ShapeDecoration(
+                          shape: RoundedRectangleBorder(
+                              side: const BorderSide(
+                                width: 2,
+                                color: Colors.blueGrey,
+                              ),
+                              borderRadius: BorderRadius.circular(20)),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: ListTile(
+                            leading: Icon(
+                              addresses[index].description == 'Home Address'
+                                  ? Icons.home_outlined
+                                  : Icons.business,
+                              size: 50,
+                            ),
+                            title: Text(
+                              addresses[index].description,
+                              style: const TextStyle(fontSize: 20),
+                            ),
+                            subtitle: Text(
+                              '${addresses[index].street}, ${addresses[index].city}',
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pushNamed(
+                                          EditAddressScreen.routeName,
+                                          arguments: AddressItem(
+                                              id: addresses[index].id,
+                                              street: addresses[index].street,
+                                              city: addresses[index].city,
+                                              description: addresses[index]
+                                                  .description));
+                                    },
+                                    icon: const Icon(Icons.edit)),
+                                // IconButton(
+                                //     onPressed: () {
+                                //       print('Deleting');
+                                //       try {
+                                //         Provider.of<Address>(context,
+                                //                 listen: false)
+                                //             .deleteAddress(addresses[index].id);
+                                //         ScaffoldMessenger.of(context)
+                                //             .showSnackBar(
+                                //           const SnackBar(
+                                //             content: Text(
+                                //                 'Address Deleted Successfully!'),
+                                //           ),
+                                //         );
+                                //       } catch (e) {
+                                //         ScaffoldMessenger.of(context)
+                                //             .showSnackBar(
+                                //           const SnackBar(
+                                //             content: Text(
+                                //               'Deleting Failed',
+                                //               textAlign: TextAlign.center,
+                                //             ),
+                                //           ),
+                                //         );
+                                //       }
+                                //     },
+                                //     icon: const Icon(Icons.delete))
+                              ],
+                            ),
                           ),
-                          title: Text(
-                            addresses[index].description,
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                          subtitle: Text(
-                            '${addresses[index].street}, ${addresses[index].city}',
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                          trailing: IconButton(
-                              onPressed: () {}, icon: const Icon(Icons.edit)),
                         ),
                       ),
                     ),

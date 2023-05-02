@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grad_login/screens/add_address_screen.dart';
+import 'package:grad_login/screens/edit_address_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -67,6 +68,7 @@ class MyApp extends StatelessWidget {
           MedicinesScreen.routeName: (context) => const MedicinesScreen(),
           DrugDetailScreen.routeName: (context) => const DrugDetailScreen(),
           AddAddressScreen.routeName: (context) => const AddAddressScreen(),
+          EditAddressScreen.routeName: (context) => const EditAddressScreen(),
         },
       ),
     );
