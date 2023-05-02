@@ -5,6 +5,7 @@ import '../app_state.dart';
 import '../providers/authProvider.dart';
 import '../providers/medicineProvider.dart';
 import '../screens/tabs_screen.dart';
+import 'error_dialog_box.dart';
 
 class LoginButton extends StatelessWidget {
   final AuthProvider authResponse;
@@ -40,22 +41,28 @@ class LoginButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(40),
           ),
         ),
-        onPressed: () {
+        onPressed: () async {
           if (formKey.currentState!.validate()) {
-            authResponse
+            await authResponse
                 .login(
                     username: nameController.text,
                     password: passwordController.text)
                 .then((_) {
               if (authResponse.appState == AppState.error) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(authResponse.errorMessage!)));
+                showAlertDialog(
+                  context: context,
+                  content: authResponse.errorMessage!,
+                  confirmButtonText: 'Dismiss',
+                );
               }
             }).then((_) => {
                       if (authResponse.appState == AppState.done)
-                        examResponse.getMedicines(),
-                      Navigator.of(context)
-                          .pushReplacementNamed(TabsScreen.routeName),
+                        {
+                          examResponse.getMedicines(),
+                          Navigator.of(context).pushReplacementNamed(
+                              TabsScreen.routeName,
+                              arguments: nameController.text),
+                        }
                     });
           }
           FocusManager.instance.primaryFocus?.unfocus();
