@@ -36,6 +36,7 @@ class InputField extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.all(10),
       child: TextFormField(
+        cursorColor: Colors.grey,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onEditingComplete: () {
           if (nextFocusNode != null) {
