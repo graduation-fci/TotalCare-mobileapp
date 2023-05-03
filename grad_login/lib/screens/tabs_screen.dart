@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:grad_login/providers/authProvider.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 import 'home_screen.dart';
 import 'interaction_screen.dart';
+import 'login_screen.dart';
 
 class TabsScreen extends StatefulWidget {
   static const String routeName = 'tabs-screen';
@@ -55,7 +59,9 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appLocalization = AppLocalizations.of(context)!;
     final settings = ModalRoute.of(context)!.settings.arguments;
+    final authProvider = Provider.of<AuthProvider>(context);
     return Scaffold(
       // appBar: AppBar(
       //   title: Text(
@@ -67,7 +73,21 @@ class _TabsScreenState extends State<TabsScreen> {
       //   backgroundColor: Theme.of(context).primaryColor,
       // ),
       // drawer: MainDrawer(),
-      body: _pages[_selectedPageIndex]['page'],
+      body: Column(
+        children: [
+          Expanded(
+            child: _pages[_selectedPageIndex]['page'],
+          ),
+          FloatingActionButton(
+            onPressed: () async {
+              // Handle button press
+              await authProvider.logout().then((value) => Navigator.of(context)
+                  .pushReplacementNamed(LoginScreen.routeName));
+            },
+            child: const Icon(Icons.logout),
+          ),
+        ],
+      ),
 
       bottomNavigationBar: SizedBox(
         height: 65,
@@ -107,7 +127,7 @@ class _TabsScreenState extends State<TabsScreen> {
                       Icons.home_outlined,
                       size: 28,
                     ),
-              label: 'Home',
+              label: appLocalization.home,
             ),
             BottomNavigationBarItem(
               icon: _selectedPageIndex == 1
@@ -127,7 +147,7 @@ class _TabsScreenState extends State<TabsScreen> {
                       MdiIcons.triangleOutline,
                       size: 22,
                     ),
-              label: 'Interactions',
+              label: appLocalization.interactions,
             ),
             BottomNavigationBarItem(
               icon: _selectedPageIndex == 2
@@ -153,7 +173,7 @@ class _TabsScreenState extends State<TabsScreen> {
                       width: 24,
                       color: const Color(0xFF615F63),
                     ),
-              label: 'Doctor',
+              label: appLocalization.doctor,
             ),
             BottomNavigationBarItem(
               icon: _selectedPageIndex == 3
@@ -176,7 +196,7 @@ class _TabsScreenState extends State<TabsScreen> {
                         size: 28,
                       ),
                     ),
-              label: 'Cart',
+              label: appLocalization.cart,
             ),
           ],
         ),
