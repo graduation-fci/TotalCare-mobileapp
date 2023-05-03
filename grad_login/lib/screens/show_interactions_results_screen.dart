@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:grad_login/models/simple_medicine.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 import 'package:grad_login/providers/interactionsProvider.dart';
@@ -30,6 +31,7 @@ class _ShowInteractionsResultsScreenState
     final List<Map<String, dynamic>> medicineList = ModalRoute.of(context)!
         .settings
         .arguments as List<Map<String, dynamic>>;
+    final appLocalization = AppLocalizations.of(context)!;
     List<String> uniqueMedicineList = [];
 
     for (int i = 0; i < medicineList.length; i++) {
@@ -44,9 +46,9 @@ class _ShowInteractionsResultsScreenState
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: const Text(
-          'Drug Interaction Report',
-          style: TextStyle(color: Colors.black87),
+        title: Text(
+          appLocalization.drugInteractionsReport,
+          style: const TextStyle(color: Colors.black87),
         ),
       ),
       body: LayoutBuilder(
@@ -66,7 +68,7 @@ class _ShowInteractionsResultsScreenState
                     right: 12,
                   ),
                   child: Text(
-                    '${interactionsResponse.length} Interactions found for the following ${uniqueMedicineList.length} drugs: ',
+                    '${interactionsResponse.length} ${appLocalization.interactions} found for the following ${uniqueMedicineList.length} drugs: ',
                     style: customTextStyle(
                       16,
                       weight: FontWeight.w600,
@@ -115,14 +117,14 @@ class _ShowInteractionsResultsScreenState
                         }
                       })
                     },
-                    children: const [
+                    children: [
                       Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Consumer'),
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(appLocalization.consumer),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Professional'),
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(appLocalization.professional),
                       ),
                     ],
                   ),
