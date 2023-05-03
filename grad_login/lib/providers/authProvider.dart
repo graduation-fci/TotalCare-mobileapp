@@ -7,6 +7,7 @@ import 'package:grad_login/infrastructure/auth/authService.dart';
 
 import '../models/user.dart';
 import '../models/exam.dart';
+import '../my_config.dart';
 
 class AuthProvider with ChangeNotifier {
   bool isRegister = false;
@@ -52,59 +53,13 @@ class AuthProvider with ChangeNotifier {
         log('$response');
         appState = AppState.done;
         break;
-      // handle other cases if necessary
     }
-    // if (responseData!['username'] != null) {
-    //   errorMessage = responseData['username'][0];
-    //   log(responseData['username'][0]);
-    //   appState = AppState.error;
-    // } else {
-    //   response = responseData;
-    //   log('$response');
-    //   appState = AppState.done;
-    // }
     notifyListeners();
   }
-
-  // Future<void> loginWithJwt(jwt) async {
-  //   await storage.write(key: tokenKey, value: jwt);
-  //   print(await storage.read(key: tokenKey));
-  // }
-
-  // Future<dynamic> getCurrentUser() async {
-  //   final jwt = await storage.read(key: tokenKey);
-  //   return json.decode(jwt!);
-  // }
 
   Future<void> logout() {
     return authService.logout();
   }
 
-  // Future<void> refreshJwt() async {
-  //   try {
-  //     const dynamic apiEndPoint = Config.apiUrl;
-  //     final refreshEndPoint = Uri.parse(apiEndPoint + '/auth/jwt/refresh/');
-
-  //     print(await storage.read(key: tokenKey));
-  //     storage.delete(key: tokenKey);
-  //     String? refToken = await storage.read(key: 'refresh');
-  //     print(refToken);
-
-  //     //problem: not sending request to server!
-  //     final response = await http.post(
-  //       refreshEndPoint,
-  //       headers: {
-  //         "content-type": "application/json",
-  //         "accept": "application/json",
-  //       },
-  //       body: json.encode(
-  //         {'refresh', refToken},
-  //       ),
-  //     );
-  //     print(refToken);
-
-  //     final responseData = json.decode(response.body);
-  //     print(responseData['access']);
-  //   } catch (error) {}
-  // }
+  
 }
