@@ -31,7 +31,9 @@ class AuthService {
     if (responseData['detail'] != null) {
       return responseData;
     }
-    storage.setToken(responseData['access']);
+    storage.setAccessToken(responseData['access']);
+    storage.setRefreshToken(responseData['refresh']);
+    log('${responseData['access']}');
     return responseData;
   }
 
@@ -66,6 +68,25 @@ class AuthService {
         return responseData;
       // handle other cases if necessary
     }
+  }
+
+  Future<void> refreshJwt() async {
+    final refreshEndPoint = Uri.parse(Config.refreshJWT);
+
+    //problem: not sending request to server!
+    final response = await http.post(
+      refreshEndPoint,
+      headers: {
+        "content-type": "application/json",
+        "accept": "application/json",
+      },
+      body: json.encode(
+        {'refresh', storage.refToken},
+      ),
+    );
+
+    final responseData = json.decode(response.body);
+    print(responseData['access']);
   }
 
   Future<void> logout() async {
