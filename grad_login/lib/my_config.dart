@@ -6,4 +6,7 @@ class Config {
   static const String register = '$apiUrl/auth/users/';
   static const String myProfile = '$apiUrl/auth/users/me/';
   static const String userMedications = '$apiUrl/users/medications/';
+  static const String categories = '$apiUrl/medicine/categories/';
+  static const String refreshJWT = '$apiUrl/auth/jwt/refresh/';
+
 }
