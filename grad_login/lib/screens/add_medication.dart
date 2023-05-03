@@ -58,19 +58,20 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
   }
 
   Future<void> _addSearchedMedicine(String medicineName) async {
-    dynamic newData = await _filterDataList(medicineName) as dynamic;
+    final newData = await _filterDataList(medicineName);
 
     // Make each object unique in the new list of interactionMedicines.
-    if (!_medicineList.contains(newData)) {
+    if (_medicineList.contains(newData)) {
+    } else {
       _medicineList.add(newData);
     }
-
     log('$_medicineList');
   }
 
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
+    final userProvider = Provider.of<UserProvider>(context);
 
     return SafeArea(
       child: GestureDetector(
@@ -120,12 +121,12 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                 child: Column(
                   children: [
                     InputField(
-                      suffixIcon: IconButton(
-                        icon: const Icon(
+                      suffixIcon: const IconButton(
+                        icon: Icon(
                           Icons.title_outlined,
                           color: Colors.grey,
                         ),
-                        onPressed: () {},
+                        onPressed: null,
                       ),
                       labelText: 'title',
                       controller: _titleController,
@@ -187,14 +188,40 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                                                   _medicineList[index]['drug']
                                                       .length;
                                               i++) {
-                                            drugsList.add(_medicineList[index]
-                                                ['drug'][i]['name']);
+                                            if (!drugsList.contains(
+                                                _medicineList[index]['drug'][i]
+                                                    ['name'])) {
+                                              drugsList.add(_medicineList[index]
+                                                  ['drug'][i]['name']);
+                                            }
                                           }
                                           return ListTile(
                                             title: Text(
                                                 _medicineList[index]['name']),
                                             subtitle:
                                                 Text(drugsList.join(', ')),
+                                            trailing: IconButton(
+                                              icon: const Icon(
+                                                Icons.delete,
+                                                color: Colors.red,
+                                              ),
+                                              onPressed: () async {
+                                                await userProvider
+                                                    .delMedication(
+                                                  _medicineList[index]['id'],
+                                                );
+                                                setState(() {
+                                                  _med.medicines.removeWhere(
+                                                      (element) =>
+                                                          element ==
+                                                          _medicineList[index]
+                                                              ['id']);
+                                                  _medicineList.removeAt(index);
+                                                });
+                                                log('$_medicineList');
+                                                log('${_med.medicines}');
+                                              },
+                                            ),
                                           );
                                         },
                                         itemCount: _medicineList.length,
@@ -232,8 +259,14 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                                                         results![index]
                                                             ['name']);
 
-                                                    _med.medicines.add(
-                                                        results![index]['id']);
+                                                    if (!_med.medicines
+                                                        .contains(
+                                                            results![index]
+                                                                ['id'])) {
+                                                      _med.medicines.add(
+                                                          results![index]
+                                                              ['id']);
+                                                    }
                                                     log('${_med.medicines}');
                                                     setState(
                                                       () {
