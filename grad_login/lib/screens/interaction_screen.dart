@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:grad_login/providers/userProvider.dart';
 import 'package:grad_login/screens/user_medications.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 import '../screens/show_interactions_results_screen.dart';
@@ -87,6 +88,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
   @override
   Widget build(BuildContext context) {
     final interactionsProvider = Provider.of<InteractionsProvider>(context);
+    final appLocalization = AppLocalizations.of(context)!;
     final userProvider = Provider.of<UserProvider>(context);
 
     return SafeArea(
@@ -95,7 +97,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
         child: Scaffold(
           appBar: AppBar(
             title: Text(
-              'Drug Interactions Checker',
+              appLocalization.drugInteractionsChecker,
               style: Theme.of(context).appBarTheme.titleTextStyle,
             ),
           ),
@@ -139,10 +141,10 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                     onChanged: _filterDataList,
                                     controller: searchController,
                                     decoration: InputDecoration(
-                                      labelText:
-                                          searchController.text.isNotEmpty
-                                              ? ''
-                                              : 'Enter a medicine name',
+                                      labelText: searchController
+                                              .text.isNotEmpty
+                                          ? ''
+                                          : appLocalization.enterMedicineName,
                                       labelStyle: const TextStyle(
                                         color: Colors.grey,
                                       ),
@@ -167,7 +169,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                     searchController.text = '';
                                   },
                                   child: Text(
-                                    'Add',
+                                    appLocalization.add,
                                     style: Theme.of(context).textTheme.button,
                                   ),
                                 ),
@@ -193,9 +195,10 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                             children: [
                                               TextButton(
                                                   onPressed: () {},
-                                                  child: const Text(
-                                                    'unsaved interactions list',
-                                                    style: TextStyle(
+                                                  child: Text(
+                                                    appLocalization
+                                                        .unsavedInteractionsList,
+                                                    style: const TextStyle(
                                                       color: Colors.black,
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -206,9 +209,9 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                               ),
                                               TextButton(
                                                 onPressed: startOver,
-                                                child: const Text(
-                                                  'Start over',
-                                                  style: TextStyle(
+                                                child: Text(
+                                                  appLocalization.startOver,
+                                                  style: const TextStyle(
                                                     color: Colors.black,
                                                     fontWeight: FontWeight.bold,
                                                   ),
@@ -275,7 +278,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                                             });
                                                   },
                                                   child: Text(
-                                                    'Check interactions',
+                                                    '${appLocalization.check} ${appLocalization.interactions}',
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .button,
@@ -292,7 +295,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                                 child: ElevatedButton(
                                                   onPressed: () {},
                                                   child: Text(
-                                                    'Save',
+                                                    appLocalization.save,
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .button,
@@ -362,9 +365,10 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                   )
                             : Stack(
                                 children: [
-                                  const Text(
-                                    'Type a drug name in the box above to get started.',
-                                    style: TextStyle(
+                                  Text(
+                                    appLocalization
+                                        .typeADrugNameInTheBoxAboveToGetStarted,
+                                    style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 16,
                                     ),
@@ -431,8 +435,8 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                   .pushNamed(UserMedicationsScreen.routeName),
                             );
                       }),
-                      child: const Text(
-                        'My Medications',
+                      child: Text(
+                        appLocalization.myMedications,
                       ),
                     ),
                   ),
