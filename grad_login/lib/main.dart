@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:grad_login/screens/add_address_screen.dart';
 import 'package:grad_login/screens/edit_address_screen.dart';
+import 'package:grad_login/screens/edit_user_details_screen.dart.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'screens/address_detail_screen.dart';
 import 'screens/address_screen.dart';
 import 'screens/drug_detail_screen.dart';
 import 'screens/home_screen.dart';
@@ -59,7 +61,7 @@ class MyApp extends StatelessWidget {
           primary: const Color.fromARGB(255, 22, 36, 66),
           secondary: const Color.fromRGBO(167, 252, 132, 0.7),
         )),
-        home: const AddressScreen(),
+        home: const LoginScreen(),
         routes: {
           LoginScreen.routeName: (ctx) => const LoginScreen(),
           RegisterFormScreen.routeName: (ctx) => const RegisterFormScreen(),
@@ -70,6 +72,8 @@ class MyApp extends StatelessWidget {
           AddAddressScreen.routeName: (context) => const AddAddressScreen(),
           EditAddressScreen.routeName: (context) => const EditAddressScreen(),
           AddressScreen.routeName: (context) => const AddressScreen(),
+          AddressDetailScreen.routeName: (context) =>
+              const AddressDetailScreen(),
         },
       ),
     );

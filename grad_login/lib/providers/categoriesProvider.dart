@@ -24,14 +24,18 @@ class Categories with ChangeNotifier {
   }
 
   Future<void> fetchCat(int _pageNumber) async {
+    // print(_pageNumber);
     final List<CatItem> loadedCat = [];
     final url = Uri.parse(
         'http://192.168.1.5:8000/medicine/categories/?page=$_pageNumber');
-    final respone = await http.get(url);
+    final respone = await http.get(url, headers: {
+      'Authorization':
+          'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgzMjkzMzMxLCJpYXQiOjE2ODMyMDY5MzEsImp0aSI6IjEyNTY1MDM2ZTY2YjRkZjU4NjFjMDU2YWQxNTBhYWZkIiwidXNlcl9pZCI6NSwidXNlcm5hbWUiOiJuZXd1c2VyIiwiZW1haWwiOiJzQGFhYS5jbyIsImZpcnN0X25hbWUiOiJuZXciLCJsYXN0X25hbWUiOiJ1c2VyIiwicHJvZmlsZV90eXBlIjoiUEFUIiwiaXNfc3RhZmYiOmZhbHNlfQ.CBefyDyUOq61DLxUBj-O7HnMoVGVqm1nSzUV6mRu9Vw '
+    });
     final extractedData = json.decode(respone.body) as Map<String, dynamic>;
-    //print(extractedData);
+    print(extractedData);
 
-    for (var i = 0; i < extractedData['results'].length; i++) {
+    for (var i = 0; i < 10; i++) {
       if (respone.statusCode == 200) {
         loadedCat.add(
           CatItem(
@@ -42,11 +46,12 @@ class Categories with ChangeNotifier {
         );
       } else {}
     }
+
     _list.addAll(loadedCat);
-    //print(_list[0].id);
+    // print(_list[0].id);
     // print(_list[1].name);
     // print(_list[0].imgURL);
-    // print(_list.length);
+    // //  print(_list.length);
     // print(_list[3].imgURL);
     notifyListeners();
   }

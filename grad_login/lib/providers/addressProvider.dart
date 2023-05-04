@@ -34,7 +34,7 @@ class Address with ChangeNotifier {
     final url = Uri.parse('http://192.168.1.5:8000/users/addresses');
     final respone = await http.get(url, headers: {
       'Authorization':
-          'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgzMjA1MzkyLCJqdGkiOiJkNjg2MjkyYjI3OTU0N2FkOWIxZmJiM2YwZjQ3NTNmOSIsInVzZXJfaWQiOjUsInVzZXJuYW1lIjoibmV3dXNlciIsImVtYWlsIjoic0BhYWEuY28iLCJmaXJzdF9uYW1lIjoibmV3IiwibGFzdF9uYW1lIjoidXNlciIsInByb2ZpbGVfdHlwZSI6IlBBVCIsImlzX3N0YWZmIjpmYWxzZX0.SQtcrwJoWcA4yn9jw7XdvMO-QWr94JtIBv1wMA6Vw1k '
+          'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgzMjkzMzMxLCJpYXQiOjE2ODMyMDY5MzEsImp0aSI6IjEyNTY1MDM2ZTY2YjRkZjU4NjFjMDU2YWQxNTBhYWZkIiwidXNlcl9pZCI6NSwidXNlcm5hbWUiOiJuZXd1c2VyIiwiZW1haWwiOiJzQGFhYS5jbyIsImZpcnN0X25hbWUiOiJuZXciLCJsYXN0X25hbWUiOiJ1c2VyIiwicHJvZmlsZV90eXBlIjoiUEFUIiwiaXNfc3RhZmYiOmZhbHNlfQ.CBefyDyUOq61DLxUBj-O7HnMoVGVqm1nSzUV6mRu9Vw '
     });
     final extractedData = json.decode(respone.body) as List<dynamic>;
     // print(extractedData.runtimeType);
@@ -67,7 +67,7 @@ class Address with ChangeNotifier {
       url,
       headers: {
         'Authorization':
-            'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgzMjA1MzkyLCJqdGkiOiJkNjg2MjkyYjI3OTU0N2FkOWIxZmJiM2YwZjQ3NTNmOSIsInVzZXJfaWQiOjUsInVzZXJuYW1lIjoibmV3dXNlciIsImVtYWlsIjoic0BhYWEuY28iLCJmaXJzdF9uYW1lIjoibmV3IiwibGFzdF9uYW1lIjoidXNlciIsInByb2ZpbGVfdHlwZSI6IlBBVCIsImlzX3N0YWZmIjpmYWxzZX0.SQtcrwJoWcA4yn9jw7XdvMO-QWr94JtIBv1wMA6Vw1k ',
+            'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgzMjkzMzMxLCJpYXQiOjE2ODMyMDY5MzEsImp0aSI6IjEyNTY1MDM2ZTY2YjRkZjU4NjFjMDU2YWQxNTBhYWZkIiwidXNlcl9pZCI6NSwidXNlcm5hbWUiOiJuZXd1c2VyIiwiZW1haWwiOiJzQGFhYS5jbyIsImZpcnN0X25hbWUiOiJuZXciLCJsYXN0X25hbWUiOiJ1c2VyIiwicHJvZmlsZV90eXBlIjoiUEFUIiwiaXNfc3RhZmYiOmZhbHNlfQ.CBefyDyUOq61DLxUBj-O7HnMoVGVqm1nSzUV6mRu9Vw ',
         'Content-Type': 'application/json',
       },
       body: json.encode(
@@ -117,7 +117,7 @@ class Address with ChangeNotifier {
       final response = await http.patch(url,
           headers: {
             'Authorization':
-                'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgzMjA1MzkyLCJqdGkiOiJkNjg2MjkyYjI3OTU0N2FkOWIxZmJiM2YwZjQ3NTNmOSIsInVzZXJfaWQiOjUsInVzZXJuYW1lIjoibmV3dXNlciIsImVtYWlsIjoic0BhYWEuY28iLCJmaXJzdF9uYW1lIjoibmV3IiwibGFzdF9uYW1lIjoidXNlciIsInByb2ZpbGVfdHlwZSI6IlBBVCIsImlzX3N0YWZmIjpmYWxzZX0.SQtcrwJoWcA4yn9jw7XdvMO-QWr94JtIBv1wMA6Vw1k ',
+                'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgzMjkzMzMxLCJpYXQiOjE2ODMyMDY5MzEsImp0aSI6IjEyNTY1MDM2ZTY2YjRkZjU4NjFjMDU2YWQxNTBhYWZkIiwidXNlcl9pZCI6NSwidXNlcm5hbWUiOiJuZXd1c2VyIiwiZW1haWwiOiJzQGFhYS5jbyIsImZpcnN0X25hbWUiOiJuZXciLCJsYXN0X25hbWUiOiJ1c2VyIiwicHJvZmlsZV90eXBlIjoiUEFUIiwiaXNfc3RhZmYiOmZhbHNlfQ.CBefyDyUOq61DLxUBj-O7HnMoVGVqm1nSzUV6mRu9Vw ',
             'Content-Type': 'application/json',
           },
           body: json.encode({
@@ -162,7 +162,7 @@ class Address with ChangeNotifier {
       url,
       headers: {
         'Authorization':
-            'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgzMjA1MzkyLCJqdGkiOiJkNjg2MjkyYjI3OTU0N2FkOWIxZmJiM2YwZjQ3NTNmOSIsInVzZXJfaWQiOjUsInVzZXJuYW1lIjoibmV3dXNlciIsImVtYWlsIjoic0BhYWEuY28iLCJmaXJzdF9uYW1lIjoibmV3IiwibGFzdF9uYW1lIjoidXNlciIsInByb2ZpbGVfdHlwZSI6IlBBVCIsImlzX3N0YWZmIjpmYWxzZX0.SQtcrwJoWcA4yn9jw7XdvMO-QWr94JtIBv1wMA6Vw1k ',
+            'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgzMjkzMzMxLCJpYXQiOjE2ODMyMDY5MzEsImp0aSI6IjEyNTY1MDM2ZTY2YjRkZjU4NjFjMDU2YWQxNTBhYWZkIiwidXNlcl9pZCI6NSwidXNlcm5hbWUiOiJuZXd1c2VyIiwiZW1haWwiOiJzQGFhYS5jbyIsImZpcnN0X25hbWUiOiJuZXciLCJsYXN0X25hbWUiOiJ1c2VyIiwicHJvZmlsZV90eXBlIjoiUEFUIiwiaXNfc3RhZmYiOmZhbHNlfQ.CBefyDyUOq61DLxUBj-O7HnMoVGVqm1nSzUV6mRu9Vw ',
         'Content-Type': 'application/json',
       },
     );
