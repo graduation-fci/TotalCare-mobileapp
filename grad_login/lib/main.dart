@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
           primary: const Color.fromARGB(255, 22, 36, 66),
           secondary: const Color.fromRGBO(167, 252, 132, 0.7),
         )),
-        home: const LoginScreen(),
+        home: const AddressScreen(),
         routes: {
           LoginScreen.routeName: (ctx) => const LoginScreen(),
           RegisterFormScreen.routeName: (ctx) => const RegisterFormScreen(),

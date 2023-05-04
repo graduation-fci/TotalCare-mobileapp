@@ -88,7 +88,7 @@ class _AddressScreenState extends State<AddressScreen> {
                           padding: const EdgeInsets.all(8),
                           child: ListTile(
                             leading: Icon(
-                              addresses[index].description == 'Home Address'
+                              addresses[index].type == 'Home'
                                   ? Icons.home_outlined
                                   : Icons.business,
                               size: 50,
@@ -109,11 +109,15 @@ class _AddressScreenState extends State<AddressScreen> {
                                       Navigator.of(context).pushNamed(
                                           EditAddressScreen.routeName,
                                           arguments: AddressItem(
-                                              id: addresses[index].id,
-                                              street: addresses[index].street,
-                                              city: addresses[index].city,
-                                              description: addresses[index]
-                                                  .description));
+                                            id: addresses[index].id,
+                                            street: addresses[index].street,
+                                            city: addresses[index].city,
+                                            description:
+                                                addresses[index].description,
+                                            phone: addresses[index].phone,
+                                            type: addresses[index].type,
+                                            title: addresses[index].title,
+                                          ));
                                     },
                                     icon: const Icon(Icons.edit)),
                                 // IconButton(

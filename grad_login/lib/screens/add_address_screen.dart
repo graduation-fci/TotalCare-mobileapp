@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:grad_login/providers/addressProvider.dart';
 import 'package:provider/provider.dart';
+import 'package:country_picker/country_picker.dart';
 
 class AddAddressScreen extends StatefulWidget {
   const AddAddressScreen({Key? key}) : super(key: key);
@@ -16,12 +17,20 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
   final _formKey = GlobalKey<FormState>();
   final _streetController = TextEditingController();
   final _cityController = TextEditingController();
+  final _descController = TextEditingController();
+  final _phoneController = TextEditingController();
   AddressType _addressType = AddressType.Home;
+  final _titleController = TextEditingController();
+
+  String countryName = 'Choose Country';
 
   @override
   void dispose() {
     _streetController.dispose();
     _cityController.dispose();
+    _titleController.dispose();
+    _descController.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
 
@@ -70,6 +79,80 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                       },
                     ),
                     const SizedBox(height: 16.0),
+                    TextFormField(
+                      controller: _descController,
+                      maxLines: 3,
+                      decoration: const InputDecoration(
+                        labelText: 'Description',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter a description';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16.0),
+                    TextFormField(
+                      controller: _titleController,
+                      decoration: const InputDecoration(
+                        labelText: 'Title',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter a valid Title';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16.0),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Row(
+                        children: [
+                          TextButton.icon(
+                            label: Text(countryName),
+                            onPressed: () => showCountryPicker(
+                              context: context,
+                              showPhoneCode: true,
+                              onSelect: (Country country) {
+                                country.flagEmoji;
+                                _phoneController.text = '+${country.phoneCode}';
+                                countryName =
+                                    '${country.flagEmoji}  ${country.name}';
+                                setState(() {});
+                              },
+                            ),
+                            icon: const Icon(Icons.arrow_drop_down),
+                          ),
+                          Expanded(
+                            child: TextFormField(
+                              controller: _phoneController,
+                              keyboardType: TextInputType.phone,
+                              onSaved: (value) {
+                                // _authData!. = value;
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Phone Number cannot be empty';
+                                }
+                              },
+                              decoration: const InputDecoration(
+                                prefixIcon: Icon(Icons.phone),
+                                contentPadding: EdgeInsets.all(5),
+                                border: OutlineInputBorder(),
+                                labelText: 'Phone Number ',
+
+                                // focusedBorder: OutlineInputBorder(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16.0),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -103,20 +186,6 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                         ),
                       ],
                     ),
-                    // TextFormField(
-                    //   controller: _descriptionController,
-                    //   maxLines: 3,
-                    //   decoration: const InputDecoration(
-                    //     labelText: 'Description',
-                    //     border: OutlineInputBorder(),
-                    //   ),
-                    //   validator: (value) {
-                    //     if (value!.isEmpty) {
-                    //       return 'Please enter a description';
-                    //     }
-                    //     return null;
-                    //   },
-                    // ),
                     const SizedBox(height: 16.0),
                     ElevatedButton(
                       onPressed: () {},
@@ -144,10 +213,12 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
       return;
     } else {
       await Provider.of<Address>(context, listen: false).addAddress(
-        _streetController.text,
-        _cityController.text,
-        '${_addressType.name.toString()} Address',
-      );
+          _streetController.text,
+          _cityController.text,
+          _descController.text,
+          _phoneController.text,
+          _addressType.name,
+          _titleController.text);
       setState(() {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
