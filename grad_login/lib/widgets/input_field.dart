@@ -1,89 +1,72 @@
-// ignore_for_file: use_key_in_widget_constructors
-
 import 'package:flutter/material.dart';
 
-class InputField extends StatefulWidget {
-  final TextEditingController nameController;
-  final String labelText;
-  final IconData prefixIcon;
-  var isPassword = false;
+// ignore: must_be_immutable
+class InputField extends StatelessWidget {
+  final String? labelText;
+  final TextEditingController controller;
+  final TextInputType keyboardType;
+  final String? Function(String?) validator;
+  final Function(String?)? onSaved;
+  final FocusNode? focusNode;
+  final FocusNode? nextFocusNode;
+  final TextInputAction? textInputAction;
+  final Icon? prefixIcon;
+  final IconButton? suffixIcon;
+  bool? passwordVis;
+  bool obsecureText;
 
   InputField({
-    required this.nameController,
-    required this.labelText,
-    required this.isPassword,
-    required this.prefixIcon,
-  });
-
-  @override
-  State<InputField> createState() => _InputFieldState();
-}
-
-class _InputFieldState extends State<InputField> {
-  var visible = true;
+    Key? key,
+    this.labelText,
+    required this.keyboardType,
+    required this.validator,
+    required this.controller,
+    required this.obsecureText,
+    this.onSaved,
+    this.focusNode,
+    this.nextFocusNode,
+    this.textInputAction,
+    this.prefixIcon,
+    this.suffixIcon,
+    this.passwordVis,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return widget.isPassword
-        ? Container(
-            padding: const EdgeInsets.all(10),
-            child: TextFormField(
-              obscureText: visible,
-              controller: widget.nameController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return '${widget.labelText} is required.';
-                }
-                return null;
-              },
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.all(5),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(40),
-                ),
-                labelText: widget.labelText,
-                prefixIcon: Icon(widget.prefixIcon),
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      visible = !visible;
-                    });
-                  },
-                  icon: visible
-                      ? const Icon(
-                          Icons.visibility_off,
-                          size: 22,
-                        )
-                      : Icon(
-                          Icons.visibility,
-                          color: Colors.black.withOpacity(0.8),
-                          size: 22,
-                        ),
-                ),
-              ),
-            ),
-          )
-        : Container(
-            padding: const EdgeInsets.all(10),
-            child: TextFormField(
-              controller: widget.nameController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return '${widget.labelText} is required.';
-                }
-                return null;
-              },
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.all(5),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(40),
-                ),
-                prefixIcon: Icon(widget.prefixIcon),
-                labelText: widget.labelText,
-                // labelStyle: TextStyle(fontStyle: )
-                // labelStyle:
-              ),
-            ),
-          );
+    return Container(
+      margin: const EdgeInsets.all(10),
+      child: TextFormField(
+        cursorColor: Colors.grey,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        onEditingComplete: () {
+          if (nextFocusNode != null) {
+            FocusScope.of(context).requestFocus(nextFocusNode);
+          }
+        },
+        controller: controller,
+        keyboardType: keyboardType,
+        validator: validator,
+        onSaved: onSaved,
+        obscureText: obsecureText,
+        focusNode: focusNode,
+        textInputAction: textInputAction,
+        decoration: InputDecoration(
+          prefixIcon: prefixIcon,
+          suffixIcon: suffixIcon,
+          contentPadding: prefixIcon != null
+              ? const EdgeInsets.all(5)
+              : const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.grey),
+          ),
+          labelText: labelText,
+          labelStyle: const TextStyle(color: Colors.grey),
+        ),
+      ),
+    );
   }
 }
