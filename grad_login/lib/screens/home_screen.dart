@@ -1,5 +1,10 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
 
+import 'package:flutter/material.dart';
+import 'package:grad_login/providers/medicineProvider.dart';
+import 'package:provider/provider.dart';
+
+import '../app_state.dart';
 import 'category_item.dart';
 import 'notification_widget.dart';
 
@@ -13,10 +18,44 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  TextEditingController searchController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+
+  Timer? _debounce;
+  Map<String, dynamic>? filteredMeds;
+  bool _isVisible = true;
+  List<dynamic>? results;
+
+  Future<List<dynamic>?> _filterDataList(String searchValue) async {
+    _debounce?.cancel(); // Cancel previous debounce timer
+    _debounce = Timer(const Duration(milliseconds: 500), () async {
+      // Perform search/filtering here
+      filteredMeds = await Provider.of<MedicineProvider>(context, listen: false)
+          .getFilteredCategories(searchQuery: searchValue);
+      if (filteredMeds != null && filteredMeds!['results'] != null) {
+        results = filteredMeds!['results'];
+      }
+      setState(() {});
+    });
+    return results;
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _focusNode.addListener(() {
+      setState(() {
+        _isVisible = _focusNode.hasFocus;
+      });
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final userName = ModalRoute.of(context)!.settings.arguments as String;
     final mediaquery = MediaQuery.of(context).size.height;
+
     return SafeArea(
       child: Scaffold(
         drawer: const Drawer(),
@@ -148,6 +187,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           Flexible(
                             flex: 1,
                             child: TextField(
+                              controller: searchController,
+                              onChanged: _filterDataList,
                               cursorColor: Colors.grey,
                               decoration: InputDecoration(
                                   fillColor: Colors.grey.shade200,
@@ -170,6 +211,40 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ],
                       ),
+                      results != null && results!.isNotEmpty
+                          ? Visibility(
+                              visible: _isVisible,
+                              child: Container(
+                                height: 200,
+                                padding: const EdgeInsets.all(8),
+                                margin: const EdgeInsets.only(top: 3),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                      color: Colors.grey.shade400,
+                                      width: 1,
+                                    )),
+                                child: ListView.builder(
+                                  itemExtent: 50,
+                                  itemBuilder: (context, index) {
+                                    return ListTile(
+                                      title: Text(
+                                        '${results![index]['name']}',
+                                        style: const TextStyle(fontSize: 15),
+                                      ),
+                                      onTap: () {
+                                        FocusManager.instance.primaryFocus
+                                            ?.unfocus();
+
+                                        searchController.text = '';
+                                      },
+                                    );
+                                  },
+                                  itemCount: results!.length,
+                                ),
+                              ),
+                            )
+                          : Container(),
                       SizedBox(
                         height: mediaquery * 0.03,
                       ),
