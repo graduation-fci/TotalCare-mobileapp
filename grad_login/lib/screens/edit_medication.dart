@@ -227,11 +227,15 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                                                 ),
                                               ),
                                             ),
-                                            onDismissed: (direction) {
+                                            onDismissed: (_) {
+                                              final deletedMed =
+                                                  medication['medicine'][index];
                                               setState(() {
-                                                userProvider.delMedication(
-                                                    medication['medicine']
-                                                        [index]['id']);
+                                                // userProvider.delMedication(
+                                                //     medication['medicine']
+                                                //         [index]['id']);
+                                                _med.medicineIds
+                                                    .removeAt(index);
                                                 medication['medicine']
                                                     .removeAt(index);
                                               });
@@ -239,20 +243,17 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                                                   .showSnackBar(
                                                 SnackBar(
                                                   content: Text(
-                                                      '${medication['title']} dismissed'),
+                                                      '${medication['medicine'][index]['name']} dismissed'),
                                                   action: SnackBarAction(
                                                     label: 'Undo',
                                                     onPressed: () {
                                                       setState(() {
-                                                        userProvider
-                                                            .addUserMedication(
-                                                                _med);
+                                                        // userProvider
+                                                        //     .addUserMedication(
+                                                        //         _med);
                                                         medication['medicine']
-                                                            .insert(
-                                                                index,
-                                                                medication[
-                                                                        'medicine']
-                                                                    [index]);
+                                                            .insert(index,
+                                                                deletedMed);
                                                       });
                                                     },
                                                   ),
