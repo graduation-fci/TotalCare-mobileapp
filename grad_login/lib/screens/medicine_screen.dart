@@ -7,30 +7,30 @@ class MedicinesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mediaquery = MediaQuery.of(context).size.height;
+    final mediaquery = MediaQuery.of(context).size;
     final args = ModalRoute.of(context)!.settings.arguments as List;
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.all(mediaquery * .03),
+            padding: EdgeInsets.all(mediaquery.height * .03),
             child: Column(
               children: [
                 SizedBox(
-                  height: mediaquery * 0.06,
+                  height: mediaquery.height * 0.06,
                   child: CustomScrollView(
                     slivers: [
                       SliverAppBar(
                         actions: [
                           Padding(
                             padding: EdgeInsets.only(
-                                right: mediaquery * 0.09,
-                                top: mediaquery * 0.02),
+                                right: mediaquery.width * 0.18,
+                                top: mediaquery.height * 0.024),
                             child: Text(
-                              args[1].toString(),
-                              style: const TextStyle(
+                              args[1].toString(), //static value
+                              style: TextStyle(
                                 overflow: TextOverflow.ellipsis,
-                                fontSize: 18,
+                                fontSize: mediaquery.width * 0.04,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -45,7 +45,7 @@ class MedicinesScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  height: mediaquery * 0.01,
+                  height: mediaquery.height * 0.01,
                 ),
                 Row(
                   children: [
@@ -57,8 +57,8 @@ class MedicinesScreen extends StatelessWidget {
                             fillColor: Colors.grey.shade200,
                             filled: true,
                             border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(mediaquery * 0.02),
+                                borderRadius: BorderRadius.circular(
+                                    mediaquery.height * 0.02),
                                 borderSide: BorderSide.none),
                             hintText: 'Search',
                             hintStyle: const TextStyle(
@@ -68,17 +68,17 @@ class MedicinesScreen extends StatelessWidget {
                             suffixIcon: Icon(
                               Icons.search,
                               color: Colors.grey,
-                              size: mediaquery * .05,
+                              size: mediaquery.width * .1,
                             )),
                       ),
                     ),
                   ],
                 ),
                 SizedBox(
-                  height: mediaquery * 0.03,
+                  height: mediaquery.height * 0.03,
                 ),
                 SizedBox(
-                  height: mediaquery,
+                  height: mediaquery.height,
                   width: double.infinity,
                   child: DrugItemScreen(
                     catID: args[0],
