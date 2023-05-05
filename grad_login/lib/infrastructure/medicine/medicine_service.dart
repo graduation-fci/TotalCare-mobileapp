@@ -59,6 +59,32 @@ class MedicineService {
     return responseData;
   }
 
+  Future<Map<String, dynamic>?> filterCategories({String? search}) async {
+    const baseUrl = Config.categories;
+    final queryParams = <String, String>{};
+    String? token;
+    await storage.getToken().then((value) {
+      token = value;
+    });
+    if (search != null) {
+      queryParams['search'] = search;
+    }
+
+    final url = Uri.parse('$baseUrl?${_getQueryString(queryParams)}');
+    final response = await http.get(
+      url,
+      headers: {
+        "content-type": "application/json",
+        "Authorization": "JWT $token",
+      },
+    );
+    final responseData = json.decode(response.body);
+    if (responseData['details'] == null) {
+      return responseData;
+    }
+    return responseData;
+  }
+
   String _getQueryString(Map<String, String> params) {
     return params.entries
         .map((e) => '${e.key}=${Uri.encodeQueryComponent(e.value)}')
