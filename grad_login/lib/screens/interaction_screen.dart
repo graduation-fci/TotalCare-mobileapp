@@ -22,7 +22,6 @@ class InteractionScreen extends StatefulWidget {
 
 class _InteractionScreenState extends State<InteractionScreen> {
   final TextEditingController searchController = TextEditingController();
-  final TextEditingController searchController2 = TextEditingController();
   final FocusNode _focusNode = FocusNode();
 
   List<Map<String, dynamic>> _interactionMedicines = [];
@@ -30,6 +29,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
   Map<String, dynamic>? filteredMeds;
   Map<String, dynamic>? meds;
   bool _isVisible = true;
+  List<int> medicineIds = [];
   Timer? _debounce;
 
   List<dynamic>? results;
@@ -68,10 +68,12 @@ class _InteractionScreenState extends State<InteractionScreen> {
   Future<void> _addSearchedMedicine(String? medicineName) async {
     List<dynamic> newData =
         await _filterDataList(medicineName!) as List<dynamic>;
-
+    final med =
+        newData.firstWhere((element) => element['name'] == medicineName);
     // Make each object unique in the new list of interactionMedicines.
-    if (!_interactionMedicines.contains(newData[0])) {
-      _interactionMedicines.add(newData[0]);
+    if (!medicineIds.contains(med['id'])) {
+      medicineIds.add(med['id']);
+      _interactionMedicines.add(med);
     }
 
     log('$_interactionMedicines');
@@ -90,6 +92,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
     final interactionsProvider = Provider.of<InteractionsProvider>(context);
     final appLocalization = AppLocalizations.of(context)!;
     final userProvider = Provider.of<UserProvider>(context);
+    final mediaQuery = MediaQuery.of(context).size;
 
     return SafeArea(
       child: GestureDetector(
@@ -118,7 +121,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
                       left: 10,
                       right: 10,
                     ),
-                    padding: const EdgeInsets.all(20),
+                    padding: EdgeInsets.all(mediaQuery.width * 0.045),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
@@ -194,16 +197,18 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               TextButton(
-                                                  onPressed: () {},
-                                                  child: Text(
-                                                    appLocalization
-                                                        .unsavedInteractionsList,
-                                                    style: const TextStyle(
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  )),
+                                                onPressed: () {},
+                                                child: Text(
+                                                  appLocalization
+                                                      .unsavedInteractionsList,
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: mediaQuery.width *
+                                                        0.038,
+                                                  ),
+                                                ),
+                                              ),
                                               const SizedBox(
                                                 width: 20,
                                               ),
@@ -211,9 +216,11 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                                 onPressed: startOver,
                                                 child: Text(
                                                   appLocalization.startOver,
-                                                  style: const TextStyle(
+                                                  style: TextStyle(
                                                     color: Colors.black,
                                                     fontWeight: FontWeight.bold,
+                                                    fontSize: mediaQuery.width *
+                                                        0.038,
                                                   ),
                                                 ),
                                               ),
@@ -330,7 +337,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                                       title: Text(
                                                         '${results![index]['name']}',
                                                         style: const TextStyle(
-                                                            fontSize: 15),
+                                                            fontSize: 15,),
                                                       ),
                                                       onTap: () {
                                                         FocusManager.instance
@@ -340,16 +347,12 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                                             results![index]
                                                                 ['name']);
                                                         setState(() {
-                                                          appState =
-                                                              AppState.loading;
                                                           searchController.text
                                                                   .isNotEmpty
                                                               ? hasContent =
                                                                   true
                                                               : hasContent =
                                                                   false;
-                                                          appState =
-                                                              AppState.done;
                                                         });
                                                         searchController.text =
                                                             '';
@@ -402,13 +405,10 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                                         results![index]
                                                             ['name']);
                                                     setState(() {
-                                                      appState =
-                                                          AppState.loading;
                                                       searchController
                                                               .text.isNotEmpty
                                                           ? hasContent = true
                                                           : hasContent = false;
-                                                      appState = AppState.done;
                                                     });
                                                     searchController.text = '';
                                                   },
