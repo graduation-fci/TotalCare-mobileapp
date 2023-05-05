@@ -6,7 +6,6 @@ import 'providers/addressProvider.dart';
 import 'providers/categoriesProvider.dart';
 import 'providers/drugProvider.dart';
 import 'providers/userProvider.dart';
-import 'providers/categories.dart';
 import 'providers/interactionsProvider.dart';
 import 'providers/medicineProvider.dart';
 import 'providers/authProvider.dart';
@@ -84,7 +83,6 @@ class MyApp extends StatelessWidget {
           AddressDetailScreen.routeName: (context) =>
               const AddressDetailScreen(),
           TabsScreen.routeName: (ctx) => const TabsScreen(),
-
         },
       ),
     );
