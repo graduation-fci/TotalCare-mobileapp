@@ -25,6 +25,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
   final List<Map<String, dynamic>> _medicineList = [];
   final FocusNode _focusNode = FocusNode();
   final formKey = GlobalKey<FormState>();
+  List<int> medicineIds = [];
 
   Map<String, dynamic>? filteredMeds;
   List<dynamic>? results;
@@ -54,17 +55,20 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
       }
       setState(() {});
     });
-    return results != null && results!.isNotEmpty ? results![0] : null;
+    return results;
   }
 
   Future<void> _addSearchedMedicine(String medicineName) async {
-    final newData = await _filterDataList(medicineName);
-
+    List<dynamic> newData =
+        await _filterDataList(medicineName) as List<dynamic>;
+    final med =
+        newData.firstWhere((element) => element['name'] == medicineName);
     // Make each object unique in the new list of interactionMedicines.
-    if (_medicineList.contains(newData)) {
-    } else {
-      _medicineList.add(newData);
+    if (!medicineIds.contains(med['id'])) {
+      medicineIds.add(med['id']);
+      _medicineList.add(med);
     }
+
     log('$_medicineList');
   }
 
