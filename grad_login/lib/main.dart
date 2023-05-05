@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'providers/addressProvider.dart';
+import 'providers/categoriesProvider.dart';
+import 'providers/drugProvider.dart';
+import 'providers/userProvider.dart';
 import 'providers/categories.dart';
 import 'providers/interactionsProvider.dart';
 import 'providers/medicineProvider.dart';
 import 'providers/authProvider.dart';
-import 'providers/userProvider.dart';
 import 'screens/tabs_screen.dart';
 import 'screens/add_medication.dart';
 import 'screens/edit_medication.dart';
@@ -14,13 +17,21 @@ import 'screens/user_medications.dart';
 import 'screens/show_interactions_results_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
+import 'screens/add_address_screen.dart';
+import 'screens/edit_address_screen.dart';
+import 'screens/edit_user_details_screen.dart.dart';
+import 'screens/address_detail_screen.dart';
+import 'screens/address_screen.dart';
+import 'screens/drug_detail_screen.dart';
+import 'screens/home_screen.dart';
+import 'screens/medicine_screen.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +52,15 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(
           value: Categories(),
         ),
+        ChangeNotifierProvider.value(
+          value: Drugs(),
+        ),
+        ChangeNotifierProvider.value(
+          value: Address(),
+        ),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         title: 'first demo',
@@ -57,7 +75,16 @@ class MyApp extends StatelessWidget {
           EditMedicationScreen.routeName: (ctx) => const EditMedicationScreen(),
           AddMedicationScreen.routeName: (ctx) => const AddMedicationScreen(),
           RegisterFormScreen.routeName: (ctx) => const RegisterFormScreen(),
+          HomeScreen.routeName: (ctx) => const HomeScreen(),
+          MedicinesScreen.routeName: (context) => const MedicinesScreen(),
+          DrugDetailScreen.routeName: (context) => const DrugDetailScreen(),
+          AddAddressScreen.routeName: (context) => const AddAddressScreen(),
+          EditAddressScreen.routeName: (context) => const EditAddressScreen(),
+          AddressScreen.routeName: (context) => const AddressScreen(),
+          AddressDetailScreen.routeName: (context) =>
+              const AddressDetailScreen(),
           TabsScreen.routeName: (ctx) => const TabsScreen(),
+
         },
       ),
     );
