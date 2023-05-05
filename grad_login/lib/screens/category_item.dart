@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:grad_login/providers/drugProvider.dart';
 import 'package:grad_login/screens/medicine_screen.dart';
 
 import 'package:provider/provider.dart';
@@ -72,13 +73,17 @@ class _CategoryItemState extends State<CategoryItem> {
                   )
                 : InkWell(
                     onTap: () {
-                      Navigator.of(context).pushNamed(
-                        MedicinesScreen.routeName,
-                        arguments: [
-                          categories[index].id,
-                          categories[index].name,
-                        ],
-                      );
+                      String? errorMSG = Provider.of<Drugs>(context).errorMSG;
+                      errorMSG == null
+                          ? Navigator.of(context).pushNamed(
+                              MedicinesScreen.routeName,
+                              arguments: [
+                                categories[index].id,
+                                categories[index].name,
+                              ],
+                            )
+                          : ScaffoldMessenger.of(context)
+                              .showSnackBar(SnackBar(content: Text(errorMSG)));
                     },
                     child: GridTile(
                       footer: SizedBox(

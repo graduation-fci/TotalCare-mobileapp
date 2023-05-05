@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:grad_login/my_config.dart';
+import '../infrastructure/shared/storage.dart';
 
 class AddressItem with ChangeNotifier {
   int id;
@@ -23,6 +24,7 @@ class AddressItem with ChangeNotifier {
 }
 
 class Address with ChangeNotifier {
+  Storage storage = Storage();
   List<AddressItem> _list = [];
 
   List<AddressItem> get items {
@@ -30,15 +32,16 @@ class Address with ChangeNotifier {
   }
 
   Future<void> fetchAddress() async {
+    String? token;
+    await storage.getToken().then((value) {
+      token = value;
+    });
     final List<AddressItem> loadedCat = [];
-    final url = Uri.parse('http://192.168.1.5:8000/users/addresses');
+    final url = Uri.parse(Config.addresses);
     final respone = await http.get(url, headers: {
-      'Authorization':
-          'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgzMjkzMzMxLCJpYXQiOjE2ODMyMDY5MzEsImp0aSI6IjEyNTY1MDM2ZTY2YjRkZjU4NjFjMDU2YWQxNTBhYWZkIiwidXNlcl9pZCI6NSwidXNlcm5hbWUiOiJuZXd1c2VyIiwiZW1haWwiOiJzQGFhYS5jbyIsImZpcnN0X25hbWUiOiJuZXciLCJsYXN0X25hbWUiOiJ1c2VyIiwicHJvZmlsZV90eXBlIjoiUEFUIiwiaXNfc3RhZmYiOmZhbHNlfQ.CBefyDyUOq61DLxUBj-O7HnMoVGVqm1nSzUV6mRu9Vw '
+      'Authorization': 'JWT $token',
     });
     final extractedData = json.decode(respone.body) as List<dynamic>;
-    // print(extractedData.runtimeType);
-    //print(extractedData);
 
     if (respone.statusCode == 200) {
       for (var i = 0; i < extractedData.length; i++) {
@@ -62,12 +65,15 @@ class Address with ChangeNotifier {
 
   Future<void> addAddress(String street, String city, String description,
       String phone, String type, String title) async {
-    final url = Uri.parse('http://192.168.1.5:8000/users/addresses/');
+    String? token;
+    await storage.getToken().then((value) {
+      token = value;
+    });
+    final url = Uri.parse(Config.addresses);
     final response = await http.post(
       url,
       headers: {
-        'Authorization':
-            'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgzMjkzMzMxLCJpYXQiOjE2ODMyMDY5MzEsImp0aSI6IjEyNTY1MDM2ZTY2YjRkZjU4NjFjMDU2YWQxNTBhYWZkIiwidXNlcl9pZCI6NSwidXNlcm5hbWUiOiJuZXd1c2VyIiwiZW1haWwiOiJzQGFhYS5jbyIsImZpcnN0X25hbWUiOiJuZXciLCJsYXN0X25hbWUiOiJ1c2VyIiwicHJvZmlsZV90eXBlIjoiUEFUIiwiaXNfc3RhZmYiOmZhbHNlfQ.CBefyDyUOq61DLxUBj-O7HnMoVGVqm1nSzUV6mRu9Vw ',
+        'Authorization': 'JWT $token',
         'Content-Type': 'application/json',
       },
       body: json.encode(
@@ -111,13 +117,16 @@ class Address with ChangeNotifier {
 
   Future<void> updateAddress(
       int id, AddressItem addressItem, String type) async {
+    String? token;
+    await storage.getToken().then((value) {
+      token = value;
+    });
     final addressIndex = _list.indexWhere((element) => element.id == id);
-    final url = Uri.parse('http://192.168.1.5:8000/users/addresses/$id/');
+    final url = Uri.parse('${Config.addresses}$id/');
     try {
       final response = await http.patch(url,
           headers: {
-            'Authorization':
-                'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgzMjkzMzMxLCJpYXQiOjE2ODMyMDY5MzEsImp0aSI6IjEyNTY1MDM2ZTY2YjRkZjU4NjFjMDU2YWQxNTBhYWZkIiwidXNlcl9pZCI6NSwidXNlcm5hbWUiOiJuZXd1c2VyIiwiZW1haWwiOiJzQGFhYS5jbyIsImZpcnN0X25hbWUiOiJuZXciLCJsYXN0X25hbWUiOiJ1c2VyIiwicHJvZmlsZV90eXBlIjoiUEFUIiwiaXNfc3RhZmYiOmZhbHNlfQ.CBefyDyUOq61DLxUBj-O7HnMoVGVqm1nSzUV6mRu9Vw ',
+            'Authorization': 'JWT $token',
             'Content-Type': 'application/json',
           },
           body: json.encode({
@@ -137,32 +146,23 @@ class Address with ChangeNotifier {
       print('Error updating address: $e');
     }
     _list[addressIndex] = addressItem;
-    // print(addressIndex);
-    print('street: ${_list[addressIndex].street}');
-    print('city: ${_list[addressIndex].city}');
-    print('Description: ${_list[addressIndex].description}');
-    print('phone: ${_list[addressIndex].phone}');
-    print('type: ${type}');
-    print('title: ${_list[addressIndex].title}');
-    // print(addressItem);
     notifyListeners();
   }
 
   Future<void> deleteAddress(int id) async {
-    //print('Deleting address with ID: $id');
-
+    String? token;
+    await storage.getToken().then((value) {
+      token = value;
+    });
     final addressIndex = _list.indexWhere((element) => element.id == id);
-    final url = Uri.parse('http://192.168.1.5:8000/users/addresses/$id/');
+    final url = Uri.parse('${Config.addresses}$id/');
     AddressItem? existingProduct = _list[addressIndex];
     _list.removeAt(addressIndex);
     notifyListeners();
-
-    // print('Sending DELETE request to $url');
     final response = await http.delete(
       url,
       headers: {
-        'Authorization':
-            'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgzMjkzMzMxLCJpYXQiOjE2ODMyMDY5MzEsImp0aSI6IjEyNTY1MDM2ZTY2YjRkZjU4NjFjMDU2YWQxNTBhYWZkIiwidXNlcl9pZCI6NSwidXNlcm5hbWUiOiJuZXd1c2VyIiwiZW1haWwiOiJzQGFhYS5jbyIsImZpcnN0X25hbWUiOiJuZXciLCJsYXN0X25hbWUiOiJ1c2VyIiwicHJvZmlsZV90eXBlIjoiUEFUIiwiaXNfc3RhZmYiOmZhbHNlfQ.CBefyDyUOq61DLxUBj-O7HnMoVGVqm1nSzUV6mRu9Vw ',
+        'Authorization': 'JWT $token',
         'Content-Type': 'application/json',
       },
     );
@@ -174,7 +174,5 @@ class Address with ChangeNotifier {
     }
 
     existingProduct = null;
-
-    // print('Address with ID $id has been successfully deleted.');
   }
 }

@@ -8,5 +8,6 @@ class Config {
   static const String userMedications = '$apiUrl/users/medications/';
   static const String categories = '$apiUrl/medicine/categories/';
   static const String refreshJWT = '$apiUrl/auth/jwt/refresh/';
-
+  static const String drugs = '$apiUrl/medicine/products/';
+  static const String addresses = '$apiUrl/users/addresses';
 }

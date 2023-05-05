@@ -27,9 +27,7 @@ class _TabsScreenState extends State<TabsScreen> {
     });
     _pages = [
       {
-        'page': HomeScreen(
-          username: settings,
-        ),
+        'page': const HomeScreen(),
         'title': 'Home',
       },
       {

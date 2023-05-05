@@ -38,92 +38,81 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
     return SizedBox(
       width: mediaquery * 0.3,
       height: mediaquery * 0.1,
-      child: _dataFetched && drugs.isNotEmpty
-          ? GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 4 / 5,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-              ),
-              itemCount: drugs.length,
-              itemBuilder: (context, index) => GestureDetector(
-                onTap: () => Navigator.of(context).pushNamed(
-                  DrugDetailScreen.routeName,
-                  arguments: DrugItem(
-                      id: drugs[index].id,
-                      name: drugs[index].name,
-                      price: drugs[index].price,
-                      imgURL: drugs[index].imgURL),
-                ),
-                child: Ink(
-                  decoration: ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                        side: const BorderSide(
-                          width: 1,
-                          color: Colors.black12,
-                        ),
-                        borderRadius: BorderRadius.circular(20)),
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 4 / 5,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+        ),
+        itemCount: drugs.length,
+        itemBuilder: (context, index) => GestureDetector(
+          onTap: () => Navigator.of(context).pushNamed(
+            DrugDetailScreen.routeName,
+            arguments: DrugItem(
+                id: drugs[index].id,
+                name: drugs[index].name,
+                price: drugs[index].price,
+                imgURL: drugs[index].imgURL),
+          ),
+          child: Ink(
+            decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                  side: const BorderSide(
+                    width: 1,
+                    color: Colors.black12,
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                  borderRadius: BorderRadius.circular(20)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Stack(
+                    alignment: Alignment.topRight,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Stack(
-                          alignment: Alignment.topRight,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
-                              child:
-                                  // Image.asset('assets/images/btn.png')
-                                  Image.network(
-                                drugs[index].imgURL,
-                                width: double.infinity,
-                                height: 150,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            const LoveBtn(),
-                          ],
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child:
+                            // Image.asset('assets/images/btn.png')
+                            Image.network(
+                          drugs[index].imgURL,
+                          width: double.infinity,
+                          height: 150,
+                          fit: BoxFit.cover,
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          // mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              drugs[index].name,
-                              maxLines: 1,
-                              overflow: TextOverflow.visible,
-                              softWrap: true,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              '${drugs[index].price.toString()}L.E.',
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      )
+                      const LoveBtn(),
                     ],
                   ),
                 ),
-              ),
-            )
-          : Center(
-              child: _dataFetched
-                  ? Text(
-                      'Category has no Drugs!',
-                      style: TextStyle(fontSize: mediaquery * 0.05),
-                    )
-                  : CircularProgressIndicator(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    // mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        drugs[index].name,
+                        maxLines: 1,
+                        overflow: TextOverflow.visible,
+                        softWrap: true,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        '${drugs[index].price.toString()}L.E.',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                )
+              ],
             ),
+          ),
+        ),
+      ),
     );
   }
 }

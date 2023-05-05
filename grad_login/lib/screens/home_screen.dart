@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
 import 'category_item.dart';
+
 import 'notification_widget.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -15,7 +15,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    final userName = ModalRoute.of(context)!.settings.arguments as String;
+    final userName = '';
+    // ModalRoute.of(context)!.settings.arguments as String;
     final mediaquery = MediaQuery.of(context).size.height;
     return SafeArea(
       child: Scaffold(
