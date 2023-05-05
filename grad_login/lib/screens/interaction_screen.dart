@@ -337,7 +337,8 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                                       title: Text(
                                                         '${results![index]['name']}',
                                                         style: const TextStyle(
-                                                            fontSize: 15,),
+                                                          fontSize: 15,
+                                                        ),
                                                       ),
                                                       onTap: () {
                                                         FocusManager.instance
@@ -427,13 +428,8 @@ class _InteractionScreenState extends State<InteractionScreen> {
                   Center(
                     child: ElevatedButton(
                       onPressed: (() {
-                        userProvider
-                            .getUserMedications()
-                            .then((value) => userProvider.getUserProfile())
-                            .then(
-                              (value) => Navigator.of(context)
-                                  .pushNamed(UserMedicationsScreen.routeName),
-                            );
+                        Navigator.of(context)
+                            .pushNamed(UserMedicationsScreen.routeName);
                       }),
                       child: Text(
                         appLocalization.myMedications,
