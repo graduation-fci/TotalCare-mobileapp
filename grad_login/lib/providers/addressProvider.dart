@@ -87,12 +87,7 @@ class Address with ChangeNotifier {
         },
       ),
     );
-    print('Street:$street');
-    print('City:$city');
-    print('Description:$description');
-    print('Phone$phone');
-    print('type:$type');
-    print('title:$title');
+
     if (response.statusCode == 201) {
       final responseData = json.decode(response.body);
       final newAddress = AddressItem(
