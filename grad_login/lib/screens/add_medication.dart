@@ -21,7 +21,7 @@ class AddMedicationScreen extends StatefulWidget {
 class _AddMedicationScreenState extends State<AddMedicationScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
-  final Medication _med = Medication(title: '', medicines: []);
+  final Medication _med = Medication(title: '', medicineIds: []);
   final List<Map<String, dynamic>> _medicineList = [];
   final FocusNode _focusNode = FocusNode();
   final formKey = GlobalKey<FormState>();
@@ -211,7 +211,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                                                   _medicineList[index]['id'],
                                                 );
                                                 setState(() {
-                                                  _med.medicines.removeWhere(
+                                                  _med.medicineIds.removeWhere(
                                                       (element) =>
                                                           element ==
                                                           _medicineList[index]
@@ -219,7 +219,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                                                   _medicineList.removeAt(index);
                                                 });
                                                 log('$_medicineList');
-                                                log('${_med.medicines}');
+                                                log('${_med.medicineIds}');
                                               },
                                             ),
                                           );
@@ -259,15 +259,15 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                                                         results![index]
                                                             ['name']);
 
-                                                    if (!_med.medicines
+                                                    if (!_med.medicineIds
                                                         .contains(
                                                             results![index]
                                                                 ['id'])) {
-                                                      _med.medicines.add(
+                                                      _med.medicineIds.add(
                                                           results![index]
                                                               ['id']);
                                                     }
-                                                    log('${_med.medicines}');
+                                                    log('${_med.medicineIds}');
                                                     setState(
                                                       () {
                                                         appState =
@@ -321,9 +321,9 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                                               results![index]['name']);
 
                                           // log('${_med.medicines}');
-                                          _med.medicines
+                                          _med.medicineIds
                                               .add(results![index]['id']);
-                                          log('${_med.medicines}');
+                                          log('${_med.medicineIds}');
                                           setState(
                                             () {
                                               appState = AppState.loading;
@@ -350,12 +350,12 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
           bottomNavigationBar: Padding(
             padding: const EdgeInsets.only(bottom: 16, left: 10, right: 10),
             child: ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 if (formKey.currentState!.validate()) {
                   formKey.currentState!.save();
-                  Provider.of<UserProvider>(context, listen: false)
+                  await Provider.of<UserProvider>(context, listen: false)
                       .addUserMedication(_med)
-                      .then((_) => Navigator.pop(context));
+                      .then((value) => Navigator.pop(context));
                 }
               },
               style: ElevatedButton.styleFrom(

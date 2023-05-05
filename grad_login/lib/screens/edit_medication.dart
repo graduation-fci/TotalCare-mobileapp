@@ -18,7 +18,7 @@ class EditMedicationScreen extends StatefulWidget {
 class _EditMedicationScreenState extends State<EditMedicationScreen> {
   final TextEditingController _titleController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-  final Medication _med = Medication(medicines: [], title: '');
+  final Medication _med = Medication(medicineIds: [], title: '');
   final _formKey = GlobalKey<FormState>();
 
   Map<String, dynamic> medication = {};

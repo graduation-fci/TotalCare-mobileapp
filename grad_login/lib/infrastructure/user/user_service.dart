@@ -39,15 +39,19 @@ class UserService {
       token = value;
     });
 
-    final response = await http.post(url,
-        headers: {
-          "content-type": "application/json",
-          "Authorization": "JWT $token",
-        },
-        body: json.encode({
+    final response = await http.post(
+      url,
+      headers: {
+        "content-type": "application/json",
+        "Authorization": "JWT $token",
+      },
+      body: json.encode(
+        {
           "title": med.title,
-          "medicines": med.medicines,
-        }));
+          "medicines": med.medicineIds,
+        },
+      ),
+    );
 
     final responseData = json.decode(response.body);
     // log('$responseData');
@@ -60,12 +64,12 @@ class UserService {
   Future<Map<String, dynamic>> editMedicationProfile(
       Medication med, int id) async {
     final url = Uri.parse('${Config.userMedications}$id/');
-    Map<String, dynamic> body = {};
-    if (med.title.isNotEmpty && med.medicines.isNotEmpty) {
-      body = {"title": med.title, "medicines": med.medicines};
-    } else if (med.title.isEmpty && med.medicines.isNotEmpty) {
-      body = {"medicines": med.medicines};
-    } else if (med.medicines.isEmpty && med.title.isNotEmpty) {
+    Map<String, dynamic>? body;
+    if (med.title.isNotEmpty && med.medicineIds.isNotEmpty) {
+      body = {"title": med.title, "medicines": med.medicineIds};
+    } else if (med.title.isEmpty && med.medicineIds.isNotEmpty) {
+      body = {"medicines": med.medicineIds};
+    } else if (med.medicineIds.isEmpty && med.title.isNotEmpty) {
       body = {"title": med.title};
     }
 
