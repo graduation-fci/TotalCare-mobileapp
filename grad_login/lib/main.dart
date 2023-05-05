@@ -83,7 +83,6 @@ class MyApp extends StatelessWidget {
           AddressDetailScreen.routeName: (context) =>
               const AddressDetailScreen(),
           TabsScreen.routeName: (ctx) => const TabsScreen(),
-
         },
       ),
     );
