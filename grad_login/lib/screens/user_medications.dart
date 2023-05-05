@@ -56,8 +56,17 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Color(0xFF003745),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         title: Text(
-          'Medication profiles',
+          'MEDICATION PROFILES',
           style: Theme.of(context).appBarTheme.titleTextStyle,
         ),
       ),
@@ -164,48 +173,42 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                       ),
-                                      trailing: SizedBox(
-                                        width: 80,
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: IconButton(
-                                                icon: const Icon(
-                                                  Icons.delete,
-                                                  color: Colors.red,
-                                                ),
-                                                onPressed: () async {
-                                                  await userProvider
-                                                      .delMedication(
-                                                    userMedications[index]
-                                                        ['id'],
-                                                  );
-                                                  setState(() {
-                                                    userMedications
-                                                        .removeAt(index);
-                                                  });
-                                                  log('$userMedications');
-                                                },
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: IconButton(
-                                                icon: const Icon(
-                                                  Icons.edit,
-                                                  color: Colors.blue,
-                                                ),
-                                                onPressed: () =>
-                                                    Navigator.of(context)
-                                                        .pushNamed(
-                                                            EditMedicationScreen
-                                                                .routeName,
-                                                            arguments:
-                                                                userMedications[
-                                                                    index]),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                      trailing: PopupMenuButton<int>(
+                                        itemBuilder: (context) => [
+                                          PopupMenuItem<int>(
+                                            height: mediaQuery.height * 0.03,
+                                            value: 0,
+                                            child: const Text('Edit'),
+                                          ),
+                                          const PopupMenuDivider(),
+                                          PopupMenuItem<int>(
+                                            textStyle:
+                                                TextStyle(color: Colors.red),
+                                            height: mediaQuery.height * 0.03,
+                                            value: 1,
+                                            child: const Text('Delete'),
+                                          ),
+                                        ],
+                                        onSelected: (value) async {
+                                          switch (value) {
+                                            case 0:
+                                              Navigator.of(context).pushNamed(
+                                                  EditMedicationScreen
+                                                      .routeName,
+                                                  arguments:
+                                                      userMedications[index]);
+                                              break;
+                                            case 1:
+                                              await userProvider.delMedication(
+                                                userMedications[index]['id'],
+                                              );
+                                              setState(() {
+                                                userMedications.removeAt(index);
+                                              });
+                                              log('$userMedications');
+                                              break;
+                                          }
+                                        },
                                       ),
                                     ),
                                   ),
