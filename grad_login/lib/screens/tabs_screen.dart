@@ -58,6 +58,7 @@ class _TabsScreenState extends State<TabsScreen> {
   @override
   Widget build(BuildContext context) {
     final appLocalization = AppLocalizations.of(context)!;
+    final mediaQuery = MediaQuery.of(context).size;
     final settings = ModalRoute.of(context)!.settings.arguments;
     final authProvider = Provider.of<AuthProvider>(context);
     return Scaffold(
@@ -71,24 +72,10 @@ class _TabsScreenState extends State<TabsScreen> {
       //   backgroundColor: Theme.of(context).primaryColor,
       // ),
       // drawer: MainDrawer(),
-      body: Column(
-        children: [
-          Expanded(
-            child: _pages[_selectedPageIndex]['page'],
-          ),
-          FloatingActionButton(
-            onPressed: () async {
-              // Handle button press
-              await authProvider.logout().then((value) => Navigator.of(context)
-                  .pushReplacementNamed(LoginScreen.routeName));
-            },
-            child: const Icon(Icons.logout),
-          ),
-        ],
-      ),
+      body: _pages[_selectedPageIndex]['page'],
 
       bottomNavigationBar: SizedBox(
-        height: 65,
+        height: mediaQuery.height * 0.083,
         child: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           onTap: _selectPage,
@@ -114,8 +101,8 @@ class _TabsScreenState extends State<TabsScreen> {
                         color: const Color.fromARGB(255, 218, 216, 219),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      width: 70,
-                      height: 35,
+                      width: mediaQuery.width * 0.18,
+                      height: mediaQuery.height * 0.04,
                       child: const Icon(
                         Icons.home_outlined,
                         size: 28,
@@ -134,8 +121,8 @@ class _TabsScreenState extends State<TabsScreen> {
                         color: const Color.fromARGB(255, 218, 216, 219),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      width: 70,
-                      height: 35,
+                      width: mediaQuery.width * 0.18,
+                      height: mediaQuery.height * 0.04,
                       child: const Icon(
                         MdiIcons.triangleOutline,
                         size: 22,
@@ -154,8 +141,8 @@ class _TabsScreenState extends State<TabsScreen> {
                         color: const Color.fromARGB(255, 218, 216, 219),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      width: 70,
-                      height: 35,
+                      width: mediaQuery.width * 0.18,
+                      height: mediaQuery.height * 0.04,
                       child: FractionallySizedBox(
                         heightFactor: 0.75,
                         widthFactor: 0.4,
@@ -180,8 +167,8 @@ class _TabsScreenState extends State<TabsScreen> {
                         color: const Color.fromARGB(255, 218, 216, 219),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      width: 70,
-                      height: 35,
+                      width: mediaQuery.width * 0.18,
+                      height: mediaQuery.height * 0.04,
                       child: const Icon(
                         MdiIcons.cartOutline,
                         size: 28,

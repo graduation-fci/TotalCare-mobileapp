@@ -73,7 +73,8 @@ class _CategoryItemState extends State<CategoryItem> {
                   )
                 : InkWell(
                     onTap: () {
-                      String? errorMSG = Provider.of<Drugs>(context).errorMSG;
+                      String? errorMSG =
+                          Provider.of<Drugs>(context, listen: false).errorMSG;
                       errorMSG == null
                           ? Navigator.of(context).pushNamed(
                               MedicinesScreen.routeName,

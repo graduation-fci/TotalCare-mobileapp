@@ -5,18 +5,17 @@ import 'package:grad_login/models/medication.dart';
 
 import '../app_state.dart';
 import '../infrastructure/user/user_service.dart';
-import '../models/user.dart';
 
 class UserProvider with ChangeNotifier {
   UserService userService = UserService();
   String? errorMessage;
   Map<String, dynamic> userProfileData = {};
-  Map<String, dynamic> userMedications = {};
   AppState appState = AppState.init;
-  final List<User> _users = [];
+  final List _userMedications = [];
+  final List<int> _medicationIds = [];
 
-  List<User> get users {
-    return [..._users];
+  List get userMedications {
+    return [..._userMedications];
   }
 
   Future<void> getUserProfile() async {
@@ -37,6 +36,7 @@ class UserProvider with ChangeNotifier {
   Future<void> addUserMedication(Medication med) async {
     appState = AppState.loading;
     notifyListeners();
+    // log('${med.medicineIds}');
     final responseData = await userService.addMedicationProfile(med);
     if (responseData['detail'] != null) {
       errorMessage = responseData['detail'];
@@ -72,8 +72,18 @@ class UserProvider with ChangeNotifier {
     } else {
       appState = AppState.done;
     }
-    userMedications = responseData;
-    // log("$userMedications");
+    responseData['results']
+        .map((element) => _medicationIds.contains(element['id'])
+            ? null
+            : _medicationIds.add(element['id']))
+        .toList();
+    log("$_medicationIds");
+    if (_userMedications.isNotEmpty) {
+      _userMedications
+          .removeWhere((element) => _medicationIds.contains(element['id']));
+    }
+    _userMedications.addAll(responseData['results']);
+    log("$userMedications");
     notifyListeners();
   }
 
@@ -81,6 +91,7 @@ class UserProvider with ChangeNotifier {
     appState = AppState.loading;
     notifyListeners();
     await userService.deleteMedication(id);
+    _userMedications.removeWhere((element) => element['id'] == id);
     appState = AppState.done;
     notifyListeners();
   }

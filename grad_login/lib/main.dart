@@ -90,6 +90,7 @@ class MyApp extends StatelessWidget {
 
   ThemeData _buildThemeData() {
     return ThemeData(
+      fontFamily: 'Heebo',
       colorScheme: ColorScheme.fromSwatch().copyWith(
         primary: const Color(0xFFC5EEFF),
         secondary: const Color(0xFF003745),
@@ -125,7 +126,6 @@ class MyApp extends StatelessWidget {
       ),
       appBarTheme: const AppBarTheme(
         titleTextStyle: TextStyle(
-          fontFamily: 'Heebo',
           color: Color(0xFF003745),
           fontWeight: FontWeight.w600,
           fontSize: 20,
