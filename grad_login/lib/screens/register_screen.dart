@@ -36,7 +36,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
     last_name: '',
     email: '',
     password: '',
-    profileType: '',
+    profileType: 'PAT',
   );
   Locale? locale;
 
@@ -44,6 +44,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController userNameController = TextEditingController();
+  final TextEditingController countryController = TextEditingController();
   final TextEditingController mobileController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController rePasswordController = TextEditingController();
@@ -70,10 +71,10 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
   String? _selectedItem;
 
   final formKey = GlobalKey<FormState>();
-  final Map<String, String> _dropDownItems = {
-    'PAT': 'Patient',
-    'DOC': 'Doctor'
-  };
+  // final Map<String, String> _dropDownItems = {
+  //   'PAT': 'Patient',
+  //   'DOC': 'Doctor'
+  // };
 
   @override
   Widget build(BuildContext context) {
@@ -110,29 +111,28 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       height: mediaQuery.height * 0.02,
                     ),
                     InputField(
-                      labelText: appLocalization.email,
-                      controller: emailController,
-                      keyboardType: TextInputType.emailAddress,
+                      labelText: appLocalization.username,
+                      controller: userNameController,
+                      keyboardType: TextInputType.text,
                       prefixIcon: const Icon(
-                        MdiIcons.email,
+                        Icons.person_add_alt_1,
                         color: Colors.grey,
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return appLocalization.emailNotEmpty;
-                        } else if (value.contains(r'\w+@\w+.\w+')) {
-                          return appLocalization.invalidEmail;
+                          return appLocalization.usernameNotEmpty;
                         }
                         return null;
                       },
                       onSaved: (value) {
-                        _userData.email = value!;
+                        _userData.username = value!;
                       },
-                      focusNode: emailFocus,
-                      nextFocusNode: firstNameFocus,
+                      focusNode: userNameFocus,
+                      nextFocusNode: countryFocus,
                       textInputAction: TextInputAction.next,
                       obsecureText: false,
                     ),
+
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
@@ -187,79 +187,97 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       height: mediaQuery.height * 0.02,
                     ),
                     InputField(
-                      labelText: appLocalization.username,
-                      controller: userNameController,
-                      keyboardType: TextInputType.text,
+                      labelText: appLocalization.email,
+                      controller: emailController,
+                      keyboardType: TextInputType.emailAddress,
                       prefixIcon: const Icon(
-                        Icons.person_add_alt_1,
+                        MdiIcons.email,
                         color: Colors.grey,
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return appLocalization.usernameNotEmpty;
+                          return appLocalization.emailNotEmpty;
+                        } else if (value.contains(r'\w+@\w+.\w+')) {
+                          return appLocalization.invalidEmail;
                         }
                         return null;
                       },
                       onSaved: (value) {
-                        _userData.username = value!;
+                        _userData.email = value!;
                       },
-                      focusNode: userNameFocus,
-                      nextFocusNode: countryFocus,
+                      focusNode: emailFocus,
+                      nextFocusNode: firstNameFocus,
                       textInputAction: TextInputAction.next,
                       obsecureText: false,
                     ),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
-                    TextButton.icon(
-                      focusNode: countryFocus,
-                      label: Text(
-                        countryName,
-                        style: const TextStyle(
-                          color: Colors.grey,
-                        ),
-                      ),
-                      onPressed: () => showCountryPicker(
-                        context: context,
-                        showPhoneCode: true,
-                        onSelect: (Country country) {
-                          country.flagEmoji;
-                          mobileController.text = '+${country.phoneCode}';
-                          countryName = '${country.flagEmoji}  ${country.name}';
-                          phoneFocus.requestFocus();
-                          setState(() {});
-                        },
-                      ),
-                      icon: const Icon(
-                        Icons.arrow_drop_down,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    SizedBox(
-                      height: mediaQuery.height * 0.02,
-                    ),
-                    InputField(
-                      labelText: appLocalization.phoneNumber,
-                      controller: mobileController,
-                      keyboardType: TextInputType.phone,
-                      prefixIcon: const Icon(
-                        Icons.phone,
-                        color: Colors.grey,
-                      ),
-                      validator: (_) {
-                        // if (value == null || value.isEmpty) {
-                        //   return appLocalization.phoneNumberNotEmpty;
-                        // }
-                        return null;
-                      },
-                      focusNode: phoneFocus,
-                      nextFocusNode: passwordFocus,
-                      textInputAction: TextInputAction.next,
-                      obsecureText: false,
-                    ),
-                    SizedBox(
-                      height: mediaQuery.height * 0.02,
-                    ),
+                    // Container(
+                    //   margin: const EdgeInsets.all(10),
+                    //   width: mediaQuery.width,
+                    //   decoration: BoxDecoration(
+                    //     border: Border.all(
+                    //       color: Colors.grey,
+                    //       width: 1,
+                    //     ),
+                    //     borderRadius: BorderRadius.circular(12),
+                    //   ),
+                    //   child: Row(
+                    //     children: [
+                    //       IconButton(
+                    //         focusNode: countryFocus,
+                    //         onPressed: () => showCountryPicker(
+                    //           context: context,
+                    //           showPhoneCode: true,
+                    //           onSelect: (Country country) {
+                    //             country.flagEmoji;
+                    //             countryController.text =
+                    //                 '+${country.phoneCode}';
+                    //             countryName =
+                    //                 '${country.flagEmoji}  ${country.name}';
+                    //             setState(() {});
+                    //           },
+                    //         ),
+                    //         icon: const Icon(
+                    //           Icons.arrow_drop_down,
+                    //           color: Colors.grey,
+                    //         ),
+                    //       ),
+                    //       countryController.text.isEmpty
+                    //           ? const Text('---')
+                    //           : TextFormField(
+                    //               controller: countryController,
+                    //               decoration: const InputDecoration(
+                    //                 // contentPadding: EdgeInsets.only(left: 18),
+                    //                 border: InputBorder.none,
+                    //               ),
+                    //               enabled: false,
+                    //             ),
+                    //       Expanded(
+                    //         child: TextFormField(
+                    //           controller: mobileController,
+                    //           focusNode: phoneFocus,
+                    //           onEditingComplete: () {
+                    //             if (passwordFocus != null) {
+                    //               FocusScope.of(context)
+                    //                   .requestFocus(passwordFocus);
+                    //             }
+                    //           },
+                    //           textInputAction: TextInputAction.next,
+                    //           keyboardType: TextInputType.phone,
+                    //           decoration: InputDecoration(
+                    //             contentPadding:
+                    //                 const EdgeInsets.fromLTRB(20, 5, 5, 5),
+                    //             labelText: appLocalization.phoneNumber,
+                    //             labelStyle: const TextStyle(color: Colors.grey),
+                    //             border: InputBorder.none,
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
                     InputField(
                       labelText: appLocalization.password,
                       controller: passwordController,
@@ -350,39 +368,42 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 18,
-                        // vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey, width: 1),
-                        borderRadius: BorderRadius.circular(40),
-                      ),
-                      child: DropdownButtonFormField<String>(
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                        ),
-                        onSaved: ((value) => _userData.profileType = value!),
-                        hint: const Text(
-                          'Select ...',
-                          style: TextStyle(fontSize: 14),
-                        ),
-                        value: _selectedItem,
-                        items: _dropDownItems.entries
-                            .map<DropdownMenuItem<String>>((value) {
-                          return DropdownMenuItem(
-                            value: value.key,
-                            child: Text(value.value),
-                          );
-                        }).toList(),
-                        onChanged: (newValue) {
-                          setState(() {
-                            _selectedItem = newValue;
-                          });
-                        },
-                      ),
-                    ),
+
+                    // select profile type
+
+                    // Container(
+                    //   padding: const EdgeInsets.symmetric(
+                    //     horizontal: 18,
+                    //     // vertical: 12,
+                    //   ),
+                    //   decoration: BoxDecoration(
+                    //     border: Border.all(color: Colors.grey, width: 1),
+                    //     borderRadius: BorderRadius.circular(40),
+                    //   ),
+                    //   child: DropdownButtonFormField<String>(
+                    //     decoration: const InputDecoration(
+                    //       border: InputBorder.none,
+                    //     ),
+                    //     onSaved: ((value) => _userData.profileType = value!),
+                    //     hint: const Text(
+                    //       'Select ...',
+                    //       style: TextStyle(fontSize: 14),
+                    //     ),
+                    //     value: _selectedItem,
+                    //     items: _dropDownItems.entries
+                    //         .map<DropdownMenuItem<String>>((value) {
+                    //       return DropdownMenuItem(
+                    //         value: value.key,
+                    //         child: Text(value.value),
+                    //       );
+                    //     }).toList(),
+                    //     onChanged: (newValue) {
+                    //       setState(() {
+                    //         _selectedItem = newValue;
+                    //       });
+                    //     },
+                    //   ),
+                    // ),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
