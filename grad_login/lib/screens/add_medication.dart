@@ -248,7 +248,9 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                                                   title: Text(
                                                     '${results![index]['name']}',
                                                     style: TextStyle(
-                                                        fontSize: mediaQuery.width * 0.41),
+                                                        fontSize:
+                                                            mediaQuery.width *
+                                                                0.41),
                                                   ),
                                                   onTap: () async {
                                                     FocusManager
@@ -311,7 +313,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                                       return ListTile(
                                         title: Text(
                                           '${results![index]['name']}',
-                                          style: const TextStyle(fontSize: 15),
+                                          style: TextStyle(fontSize: mediaQuery.width * 0.041),
                                         ),
                                         onTap: () async {
                                           FocusManager.instance.primaryFocus
