@@ -433,7 +433,13 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                   borderRadius: BorderRadius.circular(40),
                 ),
               ),
-              child: Text('Save', style: Theme.of(context).textTheme.button),
+              child: Text(
+                'Save',
+                style: Theme.of(context)
+                    .textTheme
+                    .button!
+                    .copyWith(fontSize: mediaQuery.width * 0.038),
+              ),
             ),
           ),
         ),

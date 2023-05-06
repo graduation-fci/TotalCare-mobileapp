@@ -45,9 +45,18 @@ class _ShowInteractionsResultsScreenState
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Color(0xFF003745),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         elevation: 0,
         title: Text(
-          appLocalization.drugInteractionsReport,
+          appLocalization.drugInteractionsReport.toUpperCase(),
           style: const TextStyle(color: Colors.black87),
         ),
       ),

@@ -174,7 +174,11 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                   },
                                   child: Text(
                                     appLocalization.add,
-                                    style: Theme.of(context).textTheme.button,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .button!
+                                        .copyWith(
+                                            fontSize: mediaQuery.width * 0.038),
                                   ),
                                 ),
                               ),

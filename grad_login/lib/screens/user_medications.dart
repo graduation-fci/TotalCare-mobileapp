@@ -97,7 +97,10 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
                     ),
                     Text(
                       '${userProfileData['first_name']} ${userProfileData['last_name']}',
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium!
+                          .copyWith(fontSize: mediaQuery.width * 0.055),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 20),
@@ -159,7 +162,10 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
                                         '${userMedications[index]['title']}',
                                         style: Theme.of(context)
                                             .textTheme
-                                            .headlineLarge,
+                                            .headlineLarge!
+                                            .copyWith(
+                                                fontSize:
+                                                    mediaQuery.width * 0.042),
                                       ),
                                       subtitle: Text(
                                         medications[index]!.join(', '),
@@ -233,7 +239,13 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
               borderRadius: BorderRadius.circular(40),
             ),
           ),
-          child: Text('Add profile', style: Theme.of(context).textTheme.button),
+          child: Text(
+            'Add profile',
+            style: Theme.of(context)
+                .textTheme
+                .button!
+                .copyWith(fontSize: mediaQuery.width * 0.038),
+          ),
         ),
       ),
     );

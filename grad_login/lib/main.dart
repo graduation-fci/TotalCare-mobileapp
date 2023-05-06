@@ -99,22 +99,18 @@ class MyApp extends StatelessWidget {
         titleLarge: TextStyle(
           color: Colors.grey.shade800,
           fontWeight: FontWeight.w600,
-          fontSize: 32,
         ),
         titleMedium: TextStyle(
           color: Colors.grey.shade800,
           fontWeight: FontWeight.w600,
-          fontSize: 20,
         ),
         bodySmall: TextStyle(
           color: Colors.grey.shade800,
-          fontSize: 12,
         ),
       ),
       textTheme: const TextTheme(
         button: TextStyle(
           fontFamily: 'NotoSans',
-          fontSize: 14,
           color: Color(0xFF003B4A),
         ),
         headlineLarge: TextStyle(
@@ -128,7 +124,8 @@ class MyApp extends StatelessWidget {
         titleTextStyle: TextStyle(
           color: Color(0xFF003745),
           fontWeight: FontWeight.w600,
-          fontSize: 20,
+          letterSpacing: 1,
+          // fontSize: 16,
         ),
         elevation: 1,
       ),

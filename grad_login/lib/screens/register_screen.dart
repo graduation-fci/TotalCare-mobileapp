@@ -420,7 +420,10 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                           regBtn(authResponse, medicineResponse, context),
                       child: Text(
                         appLocalization.register,
-                        style: Theme.of(context).textTheme.button,
+                        style: Theme.of(context)
+                            .textTheme
+                            .button!
+                            .copyWith(fontSize: mediaQuery.width * 0.038),
                       ),
                     ),
                     if (authResponse.appState == AppState.loading)
@@ -464,7 +467,10 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                             const SizedBox(width: 10),
                             Text(
                               appLocalization.signUpWithGoogle,
-                              style: Theme.of(context).textTheme.button,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .button!
+                                  .copyWith(fontSize: mediaQuery.width * 0.038),
                             ),
                           ],
                         ),
@@ -478,7 +484,10 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       children: [
                         Text(
                           appLocalization.alreadyHaveAnAccount,
-                          style: Theme.of(context).textTheme.button,
+                          style: Theme.of(context)
+                              .textTheme
+                              .button!
+                              .copyWith(fontSize: mediaQuery.width * 0.038),
                         ),
                         TextButton(
                             onPressed: () => {
@@ -501,7 +510,11 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                               ),
                               child: Text(
                                 appLocalization.login,
-                                style: Theme.of(context).textTheme.button,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .button!
+                                    .copyWith(
+                                        fontSize: mediaQuery.width * 0.038),
                               ),
                             ))
                       ],

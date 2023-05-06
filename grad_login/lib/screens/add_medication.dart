@@ -378,7 +378,13 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                   borderRadius: BorderRadius.circular(40),
                 ),
               ),
-              child: Text('Add', style: Theme.of(context).textTheme.button),
+              child: Text(
+                'Add',
+                style: Theme.of(context)
+                    .textTheme
+                    .button!
+                    .copyWith(fontSize: mediaQuery.width * 0.038),
+              ),
             ),
           ),
         ),
