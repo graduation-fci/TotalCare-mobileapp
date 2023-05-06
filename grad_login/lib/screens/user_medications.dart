@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:grad_login/providers/interactionsProvider.dart';
 import 'package:grad_login/screens/show_interactions_results_screen.dart';
+import 'package:grad_login/widgets/error_dialog_box.dart';
 import 'package:provider/provider.dart';
 
 import '../app_state.dart';
@@ -150,8 +151,18 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
                                             .getInteractions(
                                                 interactionMedicines)
                                             .then(
-                                              (_) => Navigator.of(context)
-                                                  .pushNamed(
+                                              (_) => interactionsProvider
+                                                          .appState ==
+                                                      AppState.error
+                                                  ? showAlertDialog(
+                                                      content:
+                                                          interactionsProvider
+                                                              .errorMessage,
+                                                      context: context,
+                                                      confirmButtonText:
+                                                          'Confirm',
+                                                    )
+                                                  : Navigator.of(context).pushNamed(
                                                       ShowInteractionsResultsScreen
                                                           .routeName,
                                                       arguments:

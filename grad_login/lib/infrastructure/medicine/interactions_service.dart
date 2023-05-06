@@ -8,8 +8,9 @@ import '../shared/storage.dart';
 class InteractionsService {
   Storage storage = Storage();
 
-  Future<Map<String, dynamic>> medicineInteraction(
+  Future<dynamic> medicineInteraction(
       List<Map<String, dynamic>> interactionMedicines) async {
+    Map<String, dynamic> responseData = {};
     final interactionsEndpoint = Uri.parse(Config.interactionMain);
     String? token;
     await storage.getToken().then((value) {
@@ -23,7 +24,16 @@ class InteractionsService {
         "Authorization": "JWT $token",
       },
     );
-    final responseData = json.decode(response.body);
+    if (response.statusCode == 500) {
+      responseData['error'] =
+          'You must have 2 medicines or more in your medication profile';
+    } else {
+      responseData = json.decode(response.body);
+      if (responseData.isEmpty) {
+        responseData['error'] =
+            'There is no Interactions between your medicines.';
+      }
+    }
     // log('$responseData');
     return responseData;
   }

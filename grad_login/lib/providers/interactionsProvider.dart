@@ -23,7 +23,7 @@ class InteractionsProvider with ChangeNotifier {
     final responseData =
         await interactionsService.medicineInteraction(interactionMeds);
     if (responseData['permutations'] == null) {
-      errorMessage = responseData['results'];
+      errorMessage = responseData['error'];
       appState = AppState.error;
     } else {
       _response = responseData['permutations'];
