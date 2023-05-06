@@ -145,13 +145,10 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                     onChanged: _filterDataList,
                                     controller: searchController,
                                     decoration: InputDecoration(
-                                      labelText: searchController
-                                              .text.isNotEmpty
-                                          ? ''
-                                          : appLocalization.enterMedicineName,
-                                      labelStyle: const TextStyle(
-                                        color: Colors.grey,
-                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.only(top: -10),
+                                      hintText:
+                                          appLocalization.enterMedicineName,
                                       border: InputBorder.none,
                                     ),
                                   ),
