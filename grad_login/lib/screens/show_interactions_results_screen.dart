@@ -26,6 +26,7 @@ class _ShowInteractionsResultsScreenState
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context).size;
     final interactionsResponse =
         Provider.of<InteractionsProvider>(context, listen: false).response;
     final List<Map<String, dynamic>> medicineList = ModalRoute.of(context)!
@@ -57,7 +58,10 @@ class _ShowInteractionsResultsScreenState
         elevation: 0,
         title: Text(
           appLocalization.drugInteractionsReport.toUpperCase(),
-          style: const TextStyle(color: Colors.black87),
+          style: Theme.of(context)
+              .appBarTheme
+              .titleTextStyle!
+              .copyWith(fontSize: mediaQuery.width * 0.045),
         ),
       ),
       body: LayoutBuilder(
@@ -79,7 +83,7 @@ class _ShowInteractionsResultsScreenState
                   child: Text(
                     '${interactionsResponse.length} ${appLocalization.interactions} found for the following ${uniqueMedicineList.length} drugs: ',
                     style: customTextStyle(
-                      16,
+                      mediaQuery.width * 0.043,
                       weight: FontWeight.w600,
                     ),
                   ),
@@ -129,11 +133,17 @@ class _ShowInteractionsResultsScreenState
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(appLocalization.consumer),
+                        child: Text(
+                          appLocalization.consumer,
+                          style: TextStyle(fontSize: mediaQuery.width * 0.04),
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(appLocalization.professional),
+                        child: Text(
+                          appLocalization.professional,
+                          style: TextStyle(fontSize: mediaQuery.width * 0.04),
+                        ),
                       ),
                     ],
                   ),
@@ -165,7 +175,8 @@ class _ShowInteractionsResultsScreenState
                                 children: [
                                   Text(
                                     namesOfMedicines[k],
-                                    style: customTextStyle(18,
+                                    style: customTextStyle(
+                                        mediaQuery.width * 0.048,
                                         weight: FontWeight.w700),
                                   ),
                                   k == namesOfMedicines.length - 1
@@ -173,7 +184,8 @@ class _ShowInteractionsResultsScreenState
                                       : Center(
                                           child: Text(
                                             '×',
-                                            style: customTextStyle(18,
+                                            style: customTextStyle(
+                                                mediaQuery.width * 0.045,
                                                 weight: FontWeight.w700),
                                           ),
                                         )
@@ -185,7 +197,7 @@ class _ShowInteractionsResultsScreenState
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
                                   color: Colors.red.shade700,
                                   width: 2,
@@ -203,11 +215,13 @@ class _ShowInteractionsResultsScreenState
                               children: [
                                 Text(
                                   'Applies to: ',
-                                  style: customTextStyle(15),
+                                  style:
+                                      customTextStyle(mediaQuery.width * 0.041),
                                 ),
                                 Text(
                                   interactionList[i]['drugs'].join(', '),
-                                  style: customTextStyle(18,
+                                  style: customTextStyle(
+                                      mediaQuery.width * 0.045,
                                       weight: FontWeight.w400),
                                   softWrap: true,
                                 ),
@@ -219,14 +233,14 @@ class _ShowInteractionsResultsScreenState
                                     '${interactionList[i]['professionalEffect']}',
                                     textAlign: TextAlign.justify,
                                     style: customTextStyle(
-                                      16,
+                                      mediaQuery.width * 0.042,
                                     ),
                                   )
                                 : Text(
                                     '${interactionList[i]['consumerEffect']}',
                                     textAlign: TextAlign.justify,
                                     style: customTextStyle(
-                                      16,
+                                      mediaQuery.width * 0.042,
                                     ),
                                   ),
                             const SizedBox(height: 24),
@@ -267,11 +281,11 @@ class _ShowInteractionsResultsScreenState
                               ),
                             ),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Save interactions report',
                             style: TextStyle(
                               color: Colors.blueAccent,
-                              fontSize: 14,
+                              fontSize: mediaQuery.width * 0.038,
                             ),
                           ),
                         ))
