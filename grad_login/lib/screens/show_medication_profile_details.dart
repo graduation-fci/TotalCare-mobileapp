@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:grad_login/providers/interactionsProvider.dart';
-import 'package:grad_login/screens/show_interactions_results_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../app_state.dart';
 import '../widgets/error_dialog_box.dart';
+import '../providers/interactionsProvider.dart';
+import '../screens/show_interactions_results_screen.dart';
+import '../screens/edit_medication.dart';
 
 class ShowMedicationProfile extends StatelessWidget {
   static const String routeName = 'show-medication-profile';
@@ -36,6 +36,23 @@ class ShowMedicationProfile extends StatelessWidget {
                 .titleTextStyle!
                 .copyWith(fontSize: mediaQuery.width * 0.05),
           ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: TextButton(
+                  onPressed: () => Navigator.of(context).pushReplacementNamed(
+                      EditMedicationScreen.routeName,
+                      arguments: medication),
+                  child: Text(
+                    'Edit',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  )),
+            )
+          ],
         ),
         resizeToAvoidBottomInset: false,
         body: LayoutBuilder(
