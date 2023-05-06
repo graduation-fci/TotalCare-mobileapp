@@ -71,7 +71,7 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
-    final userProvider = Provider.of<UserProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
     medication =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
@@ -103,8 +103,10 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
               },
             ),
             title: Text(
-              'EDIT PROFILE',
-              style: Theme.of(context).appBarTheme.titleTextStyle,
+              'Edit profile'.toUpperCase(),
+              style: Theme.of(context).appBarTheme.titleTextStyle!.copyWith(
+                    fontSize: mediaQuery.width * 0.05,
+                  ),
             ),
             actions: const [
               IconButton(onPressed: null, icon: Icon(Icons.save_as_outlined)),
@@ -231,29 +233,25 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                                               final deletedMed =
                                                   medication['medicine'][index];
                                               setState(() {
-                                                // userProvider.delMedication(
-                                                //     medication['medicine']
-                                                //         [index]['id']);
-                                                _med.medicineIds
-                                                    .removeAt(index);
                                                 medication['medicine']
                                                     .removeAt(index);
+                                                medicineIds
+                                                    .remove(deletedMed['id']);
                                               });
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(
                                                 SnackBar(
                                                   content: Text(
-                                                      '${medication['medicine'][index]['name']} dismissed'),
+                                                      '${deletedMed['name']} dismissed'),
                                                   action: SnackBarAction(
                                                     label: 'Undo',
                                                     onPressed: () {
                                                       setState(() {
-                                                        // userProvider
-                                                        //     .addUserMedication(
-                                                        //         _med);
                                                         medication['medicine']
                                                             .insert(index,
                                                                 deletedMed);
+                                                        medicineIds.add(
+                                                            deletedMed['id']);
                                                       });
                                                     },
                                                   ),
@@ -269,8 +267,9 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                                               child: Container(
                                                 padding:
                                                     const EdgeInsets.symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 8),
+                                                  horizontal: 8,
+                                                  vertical: 8,
+                                                ),
                                                 child: ListTile(
                                                   title: Text(
                                                     medication['medicine']
@@ -414,11 +413,13 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
           bottomNavigationBar: Padding(
             padding: const EdgeInsets.only(bottom: 16, left: 10, right: 10),
             child: ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 if (_formKey.currentState!.validate()) {
+                  _med.medicineIds.addAll(medicineIds);
                   _formKey.currentState!.save();
-                  Provider.of<UserProvider>(context, listen: false)
+                  await userProvider
                       .editUserMedication(_med, medication['id'])
+                      .then((_) => userProvider.getUserMedications())
                       .then((_) => Navigator.pop(context));
                 }
               },
