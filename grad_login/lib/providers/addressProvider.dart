@@ -24,6 +24,8 @@ class AddressItem with ChangeNotifier {
 }
 
 class Address with ChangeNotifier {
+  String? errorMSG;
+
   Storage storage = Storage();
   List<AddressItem> _list = [];
 
@@ -60,6 +62,9 @@ class Address with ChangeNotifier {
         _list = loadedCat;
       }
       notifyListeners();
+    }else{
+        errorMSG = 'There is no addresses';
+      
     }
   }
 
@@ -102,7 +107,8 @@ class Address with ChangeNotifier {
       _list.add(newAddress);
       notifyListeners();
     } else {
-      throw Exception('Failed to create address: ${response.statusCode}');
+              errorMSG = 'Failed to add address, Please try again later!';
+
     }
   }
 
@@ -111,38 +117,39 @@ class Address with ChangeNotifier {
   }
 
   Future<void> updateAddress(
-      int id, AddressItem addressItem, String type) async {
-    String? token;
-    await storage.getToken().then((value) {
-      token = value;
-    });
-    final addressIndex = _list.indexWhere((element) => element.id == id);
-    final url = Uri.parse('${Config.addresses}$id/');
-    try {
-      final response = await http.patch(url,
-          headers: {
-            'Authorization': 'JWT $token',
-            'Content-Type': 'application/json',
-          },
-          body: json.encode({
-            'street': addressItem.street,
-            'city': addressItem.city,
-            'description': addressItem.description,
-            'phone': addressItem.phone,
-            'type': type,
-            'title': addressItem.title
-          }));
-      if (response.statusCode == 200) {
-        print('Address updated successfully');
-      } else {
-        print('Failed to update address, status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error updating address: $e');
+    int id, AddressItem addressItem, String type) async {
+  String? token = await storage.getToken();
+  final addressIndex =
+      _list.indexWhere((element) => element.id == id);
+  final url = Uri.parse('${Config.addresses}$id/');
+
+    final response = await http.patch(
+      url,
+      headers: {
+        'Authorization': 'JWT $token',
+        'Content-Type': 'application/json',
+      },
+      body: json.encode({
+        'street': addressItem.street,
+        'city': addressItem.city,
+        'description': addressItem.description,
+        'phone': addressItem.phone,
+        'type': type,
+        'title': addressItem.title
+      }),
+    );
+    print(response.body);
+    if (response.statusCode == 200) {
+    
+  _list[addressIndex] = addressItem;
+    } else {
+            errorMSG = 'Failed to update address, try again later!';
+
     }
-    _list[addressIndex] = addressItem;
-    notifyListeners();
-  }
+
+  notifyListeners();
+}
+
 
   Future<void> deleteAddress(int id) async {
     String? token;
@@ -165,7 +172,8 @@ class Address with ChangeNotifier {
     if (response.statusCode >= 400) {
       _list.insert(addressIndex, existingProduct);
       notifyListeners();
-      throw ('Could not delete product!');
+              errorMSG = 'Failed to delete address, try again later!';
+
     }
 
     existingProduct = null;

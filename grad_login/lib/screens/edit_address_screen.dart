@@ -79,7 +79,7 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppBar(centerTitle: true,
         title: Text('Edit ${_titleController.text}'),
       ),
       body: SingleChildScrollView(
