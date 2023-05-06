@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:grad_login/providers/medicineProvider.dart';
@@ -20,7 +21,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
- int _page = 1;
+
+  final scrollController = ScrollController();
+  int _page = 1;
 
   bool _isLoading = false;
 
@@ -31,6 +34,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Map<String, dynamic>? filteredMeds;
   bool _isVisible = true;
   List<dynamic>? results;
+
+
 
   Future<List<dynamic>?> _filterDataList(String searchValue) async {
     _debounce?.cancel(); // Cancel previous debounce timer
@@ -48,7 +53,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
+scrollController.addListener(_scrollListener);
+_loadCategories();
     _focusNode.addListener(() {
       setState(() {
         _isVisible = _focusNode.hasFocus;
@@ -56,11 +62,11 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     super.initState();
   }
-  void _loadCategories() {
+  Future<void> _loadCategories() async{
     setState(() {
       _isLoading = true;
     });
-    Provider.of<Categories>(context, listen: false).fetchCat(_page).then((_) {
+   await Provider.of<Categories>(context, listen: false).fetchCat(_page).then((_) {
       setState(() {
         _isLoading = false;
       });
@@ -78,6 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
         body: LayoutBuilder(
           builder: (context , constraints ) {  
           return SingleChildScrollView(
+            controller: scrollController,
             child: Padding(
               padding: EdgeInsets.all(mediaquery.height * .03),
               child: Column(
@@ -296,9 +303,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                         CategoryItem(),
-                        SizedBox(
-                          height: mediaquery.height * .10,
-                        ),
+                       _isLoading? const Center(child: CircularProgressIndicator(),): Container(),
                       ],
                     ),
                   )
@@ -309,5 +314,13 @@ class _HomeScreenState extends State<HomeScreen> {
         }),
       ),
     );
+  }
+
+  void _scrollListener(){
+    if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
+      _page++;
+  _loadCategories();
+    }
+    
   }
 }
