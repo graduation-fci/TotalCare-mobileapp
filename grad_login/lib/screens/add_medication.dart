@@ -94,8 +94,11 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
               },
             ),
             title: Text(
-              'Add profile',
-              style: Theme.of(context).appBarTheme.titleTextStyle,
+              'Add profile'.toUpperCase(),
+              style: Theme.of(context)
+                  .appBarTheme
+                  .titleTextStyle!
+                  .copyWith(fontSize: mediaQuery.width * 0.05),
             ),
             actions: [
               IconButton(
@@ -359,7 +362,10 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                   formKey.currentState!.save();
                   await Provider.of<UserProvider>(context, listen: false)
                       .addUserMedication(_med)
-                      .then((value) => Navigator.pop(context));
+                      .then((_) =>
+                          Provider.of<UserProvider>(context, listen: false)
+                              .getUserMedications())
+                      .then((_) => Navigator.pop(context));
                 }
               },
               style: ElevatedButton.styleFrom(
