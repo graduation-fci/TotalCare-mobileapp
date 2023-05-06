@@ -2,14 +2,13 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:grad_login/providers/interactionsProvider.dart';
-import 'package:grad_login/screens/show_interactions_results_screen.dart';
-import 'package:grad_login/widgets/error_dialog_box.dart';
 import 'package:provider/provider.dart';
 
 import '../app_state.dart';
 import '../screens/add_medication.dart';
 import '../screens/edit_medication.dart';
 import '../providers/userProvider.dart';
+import '../screens/show_medication_profile_details.dart';
 
 class UserMedicationsScreen extends StatefulWidget {
   static const routeName = 'user-medications-screen';
@@ -28,8 +27,6 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
     final userProvider = Provider.of<UserProvider>(context);
-    final interactionsProvider =
-        Provider.of<InteractionsProvider>(context, listen: false);
     final userProfileData = userProvider.userProfileData;
     final userMedications = userProvider.userMedications;
 
@@ -124,50 +121,15 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
                               itemBuilder: (context, index) {
-                                List<Map<String, dynamic>>
-                                    interactionMedicines = [];
-
-                                // add medicine objects to the interactionMedicines list
-                                // so that I can use them to get the interactions
-                                if (userMedications != null ||
-                                    userMedications.isNotEmpty) {
-                                  for (int i = 0;
-                                      i <
-                                          userMedications[index]['medicine']
-                                              .length;
-                                      i++) {
-                                    interactionMedicines.add(
-                                        userMedications[index]['medicine'][i]);
-                                  }
-                                }
-
                                 return Card(
                                   elevation: 5,
                                   child: Padding(
                                     padding: const EdgeInsets.all(6),
                                     child: ListTile(
                                       onTap: () async {
-                                        await interactionsProvider
-                                            .getInteractions(
-                                                interactionMedicines)
-                                            .then(
-                                              (_) => interactionsProvider
-                                                          .appState ==
-                                                      AppState.error
-                                                  ? showAlertDialog(
-                                                      content:
-                                                          interactionsProvider
-                                                              .errorMessage,
-                                                      context: context,
-                                                      confirmButtonText:
-                                                          'Confirm',
-                                                    )
-                                                  : Navigator.of(context).pushNamed(
-                                                      ShowInteractionsResultsScreen
-                                                          .routeName,
-                                                      arguments:
-                                                          interactionMedicines),
-                                            );
+                                        Navigator.of(context).pushNamed(
+                                            ShowMedicationProfile.routeName,
+                                            arguments: userMedications[index]);
                                       },
                                       title: Text(
                                         '${userMedications[index]['title']}',
@@ -193,7 +155,7 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
                                           const PopupMenuDivider(),
                                           PopupMenuItem<int>(
                                             textStyle:
-                                                TextStyle(color: Colors.red),
+                                                const TextStyle(color: Colors.red),
                                             height: mediaQuery.height * 0.03,
                                             value: 1,
                                             child: const Text('Delete'),
