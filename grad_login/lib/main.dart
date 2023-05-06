@@ -24,6 +24,7 @@ import 'screens/address_screen.dart';
 import 'screens/drug_detail_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/medicine_screen.dart';
+import 'screens/show_medication_profile_details.dart';
 
 void main() {
   runApp(const MyApp());
@@ -83,6 +84,8 @@ class MyApp extends StatelessWidget {
           AddressDetailScreen.routeName: (context) =>
               const AddressDetailScreen(),
           TabsScreen.routeName: (ctx) => const TabsScreen(),
+          ShowMedicationProfile.routeName: (ctx) =>
+              const ShowMedicationProfile(),
         },
       ),
     );
