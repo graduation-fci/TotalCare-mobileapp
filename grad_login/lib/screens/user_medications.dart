@@ -24,16 +24,6 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
   Map<int, List> medications = {};
 
   @override
-  void initState() {
-    // TODO: implement initState
-    Future.delayed(Duration.zero).then((_) {
-      Provider.of<UserProvider>(context, listen: false).getUserMedications();
-      Provider.of<UserProvider>(context, listen: false).getUserProfile();
-    });
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
     final userProvider = Provider.of<UserProvider>(context);
@@ -66,8 +56,11 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
           },
         ),
         title: Text(
-          'MEDICATION PROFILES',
-          style: Theme.of(context).appBarTheme.titleTextStyle,
+          'Medication Profiles'.toUpperCase(),
+          style: Theme.of(context)
+              .appBarTheme
+              .titleTextStyle!
+              .copyWith(fontSize: mediaQuery.width * 0.05),
         ),
       ),
       resizeToAvoidBottomInset: false,
