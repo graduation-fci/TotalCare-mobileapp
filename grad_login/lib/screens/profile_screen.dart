@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:grad_login/providers/authProvider.dart';
 import 'package:grad_login/screens/address_screen.dart';
+import 'package:grad_login/screens/cart_screen.dart';
 import 'package:grad_login/screens/edit_profile_screen.dart';
 import 'package:grad_login/screens/login_screen.dart';
 import 'package:provider/provider.dart';
@@ -170,7 +171,10 @@ class _ProfilesState extends State<Profiles> {
                 child: ListView(
                   children: <Widget>[
                     buildAccountOption(
-                        context, 'My Orders', Icons.shopping_cart_outlined),
+                        context, 'My Orders', Icons.shopping_cart_outlined,
+                        myFunc: () {
+                      Navigator.of(context).pushNamed(CartScreen.routeName);
+                    }),
                     buildDivider(),
                     buildAccountOption(
                         context, 'Wishlist', Icons.favorite_border_outlined),
@@ -195,7 +199,10 @@ class _ProfilesState extends State<Profiles> {
                     ),
                     buildDivider(),
                     buildAccountOption(
-                        context, 'Payment History', Icons.history_outlined),
+                      context,
+                      'Payment History',
+                      Icons.history_outlined,
+                    ),
                     buildDivider(),
                     buildAccountOption(
                         context, 'Invite Friends', Icons.person_add_outlined),
