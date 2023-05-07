@@ -25,6 +25,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
   final List<Map<String, dynamic>> _medicineList = [];
   final FocusNode _focusNode = FocusNode();
   final formKey = GlobalKey<FormState>();
+  List<int> medicineIds = [];
 
   Map<String, dynamic>? filteredMeds;
   List<dynamic>? results;
@@ -54,17 +55,20 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
       }
       setState(() {});
     });
-    return results != null && results!.isNotEmpty ? results![0] : null;
+    return results;
   }
 
   Future<void> _addSearchedMedicine(String medicineName) async {
-    final newData = await _filterDataList(medicineName);
-
+    List<dynamic> newData =
+        await _filterDataList(medicineName) as List<dynamic>;
+    final med =
+        newData.firstWhere((element) => element['name'] == medicineName);
     // Make each object unique in the new list of interactionMedicines.
-    if (_medicineList.contains(newData)) {
-    } else {
-      _medicineList.add(newData);
+    if (!medicineIds.contains(med['id'])) {
+      medicineIds.add(med['id']);
+      _medicineList.add(med);
     }
+
     log('$_medicineList');
   }
 
@@ -90,8 +94,11 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
               },
             ),
             title: Text(
-              'Add profile',
-              style: Theme.of(context).appBarTheme.titleTextStyle,
+              'Add profile'.toUpperCase(),
+              style: Theme.of(context)
+                  .appBarTheme
+                  .titleTextStyle!
+                  .copyWith(fontSize: mediaQuery.width * 0.05),
             ),
             actions: [
               IconButton(
@@ -121,19 +128,12 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                 child: Column(
                   children: [
                     InputField(
-                      suffixIcon: const IconButton(
-                        icon: Icon(
-                          Icons.title_outlined,
-                          color: Colors.grey,
-                        ),
-                        onPressed: null,
-                      ),
-                      labelText: 'title',
+                      labelText: 'Title',
                       controller: _titleController,
                       keyboardType: TextInputType.name,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'asdasd';
+                          return 'Title cannot be Empty';
                         }
                         return null;
                       },
@@ -148,17 +148,16 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 15),
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey, width: 1),
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       child: TextFormField(
                         focusNode: _focusNode,
                         onChanged: _filterDataList,
                         controller: _searchController,
-                        decoration: InputDecoration(
-                          labelText: _searchController.text.isNotEmpty
-                              ? ''
-                              : 'Enter a medicine name',
-                          labelStyle: const TextStyle(
+                        cursorColor: Colors.grey,
+                        decoration: const InputDecoration(
+                          hintText: 'Enter a medicine name',
+                          labelStyle: TextStyle(
                             color: Colors.grey,
                           ),
                           border: InputBorder.none,
@@ -218,8 +217,8 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                                                               ['id']);
                                                   _medicineList.removeAt(index);
                                                 });
-                                                log('$_medicineList');
-                                                log('${_med.medicineIds}');
+                                                // log('$_medicineList');
+                                                // log('${_med.medicineIds}');
                                               },
                                             ),
                                           );
@@ -248,8 +247,10 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                                                 return ListTile(
                                                   title: Text(
                                                     '${results![index]['name']}',
-                                                    style: const TextStyle(
-                                                        fontSize: 15),
+                                                    style: TextStyle(
+                                                        fontSize:
+                                                            mediaQuery.width *
+                                                                0.41),
                                                   ),
                                                   onTap: () async {
                                                     FocusManager
@@ -267,7 +268,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                                                           results![index]
                                                               ['id']);
                                                     }
-                                                    log('${_med.medicineIds}');
+                                                    // log('${_med.medicineIds}');
                                                     setState(
                                                       () {
                                                         appState =
@@ -312,7 +313,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                                       return ListTile(
                                         title: Text(
                                           '${results![index]['name']}',
-                                          style: const TextStyle(fontSize: 15),
+                                          style: TextStyle(fontSize: mediaQuery.width * 0.041),
                                         ),
                                         onTap: () async {
                                           FocusManager.instance.primaryFocus
@@ -320,10 +321,9 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                                           await _addSearchedMedicine(
                                               results![index]['name']);
 
-                                          // log('${_med.medicines}');
                                           _med.medicineIds
                                               .add(results![index]['id']);
-                                          log('${_med.medicineIds}');
+
                                           setState(
                                             () {
                                               appState = AppState.loading;
@@ -355,7 +355,10 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                   formKey.currentState!.save();
                   await Provider.of<UserProvider>(context, listen: false)
                       .addUserMedication(_med)
-                      .then((value) => Navigator.pop(context));
+                      .then((_) =>
+                          Provider.of<UserProvider>(context, listen: false)
+                              .getUserMedications())
+                      .then((_) => Navigator.pop(context));
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -368,7 +371,13 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                   borderRadius: BorderRadius.circular(40),
                 ),
               ),
-              child: Text('Add', style: Theme.of(context).textTheme.button),
+              child: Text(
+                'Add',
+                style: Theme.of(context)
+                    .textTheme
+                    .button!
+                    .copyWith(fontSize: mediaQuery.width * 0.038),
+              ),
             ),
           ),
         ),

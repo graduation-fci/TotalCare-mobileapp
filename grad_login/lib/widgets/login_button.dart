@@ -69,7 +69,10 @@ class LoginButton extends StatelessWidget {
         },
         child: Text(
           appLocalization.login,
-          style: Theme.of(context).textTheme.button,
+          style: Theme.of(context)
+              .textTheme
+              .button!
+              .copyWith(fontSize: mediaQuery.size.width * 0.038),
         ),
       );
     }

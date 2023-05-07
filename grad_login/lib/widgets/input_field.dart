@@ -51,6 +51,7 @@ class InputField extends StatelessWidget {
         focusNode: focusNode,
         textInputAction: textInputAction,
         decoration: InputDecoration(
+          hintText: labelText,
           prefixIcon: prefixIcon,
           suffixIcon: suffixIcon,
           contentPadding: prefixIcon != null
@@ -63,8 +64,8 @@ class InputField extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(color: Colors.grey),
           ),
-          labelText: labelText,
-          labelStyle: const TextStyle(color: Colors.grey),
+          // labelText: labelText,
+          // labelStyle: const TextStyle(color: Colors.grey),
         ),
       ),
     );

@@ -12,35 +12,36 @@ class _NotificationIconState extends State<NotificationIcon> {
 
   @override
   Widget build(BuildContext context) {
-    final mediaquery = MediaQuery.of(context).size.height;
+    final mediaquery = MediaQuery.of(context).size;
 
     return SizedBox(
-      width: mediaquery * 0.04,
-      height: mediaquery * 0.04,
+      width: mediaquery.width * 0.08,
+      height: mediaquery.height * 0.04,
       child: Stack(
         children: [
           Icon(
             Icons.notifications,
             color: Colors.black,
-            size: mediaquery * 0.04,
+            size: mediaquery.width * 0.09,
           ),
           Container(
-            width: mediaquery * 0.04,
-            height: mediaquery * 0.04,
+            width: mediaquery.width * 0.08,
+            height: mediaquery.height * 0.04,
             alignment: Alignment.topRight,
-            margin: EdgeInsets.only(top: mediaquery * 0.003),
+            margin: EdgeInsets.only(top: mediaquery.height * 0.003),
             child: Container(
-              width: mediaquery * 0.02,
-              height: mediaquery * 0.02,
+              width: mediaquery.width * 0.05,
+              height: mediaquery.height * 0.02,
               decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: const Color(0xffc32c37),
                   border: Border.all(color: Colors.white, width: 1)),
-              child: Center(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(4.5, 0, 0, 2),
                 child: Text(
                   _counter.toString(),
                   style: TextStyle(
-                      fontSize: mediaquery * 0.015, color: Colors.white),
+                      fontSize: mediaquery.width * 0.031, color: Colors.white),
                 ),
               ),
             ),

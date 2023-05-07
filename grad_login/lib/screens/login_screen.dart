@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -12,7 +14,6 @@ import '../providers/medicineProvider.dart';
 import '../providers/authProvider.dart';
 import '../widgets/input_field.dart';
 import '../widgets/login_button.dart';
-
 
 class LoginScreen extends StatefulWidget {
   static const String routeName = '/login';
@@ -39,8 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-    final mainTopPadding =
-        AppBar().preferredSize.height + mediaQuery.size.height * 0.07;
+    final mainTopPadding = mediaQuery.size.height * 0.13;
     final authResponse = Provider.of<AuthProvider>(context);
     final medicineResponse = Provider.of<MedicineProvider>(context);
     final appLocalization = AppLocalizations.of(context)!;
@@ -66,14 +66,20 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: EdgeInsets.all(10),
                     child: Text(
                       'Total Care',
-                      style: Theme.of(context).primaryTextTheme.titleLarge,
+                      style: Theme.of(context)
+                          .primaryTextTheme
+                          .titleLarge!
+                          .copyWith(fontSize: mediaQuery.size.width * 0.095),
                     ),
                   ),
                   Container(
                     padding: const EdgeInsets.all(10),
                     child: Text(
                       appLocalization.signIn,
-                      style: Theme.of(context).primaryTextTheme.titleMedium,
+                      style: Theme.of(context)
+                          .primaryTextTheme
+                          .titleMedium!
+                          .copyWith(fontSize: mediaQuery.size.width * 0.055),
                     ),
                   ),
                   InputField(
@@ -144,7 +150,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           child: Text(
                             appLocalization.forgetPassword,
-                            style: Theme.of(context).primaryTextTheme.bodySmall,
+                            style: Theme.of(context)
+                                .primaryTextTheme
+                                .bodySmall!
+                                .copyWith(
+                                    fontSize: mediaQuery.size.width * 0.033),
                           ),
                         ),
                       ),
@@ -181,7 +191,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           children: [
                             Text(
                               '${appLocalization.dontHaveAnAccount} ',
-                              style: Theme.of(context).textTheme.button,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .button!
+                                  .copyWith(
+                                      fontSize: mediaQuery.size.width * 0.038),
                             ),
                             TextButton(
                               onPressed: () {
@@ -204,7 +218,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 child: Text(
                                   appLocalization.register,
-                                  style: Theme.of(context).textTheme.button,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .button!
+                                      .copyWith(
+                                          fontSize:
+                                              mediaQuery.size.width * 0.038),
                                 ),
                               ),
                             ),
@@ -267,7 +286,10 @@ class SignWithGoogleButton extends StatelessWidget {
             ),
             Text(
               appLocalization.signInWithGoogle,
-              style: Theme.of(context).textTheme.button,
+              style: Theme.of(context)
+                  .textTheme
+                  .button!
+                  .copyWith(fontSize: mediaQuery.size.width * 0.038),
             ),
           ],
         ),

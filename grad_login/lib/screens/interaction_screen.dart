@@ -91,7 +91,6 @@ class _InteractionScreenState extends State<InteractionScreen> {
   Widget build(BuildContext context) {
     final interactionsProvider = Provider.of<InteractionsProvider>(context);
     final appLocalization = AppLocalizations.of(context)!;
-    final userProvider = Provider.of<UserProvider>(context);
     final mediaQuery = MediaQuery.of(context).size;
 
     return SafeArea(
@@ -100,8 +99,10 @@ class _InteractionScreenState extends State<InteractionScreen> {
         child: Scaffold(
           appBar: AppBar(
             title: Text(
-              appLocalization.drugInteractionsChecker,
-              style: Theme.of(context).appBarTheme.titleTextStyle,
+              appLocalization.drugInteractionsChecker.toUpperCase(),
+              style: Theme.of(context).appBarTheme.titleTextStyle!.copyWith(
+                    fontSize: mediaQuery.width * 0.05,
+                  ),
             ),
           ),
           resizeToAvoidBottomInset: false,
@@ -144,13 +145,10 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                     onChanged: _filterDataList,
                                     controller: searchController,
                                     decoration: InputDecoration(
-                                      labelText: searchController
-                                              .text.isNotEmpty
-                                          ? ''
-                                          : appLocalization.enterMedicineName,
-                                      labelStyle: const TextStyle(
-                                        color: Colors.grey,
-                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.only(top: -10),
+                                      hintText:
+                                          appLocalization.enterMedicineName,
                                       border: InputBorder.none,
                                     ),
                                   ),
@@ -173,7 +171,11 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                   },
                                   child: Text(
                                     appLocalization.add,
-                                    style: Theme.of(context).textTheme.button,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .button!
+                                        .copyWith(
+                                            fontSize: mediaQuery.width * 0.038),
                                   ),
                                 ),
                               ),
@@ -427,9 +429,14 @@ class _InteractionScreenState extends State<InteractionScreen> {
                   ),
                   Center(
                     child: ElevatedButton(
-                      onPressed: (() {
-                        Navigator.of(context)
-                            .pushNamed(UserMedicationsScreen.routeName);
+                      onPressed: (() async {
+                        await Provider.of<UserProvider>(context, listen: false)
+                            .getUserMedications()
+                            .then((_) => Provider.of<UserProvider>(context,
+                                    listen: false)
+                                .getUserProfile())
+                            .then((_) => Navigator.of(context)
+                                .pushNamed(UserMedicationsScreen.routeName));
                       }),
                       child: Text(
                         appLocalization.myMedications,

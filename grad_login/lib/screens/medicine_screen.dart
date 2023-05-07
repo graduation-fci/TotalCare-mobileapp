@@ -11,8 +11,7 @@ class MedicinesScreen extends StatelessWidget {
     final args = ModalRoute.of(context)!.settings.arguments as List;
     return SafeArea(
       child: Scaffold(
-        body: LayoutBuilder(
-          builder: (context , constraints ) {  
+        body: LayoutBuilder(builder: (context, constraints) {
           return SingleChildScrollView(
             child: ConstrainedBox(
               constraints: BoxConstraints(minHeight: constraints.maxHeight),
@@ -25,15 +24,14 @@ class MedicinesScreen extends StatelessWidget {
                       child: CustomScrollView(
                         slivers: [
                           SliverAppBar(
-                            title:  Text(
-                                args[1].toString(), //static value
-                                style: TextStyle(
-                                  
-                                  overflow: TextOverflow.ellipsis,
-                                  fontSize: mediaquery.width * 0.04,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            title: Text(
+                              args[1].toString(), //static value
+                              style: TextStyle(
+                                overflow: TextOverflow.ellipsis,
+                                fontSize: mediaquery.width * 0.04,
+                                fontWeight: FontWeight.bold,
                               ),
+                            ),
                             elevation: 0,
                             backgroundColor: Colors.white10,
                             foregroundColor: Colors.black,
@@ -59,10 +57,10 @@ class MedicinesScreen extends StatelessWidget {
                                         mediaquery.height * 0.02),
                                     borderSide: BorderSide.none),
                                 hintText: 'Search',
-                                hintStyle: const TextStyle(
+                                hintStyle: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey,
-                                    fontSize: 18),
+                                    fontSize: mediaquery.width * 0.05),
                                 suffixIcon: Icon(
                                   Icons.search,
                                   color: Colors.grey,
@@ -83,7 +81,7 @@ class MedicinesScreen extends StatelessWidget {
               ),
             ),
           );
-  }),
+        }),
       ),
     );
   }

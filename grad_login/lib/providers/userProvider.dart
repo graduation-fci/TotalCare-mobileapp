@@ -44,7 +44,7 @@ class UserProvider with ChangeNotifier {
     } else {
       appState = AppState.done;
     }
-    log("$responseData");
+    // log("$responseData");
     notifyListeners();
   }
 
@@ -77,13 +77,13 @@ class UserProvider with ChangeNotifier {
             ? null
             : _medicationIds.add(element['id']))
         .toList();
-    log("$_medicationIds");
+    // log("$_medicationIds");
     if (_userMedications.isNotEmpty) {
       _userMedications
           .removeWhere((element) => _medicationIds.contains(element['id']));
     }
     _userMedications.addAll(responseData['results']);
-    log("$userMedications");
+    // log("$_userMedications");
     notifyListeners();
   }
 

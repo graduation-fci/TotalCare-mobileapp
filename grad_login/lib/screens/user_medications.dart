@@ -2,13 +2,13 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:grad_login/providers/interactionsProvider.dart';
-import 'package:grad_login/screens/show_interactions_results_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../app_state.dart';
 import '../screens/add_medication.dart';
 import '../screens/edit_medication.dart';
 import '../providers/userProvider.dart';
+import '../screens/show_medication_profile_details.dart';
 
 class UserMedicationsScreen extends StatefulWidget {
   static const routeName = 'user-medications-screen';
@@ -24,21 +24,9 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
   Map<int, List> medications = {};
 
   @override
-  void initState() {
-    // TODO: implement initState
-    Future.delayed(Duration.zero).then((_) {
-      Provider.of<UserProvider>(context, listen: false).getUserMedications();
-      Provider.of<UserProvider>(context, listen: false).getUserProfile();
-    });
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
     final userProvider = Provider.of<UserProvider>(context);
-    final interactionsProvider =
-        Provider.of<InteractionsProvider>(context, listen: false);
     final userProfileData = userProvider.userProfileData;
     final userMedications = userProvider.userMedications;
 
@@ -56,9 +44,21 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Color(0xFF003745),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         title: Text(
-          'Medication profiles',
-          style: Theme.of(context).appBarTheme.titleTextStyle,
+          'Medication Profiles'.toUpperCase(),
+          style: Theme.of(context)
+              .appBarTheme
+              .titleTextStyle!
+              .copyWith(fontSize: mediaQuery.width * 0.05),
         ),
       ),
       resizeToAvoidBottomInset: false,
@@ -95,7 +95,10 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
                     ),
                     Text(
                       '${userProfileData['first_name']} ${userProfileData['last_name']}',
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium!
+                          .copyWith(fontSize: mediaQuery.width * 0.055),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 20),
@@ -118,94 +121,66 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
                               itemBuilder: (context, index) {
-                                List<Map<String, dynamic>>
-                                    interactionMedicines = [];
-
-                                // add medicine objects to the interactionMedicines list
-                                // so that I can use them to get the interactions
-                                if (userMedications != null ||
-                                    userMedications.isNotEmpty) {
-                                  for (int i = 0;
-                                      i <
-                                          userMedications[index]['medicine']
-                                              .length;
-                                      i++) {
-                                    interactionMedicines.add(
-                                        userMedications[index]['medicine'][i]);
-                                  }
-                                }
-
                                 return Card(
                                   elevation: 5,
                                   child: Padding(
                                     padding: const EdgeInsets.all(6),
                                     child: ListTile(
                                       onTap: () async {
-                                        await interactionsProvider
-                                            .getInteractions(
-                                                interactionMedicines)
-                                            .then(
-                                              (_) => Navigator.of(context)
-                                                  .pushNamed(
-                                                      ShowInteractionsResultsScreen
-                                                          .routeName,
-                                                      arguments:
-                                                          interactionMedicines),
-                                            );
+                                        Navigator.of(context).pushNamed(
+                                            ShowMedicationProfile.routeName,
+                                            arguments: userMedications[index]);
                                       },
                                       title: Text(
                                         '${userMedications[index]['title']}',
                                         style: Theme.of(context)
                                             .textTheme
-                                            .headlineLarge,
+                                            .headlineLarge!
+                                            .copyWith(
+                                                fontSize:
+                                                    mediaQuery.width * 0.042),
                                       ),
                                       subtitle: Text(
                                         medications[index]!.join(', '),
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                       ),
-                                      trailing: SizedBox(
-                                        width: 80,
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: IconButton(
-                                                icon: const Icon(
-                                                  Icons.delete,
-                                                  color: Colors.red,
-                                                ),
-                                                onPressed: () async {
-                                                  await userProvider
-                                                      .delMedication(
-                                                    userMedications[index]
-                                                        ['id'],
-                                                  );
-                                                  setState(() {
-                                                    userMedications
-                                                        .removeAt(index);
-                                                  });
-                                                  log('$userMedications');
-                                                },
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: IconButton(
-                                                icon: const Icon(
-                                                  Icons.edit,
-                                                  color: Colors.blue,
-                                                ),
-                                                onPressed: () =>
-                                                    Navigator.of(context)
-                                                        .pushNamed(
-                                                            EditMedicationScreen
-                                                                .routeName,
-                                                            arguments:
-                                                                userMedications[
-                                                                    index]),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                      trailing: PopupMenuButton<int>(
+                                        itemBuilder: (context) => [
+                                          PopupMenuItem<int>(
+                                            height: mediaQuery.height * 0.03,
+                                            value: 0,
+                                            child: const Text('Edit'),
+                                          ),
+                                          const PopupMenuDivider(),
+                                          PopupMenuItem<int>(
+                                            textStyle:
+                                                const TextStyle(color: Colors.red),
+                                            height: mediaQuery.height * 0.03,
+                                            value: 1,
+                                            child: const Text('Delete'),
+                                          ),
+                                        ],
+                                        onSelected: (value) async {
+                                          switch (value) {
+                                            case 0:
+                                              Navigator.of(context).pushNamed(
+                                                  EditMedicationScreen
+                                                      .routeName,
+                                                  arguments:
+                                                      userMedications[index]);
+                                              break;
+                                            case 1:
+                                              await userProvider.delMedication(
+                                                userMedications[index]['id'],
+                                              );
+                                              setState(() {
+                                                userMedications.removeAt(index);
+                                              });
+                                              log('$userMedications');
+                                              break;
+                                          }
+                                        },
                                       ),
                                     ),
                                   ),
@@ -237,7 +212,13 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
               borderRadius: BorderRadius.circular(40),
             ),
           ),
-          child: Text('Add profile', style: Theme.of(context).textTheme.button),
+          child: Text(
+            'Add profile',
+            style: Theme.of(context)
+                .textTheme
+                .button!
+                .copyWith(fontSize: mediaQuery.width * 0.038),
+          ),
         ),
       ),
     );

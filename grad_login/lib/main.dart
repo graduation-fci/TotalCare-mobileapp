@@ -24,6 +24,7 @@ import 'screens/address_screen.dart';
 import 'screens/drug_detail_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/medicine_screen.dart';
+import 'screens/show_medication_profile_details.dart';
 
 void main() {
   runApp(const MyApp());
@@ -83,6 +84,8 @@ class MyApp extends StatelessWidget {
           AddressDetailScreen.routeName: (context) =>
               const AddressDetailScreen(),
           TabsScreen.routeName: (ctx) => const TabsScreen(),
+          ShowMedicationProfile.routeName: (ctx) =>
+              const ShowMedicationProfile(),
         },
       ),
     );
@@ -99,22 +102,18 @@ class MyApp extends StatelessWidget {
         titleLarge: TextStyle(
           color: Colors.grey.shade800,
           fontWeight: FontWeight.w600,
-          fontSize: 32,
         ),
         titleMedium: TextStyle(
           color: Colors.grey.shade800,
           fontWeight: FontWeight.w600,
-          fontSize: 20,
         ),
         bodySmall: TextStyle(
           color: Colors.grey.shade800,
-          fontSize: 12,
         ),
       ),
       textTheme: const TextTheme(
         button: TextStyle(
           fontFamily: 'NotoSans',
-          fontSize: 14,
           color: Color(0xFF003B4A),
         ),
         headlineLarge: TextStyle(
@@ -128,7 +127,8 @@ class MyApp extends StatelessWidget {
         titleTextStyle: TextStyle(
           color: Color(0xFF003745),
           fontWeight: FontWeight.w600,
-          fontSize: 20,
+          letterSpacing: 1,
+          // fontSize: 16,
         ),
         elevation: 1,
       ),

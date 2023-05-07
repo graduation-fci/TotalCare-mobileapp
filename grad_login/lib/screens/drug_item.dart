@@ -7,7 +7,7 @@ import 'love_button.dart';
 
 class DrugItemScreen extends StatefulWidget {
   final int catID;
-  DrugItemScreen({required this.catID});
+  const DrugItemScreen({super.key, required this.catID});
   @override
   State<DrugItemScreen> createState() => _DrugItemScreenState();
 }
@@ -73,8 +73,8 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
                 Image.network(drugs[index].imgURL,fit: BoxFit.cover,
                 ),
                const Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: const LoveBtn(),
+                  padding: EdgeInsets.all(8.0),
+                  child: LoveBtn(),
                 ),
                 ],
           ),
