@@ -1,35 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 import '../app_state.dart';
+import '../providers/userProvider.dart';
 import '../providers/authProvider.dart';
-import '../providers/medicineProvider.dart';
 import '../screens/tabs_screen.dart';
 import 'error_dialog_box.dart';
 
 class LoginButton extends StatelessWidget {
-  final AuthProvider authResponse;
   final TextEditingController nameController;
   final TextEditingController passwordController;
   final GlobalKey<FormState> formKey;
-  final MedicineProvider examResponse;
   final MediaQueryData mediaQuery;
 
   const LoginButton({
     super.key,
-    required this.authResponse,
     required this.nameController,
     required this.passwordController,
     required this.formKey,
-    required this.examResponse,
     required this.mediaQuery,
   });
 
   @override
   Widget build(BuildContext context) {
     final appLocalization = AppLocalizations.of(context)!;
+    final userProvider = Provider.of<UserProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context);
 
-    if (authResponse.appState != AppState.loading) {
+    if (authProvider.appState != AppState.loading) {
       return ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: Theme.of(context).colorScheme.primary,
@@ -43,27 +42,32 @@ class LoginButton extends StatelessWidget {
         ),
         onPressed: () async {
           if (formKey.currentState!.validate()) {
-            await authResponse
+            await authProvider
                 .login(
                     username: nameController.text,
                     password: passwordController.text)
                 .then((_) {
-              if (authResponse.appState == AppState.error) {
-                showAlertDialog(
-                  context: context,
-                  content: authResponse.errorMessage!,
-                  confirmButtonText: 'Dismiss',
-                );
-              }
-            }).then((_) => {
-                      if (authResponse.appState == AppState.done)
+                  if (authProvider.appState == AppState.error) {
+                    showAlertDialog(
+                      context: context,
+                      content: authProvider.errorMessage!,
+                      confirmButtonText: 'Dismiss',
+                    );
+                    return;
+                  }
+                })
+                .then((_) => {
+                      if (authProvider.appState == AppState.done)
                         {
-                          examResponse.getMedicines(),
-                          Navigator.of(context).pushReplacementNamed(
-                              TabsScreen.routeName,
-                              arguments: nameController.text),
+                          userProvider.getUserProfile(),
+                          userProvider.getUserMedications(),
                         }
-                    });
+                    })
+                .then(
+                  (_) => Navigator.of(context).pushReplacementNamed(
+                      TabsScreen.routeName,
+                      arguments: nameController.text),
+                );
           }
           FocusManager.instance.primaryFocus?.unfocus();
         },
