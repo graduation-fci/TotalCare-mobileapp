@@ -38,14 +38,19 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
     final responseData = await authService.register(user);
     switch (responseData!.keys.first) {
+      case 'email':
+        errorMessage = responseData['email'][0];
+        // log(responseData['email'][0]);
+        appState = AppState.error;
+        break;
       case 'username':
         errorMessage = responseData['username'][0];
-        log(responseData['username'][0]);
+        // log(responseData['username'][0]);
         appState = AppState.error;
         break;
       case 'password':
         errorMessage = responseData['password'][0];
-        log(responseData['password'][0]);
+        // log(responseData['password'][0]);
         appState = AppState.error;
         break;
       default:
@@ -60,6 +65,4 @@ class AuthProvider with ChangeNotifier {
   Future<void> logout() {
     return authService.logout();
   }
-
-  
 }
