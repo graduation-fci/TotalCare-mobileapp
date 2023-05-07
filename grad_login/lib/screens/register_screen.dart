@@ -5,7 +5,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:grad_login/widgets/error_dialog_box.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:country_picker/country_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -44,7 +43,6 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController userNameController = TextEditingController();
-  final TextEditingController countryController = TextEditingController();
   final TextEditingController mobileController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController rePasswordController = TextEditingController();
@@ -53,7 +51,6 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
   FocusNode firstNameFocus = FocusNode();
   FocusNode lastNameFocus = FocusNode();
   FocusNode userNameFocus = FocusNode();
-  FocusNode countryFocus = FocusNode();
   FocusNode phoneFocus = FocusNode();
   FocusNode passwordFocus = FocusNode();
   FocusNode rePasswordFocus = FocusNode();
@@ -68,13 +65,8 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
 
   bool passwordVisible = true;
   bool rePasswordVisible = true;
-  String? _selectedItem;
 
   final formKey = GlobalKey<FormState>();
-  // final Map<String, String> _dropDownItems = {
-  //   'PAT': 'Patient',
-  //   'DOC': 'Doctor'
-  // };
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +74,6 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
     final appLocalization = AppLocalizations.of(context)!;
     final authResponse = Provider.of<AuthProvider>(context);
     final medicineResponse = Provider.of<MedicineProvider>(context);
-    String countryName = appLocalization.countryName;
 
     return Scaffold(
       body: SafeArea(
@@ -128,7 +119,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         _userData.username = value!;
                       },
                       focusNode: userNameFocus,
-                      nextFocusNode: countryFocus,
+                      nextFocusNode: firstNameFocus,
                       textInputAction: TextInputAction.next,
                       obsecureText: false,
                     ),
@@ -179,7 +170,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         _userData.last_name = value!;
                       },
                       focusNode: lastNameFocus,
-                      nextFocusNode: userNameFocus,
+                      nextFocusNode: emailFocus,
                       textInputAction: TextInputAction.next,
                       obsecureText: false,
                     ),
@@ -206,78 +197,14 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         _userData.email = value!;
                       },
                       focusNode: emailFocus,
-                      nextFocusNode: firstNameFocus,
+                      nextFocusNode: passwordFocus,
                       textInputAction: TextInputAction.next,
                       obsecureText: false,
                     ),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
-                    // Container(
-                    //   margin: const EdgeInsets.all(10),
-                    //   width: mediaQuery.width,
-                    //   decoration: BoxDecoration(
-                    //     border: Border.all(
-                    //       color: Colors.grey,
-                    //       width: 1,
-                    //     ),
-                    //     borderRadius: BorderRadius.circular(12),
-                    //   ),
-                    //   child: Row(
-                    //     children: [
-                    //       IconButton(
-                    //         focusNode: countryFocus,
-                    //         onPressed: () => showCountryPicker(
-                    //           context: context,
-                    //           showPhoneCode: true,
-                    //           onSelect: (Country country) {
-                    //             country.flagEmoji;
-                    //             countryController.text =
-                    //                 '+${country.phoneCode}';
-                    //             countryName =
-                    //                 '${country.flagEmoji}  ${country.name}';
-                    //             setState(() {});
-                    //           },
-                    //         ),
-                    //         icon: const Icon(
-                    //           Icons.arrow_drop_down,
-                    //           color: Colors.grey,
-                    //         ),
-                    //       ),
-                    //       countryController.text.isEmpty
-                    //           ? const Text('---')
-                    //           : TextFormField(
-                    //               controller: countryController,
-                    //               decoration: const InputDecoration(
-                    //                 // contentPadding: EdgeInsets.only(left: 18),
-                    //                 border: InputBorder.none,
-                    //               ),
-                    //               enabled: false,
-                    //             ),
-                    //       Expanded(
-                    //         child: TextFormField(
-                    //           controller: mobileController,
-                    //           focusNode: phoneFocus,
-                    //           onEditingComplete: () {
-                    //             if (passwordFocus != null) {
-                    //               FocusScope.of(context)
-                    //                   .requestFocus(passwordFocus);
-                    //             }
-                    //           },
-                    //           textInputAction: TextInputAction.next,
-                    //           keyboardType: TextInputType.phone,
-                    //           decoration: InputDecoration(
-                    //             contentPadding:
-                    //                 const EdgeInsets.fromLTRB(20, 5, 5, 5),
-                    //             labelText: appLocalization.phoneNumber,
-                    //             labelStyle: const TextStyle(color: Colors.grey),
-                    //             border: InputBorder.none,
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
+                    
                     InputField(
                       labelText: appLocalization.password,
                       controller: passwordController,
@@ -368,42 +295,6 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
-
-                    // select profile type
-
-                    // Container(
-                    //   padding: const EdgeInsets.symmetric(
-                    //     horizontal: 18,
-                    //     // vertical: 12,
-                    //   ),
-                    //   decoration: BoxDecoration(
-                    //     border: Border.all(color: Colors.grey, width: 1),
-                    //     borderRadius: BorderRadius.circular(40),
-                    //   ),
-                    //   child: DropdownButtonFormField<String>(
-                    //     decoration: const InputDecoration(
-                    //       border: InputBorder.none,
-                    //     ),
-                    //     onSaved: ((value) => _userData.profileType = value!),
-                    //     hint: const Text(
-                    //       'Select ...',
-                    //       style: TextStyle(fontSize: 14),
-                    //     ),
-                    //     value: _selectedItem,
-                    //     items: _dropDownItems.entries
-                    //         .map<DropdownMenuItem<String>>((value) {
-                    //       return DropdownMenuItem(
-                    //         value: value.key,
-                    //         child: Text(value.value),
-                    //       );
-                    //     }).toList(),
-                    //     onChanged: (newValue) {
-                    //       setState(() {
-                    //         _selectedItem = newValue;
-                    //       });
-                    //     },
-                    //   ),
-                    // ),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(

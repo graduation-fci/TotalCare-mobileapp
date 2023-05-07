@@ -32,18 +32,32 @@ class _AddressScreenState extends State<AddressScreen> {
   Widget build(BuildContext context) {
     final addresses = Provider.of<Address>(context).items;
     final String? errorMSG = Provider.of<Address>(context).errorMSG;
+    final mediaQuery = MediaQuery.of(context).size;
 
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: const Text('Addresses'),
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: Text(
+            'Addresses',
+            style: Theme.of(context)
+                .appBarTheme
+                .titleTextStyle!
+                .copyWith(fontSize: mediaQuery.width * 0.06),
+          ),
         ),
         body: _isLoading
             ? const Center(
                 child: CircularProgressIndicator(),
               )
-            :  Padding(
+            : Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                 child: ListView.builder(
@@ -191,7 +205,8 @@ class _AddressScreenState extends State<AddressScreen> {
                     );
                   },
                   itemCount: addresses.length,
-                )),
+                ),
+              ),
         floatingActionButton: Padding(
           padding: const EdgeInsets.only(left: 28),
           child: SizedBox(
@@ -204,7 +219,7 @@ class _AddressScreenState extends State<AddressScreen> {
               },
               label: const Text(
                 'Add new address',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
             ),
           ),

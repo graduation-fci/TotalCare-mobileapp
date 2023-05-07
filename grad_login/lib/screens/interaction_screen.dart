@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:grad_login/providers/userProvider.dart';
-import 'package:grad_login/screens/user_medications.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
@@ -280,10 +278,9 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                                               Navigator.of(
                                                                       context)
                                                                   .pushNamed(
-                                                                      ShowInteractionsResultsScreen
-                                                                          .routeName,
-                                                                      arguments:
-                                                                          _interactionMedicines),
+                                                                ShowInteractionsResultsScreen
+                                                                    .routeName,
+                                                              ),
                                                             });
                                                   },
                                                   child: Text(
@@ -425,22 +422,6 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                 ],
                               ),
                       ],
-                    ),
-                  ),
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: (() async {
-                        await Provider.of<UserProvider>(context, listen: false)
-                            .getUserMedications()
-                            .then((_) => Provider.of<UserProvider>(context,
-                                    listen: false)
-                                .getUserProfile())
-                            .then((_) => Navigator.of(context)
-                                .pushNamed(UserMedicationsScreen.routeName));
-                      }),
-                      child: Text(
-                        appLocalization.myMedications,
-                      ),
                     ),
                   ),
                 ],

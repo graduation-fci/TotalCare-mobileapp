@@ -26,9 +26,9 @@ class UserProvider with ChangeNotifier {
       errorMessage = responseData['detail'];
       appState = AppState.error;
     } else {
+      userProfileData = responseData;
       appState = AppState.done;
     }
-    userProfileData = responseData;
     // log("$userProfileData");
     notifyListeners();
   }
@@ -70,20 +70,18 @@ class UserProvider with ChangeNotifier {
       errorMessage = responseData['detail'];
       appState = AppState.error;
     } else {
+      responseData['results']
+          .map((element) => _medicationIds.contains(element['id'])
+              ? null
+              : _medicationIds.add(element['id']))
+          .toList();
+      if (_userMedications.isNotEmpty) {
+        _userMedications
+            .removeWhere((element) => _medicationIds.contains(element['id']));
+      }
+      _userMedications.addAll(responseData['results']);
       appState = AppState.done;
     }
-    responseData['results']
-        .map((element) => _medicationIds.contains(element['id'])
-            ? null
-            : _medicationIds.add(element['id']))
-        .toList();
-    // log("$_medicationIds");
-    if (_userMedications.isNotEmpty) {
-      _userMedications
-          .removeWhere((element) => _medicationIds.contains(element['id']));
-    }
-    _userMedications.addAll(responseData['results']);
-    // log("$_userMedications");
     notifyListeners();
   }
 

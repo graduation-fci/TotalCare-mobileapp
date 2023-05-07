@@ -22,9 +22,9 @@ class _ShowInteractionsResultsScreenState
     extends State<ShowInteractionsResultsScreen> {
   final List<Map<String, String>> medicines = [];
 
+  List<String> uniqueDrugsList = [];
   List<bool> _selections = [true, false];
   bool isProfessional = false;
-  int numOfDrugs = 0;
   String? errorMsg;
 
   @override
@@ -32,25 +32,26 @@ class _ShowInteractionsResultsScreenState
     final mediaQuery = MediaQuery.of(context).size;
     final interactionsProvider =
         Provider.of<InteractionsProvider>(context, listen: false);
-    dynamic interactionsResponse = interactionsProvider.response;
-    final List<Map<String, dynamic>> medicineList = ModalRoute.of(context)!
-        .settings
-        .arguments as List<Map<String, dynamic>>;
     final appLocalization = AppLocalizations.of(context)!;
-    List<String> uniqueMedicineList = [];
+    List<dynamic> interactionsResponse = interactionsProvider.response;
 
-    for (int i = 0; i < medicineList.length; i++) {
-      for (int j = 0; j < medicineList[i]['drug'].length; j++) {
-        if (!uniqueMedicineList.contains(medicineList[i]['drug'][j]['name'])) {
-          uniqueMedicineList.add(medicineList[i]['drug'][j]['name']);
-          numOfDrugs++;
+    for (int i = 0; i < interactionsResponse.length; i++) {
+      for (int j = 0; j < interactionsResponse[i]['interactions'].length; j++) {
+        for (int k = 0;
+            k < interactionsResponse[i]['interactions'][j]['drugs'].length;
+            k++) {
+          if (!uniqueDrugsList.contains(
+              interactionsResponse[i]['interactions'][j]['drugs'][k])) {
+            uniqueDrugsList
+                .add(interactionsResponse[i]['interactions'][j]['drugs'][k]);
+          }
         }
       }
     }
-
     if (interactionsProvider.appState == AppState.error) {
       errorMsg = interactionsProvider.errorMessage;
       interactionsResponse = [];
+      uniqueDrugsList = [];
     }
 
     return Scaffold(
@@ -90,7 +91,7 @@ class _ShowInteractionsResultsScreenState
                     right: 12,
                   ),
                   child: Text(
-                    '${interactionsResponse.length} ${appLocalization.interactions} found for the following ${uniqueMedicineList.length} drugs: ',
+                    '${interactionsResponse.length} ${appLocalization.interactions} found for the following ${uniqueDrugsList.length} drugs: ',
                     style: customTextStyle(
                       mediaQuery.width * 0.043,
                       weight: FontWeight.w600,
@@ -114,10 +115,10 @@ class _ShowInteractionsResultsScreenState
                           ),
                         ),
                       ),
-                      title: Text(uniqueMedicineList[drugIndex]),
+                      title: Text(uniqueDrugsList[drugIndex]),
                     );
                   },
-                  itemCount: uniqueMedicineList.length,
+                  itemCount: uniqueDrugsList.length,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 30, left: 21, bottom: 21),
