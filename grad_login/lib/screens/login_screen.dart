@@ -3,14 +3,13 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:grad_login/providers/userProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'register_screen.dart';
-import 'home_screen.dart';
 
 import '../app_state.dart';
-import '../providers/medicineProvider.dart';
 import '../providers/authProvider.dart';
 import '../widgets/input_field.dart';
 import '../widgets/login_button.dart';
@@ -41,8 +40,8 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final mainTopPadding = mediaQuery.size.height * 0.13;
-    final authResponse = Provider.of<AuthProvider>(context);
-    final medicineResponse = Provider.of<MedicineProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
     final appLocalization = AppLocalizations.of(context)!;
     final GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
 
@@ -161,14 +160,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                   LoginButton(
-                    authResponse: authResponse,
                     nameController: nameController,
                     passwordController: passwordController,
                     formKey: _formKey,
-                    examResponse: medicineResponse,
                     mediaQuery: mediaQuery,
                   ),
-                  if (authResponse.appState == AppState.loading)
+                  if (authProvider.appState == AppState.loading ||
+                      userProvider.appState == AppState.loading)
                     CircularProgressIndicator.adaptive(),
                   Column(
                     children: [

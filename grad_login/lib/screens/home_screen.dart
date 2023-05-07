@@ -88,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
               controller: scrollController,
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                  vertical: mediaquery.height * .03,
+                  vertical: mediaquery.height * .015,
                   horizontal: mediaquery.width * 0.05,
                 ),
                 child: Column(
