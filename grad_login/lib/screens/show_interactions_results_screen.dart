@@ -1,8 +1,10 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:grad_login/app_state.dart';
 import 'package:grad_login/models/simple_medicine.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:grad_login/screens/interaction_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'package:grad_login/providers/interactionsProvider.dart';
@@ -18,17 +20,19 @@ class ShowInteractionsResultsScreen extends StatefulWidget {
 
 class _ShowInteractionsResultsScreenState
     extends State<ShowInteractionsResultsScreen> {
-  List<bool> _selections = [true, false];
-
   final List<Map<String, String>> medicines = [];
+
+  List<bool> _selections = [true, false];
   bool isProfessional = false;
   int numOfDrugs = 0;
+  String? errorMsg;
 
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
-    final interactionsResponse =
-        Provider.of<InteractionsProvider>(context, listen: false).response;
+    final interactionsProvider =
+        Provider.of<InteractionsProvider>(context, listen: false);
+    dynamic interactionsResponse = interactionsProvider.response;
     final List<Map<String, dynamic>> medicineList = ModalRoute.of(context)!
         .settings
         .arguments as List<Map<String, dynamic>>;
@@ -42,6 +46,11 @@ class _ShowInteractionsResultsScreenState
           numOfDrugs++;
         }
       }
+    }
+
+    if (interactionsProvider.appState == AppState.error) {
+      errorMsg = interactionsProvider.errorMessage;
+      interactionsResponse = [];
     }
 
     return Scaffold(
@@ -118,18 +127,7 @@ class _ShowInteractionsResultsScreenState
                     fillColor: const Color.fromARGB(255, 2, 17, 29),
                     borderWidth: 0,
                     isSelected: _selections,
-                    onPressed: (index) => {
-                      setState(() {
-                        _selections =
-                            _selections.map((value) => false).toList();
-                        _selections[index] = true;
-                        if (_selections[0]) {
-                          isProfessional = false;
-                        } else if (_selections[1]) {
-                          isProfessional = true;
-                        }
-                      })
-                    },
+                    onPressed: toggleBtnsFunction,
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -148,114 +146,128 @@ class _ShowInteractionsResultsScreenState
                     ],
                   ),
                 ),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: interactionsResponse.length,
-                  itemBuilder: (context, index) {
-                    final List interactionList =
-                        interactionsResponse[index]['interactions'];
-                    final List medicinesOfInteraction =
-                        interactionsResponse[index]['medecines'];
-                    final List namesOfMedicines = [];
+                errorMsg != null
+                    ? Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                        ),
+                        child: Text(
+                          errorMsg!,
+                          style: TextStyle(fontSize: mediaQuery.width * 0.05),
+                        ))
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: interactionsResponse.length,
+                        itemBuilder: (context, index) {
+                          final List interactionList =
+                              interactionsResponse[index]['interactions'];
+                          final List medicinesOfInteraction =
+                              interactionsResponse[index]['medecines'];
+                          final List namesOfMedicines = [];
 
-                    for (int k = 0; k < medicinesOfInteraction.length; k++) {
-                      namesOfMedicines.add(medicinesOfInteraction[k]['nameEn']);
-                    }
+                          for (int k = 0;
+                              k < medicinesOfInteraction.length;
+                              k++) {
+                            namesOfMedicines
+                                .add(medicinesOfInteraction[k]['nameEn']);
+                          }
 
-                    for (int i = 0; i < interactionList.length; i++) {
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                            left: 21, bottom: 21, right: 21),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            for (int k = 0; k < namesOfMedicines.length; k++)
-                              Column(
+                          for (int i = 0; i < interactionList.length; i++) {
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 21, bottom: 21, right: 21),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    namesOfMedicines[k],
-                                    style: customTextStyle(
-                                        mediaQuery.width * 0.048,
-                                        weight: FontWeight.w700),
+                                  for (int k = 0;
+                                      k < namesOfMedicines.length;
+                                      k++)
+                                    Column(
+                                      children: [
+                                        Text(
+                                          namesOfMedicines[k],
+                                          style: customTextStyle(
+                                              mediaQuery.width * 0.048,
+                                              weight: FontWeight.w700),
+                                        ),
+                                        k == namesOfMedicines.length - 1
+                                            ? Container()
+                                            : Center(
+                                                child: Text(
+                                                  '×',
+                                                  style: customTextStyle(
+                                                      mediaQuery.width * 0.045,
+                                                      weight: FontWeight.w700),
+                                                ),
+                                              )
+                                      ],
+                                    ),
+                                  const SizedBox(
+                                    height: 8,
                                   ),
-                                  k == namesOfMedicines.length - 1
-                                      ? Container()
-                                      : Center(
-                                          child: Text(
-                                            '×',
-                                            style: customTextStyle(
-                                                mediaQuery.width * 0.045,
-                                                weight: FontWeight.w700),
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: Colors.red.shade700,
+                                        width: 2,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      '${interactionList[i]['severity']}',
+                                      style: const TextStyle(
+                                        color: Color.fromARGB(255, 64, 26, 23),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Wrap(
+                                    children: [
+                                      Text(
+                                        'Applies to: ',
+                                        style: customTextStyle(
+                                            mediaQuery.width * 0.041),
+                                      ),
+                                      Text(
+                                        interactionList[i]['drugs'].join(', '),
+                                        style: customTextStyle(
+                                            mediaQuery.width * 0.045,
+                                            weight: FontWeight.w400),
+                                        softWrap: true,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  isProfessional
+                                      ? Text(
+                                          '${interactionList[i]['professionalEffect']}',
+                                          textAlign: TextAlign.justify,
+                                          style: customTextStyle(
+                                            mediaQuery.width * 0.042,
                                           ),
                                         )
+                                      : Text(
+                                          '${interactionList[i]['consumerEffect']}',
+                                          textAlign: TextAlign.justify,
+                                          style: customTextStyle(
+                                            mediaQuery.width * 0.042,
+                                          ),
+                                        ),
+                                  const SizedBox(height: 24),
+                                  const Divider(
+                                    thickness: 1,
+                                    color: Colors.black87,
+                                  ),
                                 ],
                               ),
-                            const SizedBox(
-                              height: 8,
-                            ),
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: Colors.red.shade700,
-                                  width: 2,
-                                ),
-                              ),
-                              child: Text(
-                                '${interactionList[i]['severity']}',
-                                style: const TextStyle(
-                                  color: Color.fromARGB(255, 64, 26, 23),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            Wrap(
-                              children: [
-                                Text(
-                                  'Applies to: ',
-                                  style:
-                                      customTextStyle(mediaQuery.width * 0.041),
-                                ),
-                                Text(
-                                  interactionList[i]['drugs'].join(', '),
-                                  style: customTextStyle(
-                                      mediaQuery.width * 0.045,
-                                      weight: FontWeight.w400),
-                                  softWrap: true,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                            isProfessional
-                                ? Text(
-                                    '${interactionList[i]['professionalEffect']}',
-                                    textAlign: TextAlign.justify,
-                                    style: customTextStyle(
-                                      mediaQuery.width * 0.042,
-                                    ),
-                                  )
-                                : Text(
-                                    '${interactionList[i]['consumerEffect']}',
-                                    textAlign: TextAlign.justify,
-                                    style: customTextStyle(
-                                      mediaQuery.width * 0.042,
-                                    ),
-                                  ),
-                            const SizedBox(height: 24),
-                            const Divider(
-                              thickness: 1,
-                              color: Colors.black87,
-                            ),
-                          ],
-                        ),
-                      );
-                    }
+                            );
+                          }
 
-                    return Container();
-                  },
-                ),
+                          return Container();
+                        },
+                      ),
                 Row(
                   children: [
                     Container(
@@ -298,6 +310,18 @@ class _ShowInteractionsResultsScreenState
       }),
     );
   }
+
+  void toggleBtnsFunction(index) => {
+        setState(() {
+          _selections = _selections.map((value) => false).toList();
+          _selections[index] = true;
+          if (_selections[0]) {
+            isProfessional = false;
+          } else if (_selections[1]) {
+            isProfessional = true;
+          }
+        })
+      };
 }
 
 TextStyle customTextStyle(double fontSize, {FontWeight? weight}) {

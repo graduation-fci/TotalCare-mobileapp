@@ -22,11 +22,12 @@ class ShowMedicationProfile extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: const Icon(
-                Icons.arrow_back,
-                color: Colors.black,
-              )),
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Colors.black,
+            ),
+          ),
           backgroundColor: Colors.transparent,
           elevation: 0,
           title: Text(
@@ -40,17 +41,18 @@ class ShowMedicationProfile extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: TextButton(
-                  onPressed: () => Navigator.of(context).pushReplacementNamed(
-                      EditMedicationScreen.routeName,
-                      arguments: medication),
-                  child: Text(
-                    'Edit',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                  )),
+                onPressed: () => Navigator.of(context).pushReplacementNamed(
+                    EditMedicationScreen.routeName,
+                    arguments: medication),
+                child: Text(
+                  'Edit',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
             )
           ],
         ),
@@ -131,15 +133,9 @@ class ShowMedicationProfile extends StatelessWidget {
                 await interactionsProvider
                     .getInteractions(interactionMedicines)
                     .then(
-                      (_) => interactionsProvider.appState == AppState.error
-                          ? showAlertDialog(
-                              content: interactionsProvider.errorMessage,
-                              context: context,
-                              confirmButtonText: 'Confirm',
-                            )
-                          : Navigator.of(context).pushNamed(
-                              ShowInteractionsResultsScreen.routeName,
-                              arguments: interactionMedicines),
+                      (_) => Navigator.of(context).pushNamed(
+                          ShowInteractionsResultsScreen.routeName,
+                          arguments: interactionMedicines),
                     );
               },
               style: ElevatedButton.styleFrom(
