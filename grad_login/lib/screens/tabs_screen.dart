@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:grad_login/providers/authProvider.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:provider/provider.dart';
 
+import 'profile_screen.dart';
 import 'home_screen.dart';
 import 'interaction_screen.dart';
-import 'login_screen.dart';
 
 class TabsScreen extends StatefulWidget {
   static const String routeName = 'tabs-screen';
@@ -36,14 +35,13 @@ class _TabsScreenState extends State<TabsScreen> {
       },
       {
         'page': null,
-        'title': 'Doctors',
-      },
-      {
-        'page': null,
         'title': 'Cart',
       },
+      {
+        'page': const Profiles(),
+        'title': 'Settings',
+      },
     ];
-    // TODO: implement initState
     super.initState();
   }
 
@@ -59,29 +57,17 @@ class _TabsScreenState extends State<TabsScreen> {
   Widget build(BuildContext context) {
     final appLocalization = AppLocalizations.of(context)!;
     final mediaQuery = MediaQuery.of(context).size;
-    final settings = ModalRoute.of(context)!.settings.arguments;
-    final authProvider = Provider.of<AuthProvider>(context);
-    return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(
-      //     _pages[_selectedPageIndex]['title'],
-      //     style: const TextStyle(
-      //       fontFamily: 'Anton-Regular',
-      //     ),
-      //   ),
-      //   backgroundColor: Theme.of(context).primaryColor,
-      // ),
-      // drawer: MainDrawer(),
-      body: _pages[_selectedPageIndex]['page'],
 
+    return Scaffold(
+      body: _pages[_selectedPageIndex]['page'],
       bottomNavigationBar: SizedBox(
         height: mediaQuery.height * 0.083,
         child: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           onTap: _selectPage,
           backgroundColor: const Color.fromARGB(255, 235, 233, 236),
-          selectedFontSize: 12,
-          unselectedFontSize: 12,
+          selectedFontSize: mediaQuery.width * 0.035,
+          unselectedFontSize: mediaQuery.width * 0.035,
           selectedLabelStyle: const TextStyle(
             fontFamily: 'Roboto-Medium',
             fontWeight: FontWeight.w600,
@@ -105,12 +91,12 @@ class _TabsScreenState extends State<TabsScreen> {
                       height: mediaQuery.height * 0.04,
                       child: const Icon(
                         Icons.home_outlined,
-                        size: 28,
+                        size: 26,
                       ),
                     )
                   : const Icon(
                       Icons.home_outlined,
-                      size: 28,
+                      size: 26,
                     ),
               label: appLocalization.home,
             ),
@@ -123,14 +109,15 @@ class _TabsScreenState extends State<TabsScreen> {
                       ),
                       width: mediaQuery.width * 0.18,
                       height: mediaQuery.height * 0.04,
-                      child: const Icon(
-                        MdiIcons.triangleOutline,
-                        size: 22,
+                      child: SvgPicture.asset(
+                        'assets/icons/pills-interaction.svg',
                       ),
                     )
-                  : const Icon(
-                      MdiIcons.triangleOutline,
-                      size: 22,
+                  : SvgPicture.asset(
+                      'assets/icons/pills-interaction.svg',
+                      width: 26,
+                      height: 26,
+                      color: const Color(0xFF615F63),
                     ),
               label: appLocalization.interactions,
             ),
@@ -143,22 +130,19 @@ class _TabsScreenState extends State<TabsScreen> {
                       ),
                       width: mediaQuery.width * 0.18,
                       height: mediaQuery.height * 0.04,
-                      child: FractionallySizedBox(
-                        heightFactor: 0.75,
-                        widthFactor: 0.4,
-                        child: Image.asset(
-                          'assets/images/stethoscope-96.png',
-                          // color: const Color(0xFF615F63),
-                        ),
+                      child: const Icon(
+                        MdiIcons.cartOutline,
+                        size: 26,
                       ),
                     )
-                  : Image.asset(
-                      'assets/images/stethoscope-96.png',
-                      height: 24,
-                      width: 24,
-                      color: const Color(0xFF615F63),
+                  : Container(
+                      margin: const EdgeInsets.only(bottom: 3),
+                      child: const Icon(
+                        MdiIcons.cartOutline,
+                        size: 26,
+                      ),
                     ),
-              label: appLocalization.doctor,
+              label: appLocalization.cart,
             ),
             BottomNavigationBarItem(
               icon: _selectedPageIndex == 3
@@ -169,19 +153,22 @@ class _TabsScreenState extends State<TabsScreen> {
                       ),
                       width: mediaQuery.width * 0.18,
                       height: mediaQuery.height * 0.04,
-                      child: const Icon(
-                        MdiIcons.cartOutline,
-                        size: 28,
+                      child: SvgPicture.asset(
+                        'assets/icons/menu-hamburger.svg',
+                        width: 26,
+                        height: 26,
                       ),
                     )
                   : Container(
                       margin: const EdgeInsets.only(bottom: 3),
-                      child: const Icon(
-                        MdiIcons.cartOutline,
-                        size: 28,
+                      child: SvgPicture.asset(
+                        'assets/icons/menu-hamburger.svg',
+                        width: 26,
+                        height: 26,
+                        color: const Color(0xFF615F63),
                       ),
                     ),
-              label: appLocalization.cart,
+              label: 'Settings',
             ),
           ],
         ),
