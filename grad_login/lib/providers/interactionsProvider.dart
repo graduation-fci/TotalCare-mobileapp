@@ -22,14 +22,14 @@ class InteractionsProvider with ChangeNotifier {
     notifyListeners();
     final responseData =
         await interactionsService.medicineInteraction(interactionMeds);
-    if (responseData['permutations'] == null) {
-      errorMessage = responseData['error'];
-      appState = AppState.error;
-    } else {
+    if (!responseData.containsKey('errorMsg')) {
       _response = responseData['permutations'];
       appState = AppState.done;
+    } else {
+      errorMessage = responseData['errorMsg'];
+      appState = AppState.error;
     }
-    log("$responseData");
+    // log("$_response");
     notifyListeners();
   }
 }

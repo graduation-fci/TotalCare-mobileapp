@@ -10,12 +10,15 @@ class InteractionsService {
 
   Future<dynamic> medicineInteraction(
       List<Map<String, dynamic>> interactionMedicines) async {
-    Map<String, dynamic> responseData = {};
     final interactionsEndpoint = Uri.parse(Config.interactionMain);
+    Map<String, dynamic> responseData = {};
+    Map<String, String> error = {};
+
     String? token;
     await storage.getToken().then((value) {
       token = value;
     });
+
     final response = await http.post(
       interactionsEndpoint,
       body: json.encode({'medicine': interactionMedicines}),
@@ -25,14 +28,13 @@ class InteractionsService {
       },
     );
     if (response.statusCode == 500) {
-      responseData['error'] =
-          'You must have 2 medicines or more in your medication profile';
-    } else {
-      responseData = json.decode(response.body);
-      if (responseData.isEmpty) {
-        responseData['error'] =
-            'There is no Interactions between your medicines.';
-      }
+      error['errorMsg'] = 'You must have 2 medicines or more';
+      return error;
+    }
+    responseData = json.decode(response.body);
+    if (responseData.isEmpty) {
+      error['errorMsg'] = 'There is no Interactions between your medicines.';
+      return error;
     }
     // log('$responseData');
     return responseData;
