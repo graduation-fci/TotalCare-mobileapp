@@ -31,7 +31,7 @@ class Cart with ChangeNotifier {
   Storage storage = Storage();
   List<CartItem> _list = [];
   String cartID = '';
-  double cartPrice = 0.0;
+  String cartPrice = '0.0';
 
   List<CartItem> get items {
     return [..._list];
@@ -51,10 +51,8 @@ class Cart with ChangeNotifier {
     //log(extractedData.toString());
     final id = extractedData[0]['id'];
     cartID = id;
-    final price = extractedData[0]['total_price'];
-    cartPrice = price;
-    log(cartID);
-    log(price.toString());
+    cartPrice = (extractedData[0]['total_price']).toString();
+    // log(cartID);
     notifyListeners();
   }
 
