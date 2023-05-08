@@ -59,15 +59,7 @@ class AuthService {
     );
     final responseData = json.decode(response.body);
     log('$responseData');
-    switch (responseData.keys.first) {
-      case 'username':
-        return responseData;
-      case 'password':
-        return responseData;
-      default:
-        return responseData;
-      // handle other cases if necessary
-    }
+    return responseData;
   }
 
   Future<void> refreshJwt() async {
