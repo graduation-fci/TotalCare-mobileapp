@@ -165,8 +165,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     formKey: _formKey,
                     mediaQuery: mediaQuery,
                   ),
-                  if (authProvider.appState == AppState.loading ||
-                      userProvider.appState == AppState.loading)
+                  if (authProvider.appState == AppState.loading)
                     CircularProgressIndicator.adaptive(),
                   Column(
                     children: [
