@@ -1,6 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:grad_login/providers/drugProvider.dart';
 import 'package:grad_login/screens/love_button.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/cartProvider.dart';
 
 class DrugDetailScreen extends StatefulWidget {
   const DrugDetailScreen({super.key});
@@ -12,6 +17,16 @@ class DrugDetailScreen extends StatefulWidget {
 
 class _DrugDetailScreenState extends State<DrugDetailScreen> {
   int number = 1;
+  String cartID = '';
+  @override
+  void initState() {
+    Provider.of<Cart>(context, listen: false).getCartID().then((_) {
+      final token = Provider.of<Cart>(context, listen: false).cartID;
+      cartID = token;
+    });
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -189,8 +204,19 @@ class _DrugDetailScreenState extends State<DrugDetailScreen> {
                       height: 50,
                       child: FloatingActionButton.extended(
                         backgroundColor: Theme.of(context).primaryColor,
-                        onPressed: () {
-                          print(number);
+                        onPressed: () async {
+                          await Provider.of<Cart>(context, listen: false)
+                              .addCart(cartID, args.id, number)
+                              .then((_) {
+                            setState(() {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content:
+                                          Text('Item added Successfully!')));
+                            });
+                          });
+                          // log(args.id.toString());
+                          // log(number.toString());
                         },
                         label: const Text(
                           'Add to cart',
