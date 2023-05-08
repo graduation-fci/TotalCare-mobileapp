@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'providers/addressProvider.dart';
+import 'providers/cartProvider.dart';
 import 'providers/categoriesProvider.dart';
 import 'providers/drugProvider.dart';
 import 'providers/userProvider.dart';
@@ -10,6 +11,7 @@ import 'providers/interactionsProvider.dart';
 import 'providers/medicineProvider.dart';
 import 'providers/authProvider.dart';
 
+import 'screens/cart_screen.dart';
 import 'screens/tabs_screen.dart';
 import 'screens/add_medication.dart';
 import 'screens/edit_medication.dart';
@@ -60,6 +62,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(
           value: Address(),
         ),
+        ChangeNotifierProvider.value(
+          value: Cart(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -90,6 +95,7 @@ class MyApp extends StatelessWidget {
               const ShowMedicationProfile(),
           Profiles.routeName: (ctx) => const Profiles(),
           EditProfileScreen.routeName: (ctx) => const EditProfileScreen(),
+          CartScreen.routeName: (context) => CartScreen(),
         },
       ),
     );

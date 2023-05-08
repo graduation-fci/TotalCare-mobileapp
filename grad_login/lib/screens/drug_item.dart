@@ -65,19 +65,28 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
           ),
           child: GridTile(
             footer: GridTileBar(
-              title: Text(drugs[index].name,style: const TextStyle(color: Colors.black),),
-              subtitle: Text('${drugs[index].price.toString()} L.E.',style: const TextStyle(color: Colors.black),),
+              title: Text(
+                drugs[index].name,
+                style: const TextStyle(color: Colors.black),
+              ),
+              subtitle: Text(
+                '${drugs[index].price.toString()} L.E.',
+                style: const TextStyle(color: Colors.black),
+              ),
             ),
-            child: Stack(alignment: Alignment.topRight,
+            child: Stack(
+              alignment: Alignment.topRight,
               children: [
-                Image.network(drugs[index].imgURL,fit: BoxFit.cover,
+                Image.network(
+                  drugs[index].imgURL,
+                  fit: BoxFit.cover,
                 ),
-               const Padding(
+                const Padding(
                   padding: EdgeInsets.all(8.0),
                   child: LoveBtn(),
                 ),
-                ],
-          ),
+              ],
+            ),
           ),
           // Column(
           //   mainAxisSize: MainAxisSize.min,
