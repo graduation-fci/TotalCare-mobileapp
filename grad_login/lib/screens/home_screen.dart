@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:grad_login/providers/medicineProvider.dart';
+import 'package:grad_login/providers/userProvider.dart';
 import 'package:provider/provider.dart';
 
-import '../app_state.dart';
 import '../providers/categoriesProvider.dart';
 import 'category_item.dart';
 
@@ -22,31 +20,18 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final scrollController = ScrollController();
-  int _page = 1;
+  String? nextUrl;
+  String? previousUrl;
+  dynamic categoriesProvider;
 
   bool _isLoading = false;
 
   TextEditingController searchController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
 
-  Timer? _debounce;
-  Map<String, dynamic>? filteredMeds;
+  Map<String, dynamic>? filteredCategories;
   bool _isVisible = true;
   List<dynamic>? results;
-
-  Future<List<dynamic>?> _filterDataList(String searchValue) async {
-    _debounce?.cancel(); // Cancel previous debounce timer
-    _debounce = Timer(const Duration(milliseconds: 500), () async {
-      // Perform search/filtering here
-      filteredMeds = await Provider.of<MedicineProvider>(context, listen: false)
-          .getFilteredCategories(searchQuery: searchValue);
-      if (filteredMeds != null && filteredMeds!['results'] != null) {
-        results = filteredMeds!['results'];
-      }
-      setState(() {});
-    });
-    return results;
-  }
 
   @override
   void initState() {
@@ -60,12 +45,12 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
   }
 
-  Future<void> _loadCategories() async {
+  Future<void> _loadCategories({String? searchQuery}) async {
     setState(() {
       _isLoading = true;
     });
     await Provider.of<Categories>(context, listen: false)
-        .fetchCat(_page)
+        .getCategories(searchQuery: searchQuery)
         .then((_) {
       setState(() {
         _isLoading = false;
@@ -75,14 +60,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final userName = ModalRoute.of(context)!.settings.arguments as String;
     final mediaquery = MediaQuery.of(context).size;
+    final userData = Provider.of<UserProvider>(context).userProfileData;
+    categoriesProvider = Provider.of<Categories>(context);
+    nextUrl = categoriesProvider.nextPageEndPoint;
+    previousUrl = categoriesProvider.previousPageEndPoint;
 
     return SafeArea(
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
-          drawer: const Drawer(),
           body: LayoutBuilder(builder: (context, constraints) {
             return SingleChildScrollView(
               controller: scrollController,
@@ -103,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               text: TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: 'Hi $userName!\n',
+                                    text: 'Hi ${userData['first_name']}!\n',
                                     style: TextStyle(
                                         fontSize: mediaquery.width * 0.045,
                                         fontWeight: FontWeight.bold,
@@ -205,7 +192,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: TextFormField(
                                   focusNode: _focusNode,
                                   controller: searchController,
-                                  onChanged: _filterDataList,
+                                  onChanged: (value) =>
+                                      _loadCategories(searchQuery: value),
                                   cursorColor: Colors.grey,
                                   decoration: InputDecoration(
                                       fillColor: Colors.grey.shade200,
@@ -300,8 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _scrollListener() {
     if (scrollController.position.pixels ==
         scrollController.position.maxScrollExtent) {
-      _page++;
-      _loadCategories();
+      categoriesProvider.getNextCat(nextUrl);
     }
   }
 }
