@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:grad_login/screens/cart_screen.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'cart_screen.dart';
 import 'profile_screen.dart';
 import 'home_screen.dart';
 import 'interaction_screen.dart';
@@ -22,9 +22,6 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      settings = ModalRoute.of(context)!.settings.arguments as String;
-    });
     _pages = [
       {
         'page': const HomeScreen(),
@@ -35,7 +32,7 @@ class _TabsScreenState extends State<TabsScreen> {
         'title': 'Interactions',
       },
       {
-        'page': null,
+        'page': const CartScreen(),
         'title': 'Cart',
       },
       {
@@ -155,15 +152,14 @@ class _TabsScreenState extends State<TabsScreen> {
                       width: mediaQuery.width * 0.18,
                       height: mediaQuery.height * 0.04,
                       child: SvgPicture.asset(
-                        'assets/icons/menu-hamburger.svg',
-                        width: 26,
-                        height: 26,
+                        'assets/icons/settings-outlined.svg',
+                        height: 200,
                       ),
                     )
                   : Container(
                       margin: const EdgeInsets.only(bottom: 3),
                       child: SvgPicture.asset(
-                        'assets/icons/menu-hamburger.svg',
+                        'assets/icons/settings-outlined.svg',
                         width: 26,
                         height: 26,
                         color: const Color(0xFF615F63),
