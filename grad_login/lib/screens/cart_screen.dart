@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:grad_login/providers/cartProvider.dart';
+import 'package:grad_login/widgets/show_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import '../providers/cartProvider.dart';
+import '../providers/orders_provider.dart';
+import '../providers/addressProvider.dart';
+
+import 'my_orders_screen.dart';
+import 'address_screen.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -12,6 +18,8 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   bool _isLoading = true;
+  ShowBottomSheet showBottomSheet = ShowBottomSheet();
+  int? addressId;
   String _cartID = '';
   @override
   void initState() {
@@ -21,15 +29,24 @@ class _CartScreenState extends State<CartScreen> {
         Provider.of<Cart>(context, listen: false).fetchCart(token);
         _cartID = token;
         _isLoading = false;
-      });
+      }).then((_) async =>
+          await Provider.of<Address>(context, listen: false).fetchAddress());
     });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final carts = Provider.of<Cart>(context).items;
-    final cartPrice = Provider.of<Cart>(context).cartPrice;
+    final cartProvider = Provider.of<Cart>(context);
+    final ordersProvider = Provider.of<OrdersProvider>(context);
+    final addressProvider = Provider.of<Address>(context);
+    final myAddresses = addressProvider.items;
+    final carts = cartProvider.items;
+    final cartPrice = cartProvider.cartPrice;
+    final cartId = cartProvider.cartID;
+
+    addressId =
+        myAddresses.isEmpty ? null : myAddresses[0].id; //same as _selectedItem
 
     return SafeArea(
       child: Scaffold(
@@ -342,8 +359,26 @@ class _CartScreenState extends State<CartScreen> {
                                 height: 50,
                                 width: double.infinity,
                                 child: ElevatedButton(
-                                  onPressed: () {},
-                                  child: const Text('Continue'),
+                                  onPressed: () async {
+                                    await showBottomSheet.showBottomSheet(
+                                        context,
+                                        myAddresses,
+                                        ordersProvider,
+                                        cartId);
+                                    // ordersProvider.placeOrder(
+                                    //     addressId, cartId);
+                                  },
+                                  child: Text(
+                                    'Continue',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .button!
+                                        .copyWith(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.05),
+                                  ),
                                 ),
                               ),
                             ],
