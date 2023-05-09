@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:grad_login/providers/orders_provider.dart';
+import 'package:grad_login/screens/my_orders_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -65,6 +67,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(
           value: Cart(),
         ),
+        ChangeNotifierProvider.value(
+          value: OrdersProvider(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -95,7 +100,8 @@ class MyApp extends StatelessWidget {
               const ShowMedicationProfile(),
           Profiles.routeName: (ctx) => const Profiles(),
           EditProfileScreen.routeName: (ctx) => const EditProfileScreen(),
-          CartScreen.routeName: (context) => CartScreen(),
+          MyOrdersScreen.routeName: (context) => const MyOrdersScreen(),
+          CartScreen.routeName: (context) => const CartScreen(),
         },
       ),
     );
@@ -138,7 +144,6 @@ class MyApp extends StatelessWidget {
           color: Color(0xFF003745),
           fontWeight: FontWeight.w600,
           letterSpacing: 1,
-          // fontSize: 16,
         ),
         elevation: 1,
       ),
