@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../infrastructure/shared/storage.dart';
@@ -9,7 +10,8 @@ class DrugItem with ChangeNotifier {
   int id;
   String name;
   double price;
-  String imgURL;
+  List imgURL;
+  List drugsList;
   //final int catID;
 
   DrugItem({
@@ -17,15 +19,15 @@ class DrugItem with ChangeNotifier {
     required this.name,
     required this.price,
     required this.imgURL,
-    // required this.catID,
+    required this.drugsList,
   });
 }
 
 class Drugs with ChangeNotifier {
   String? errorMSG;
   Storage storage = Storage();
-  List<DrugItem> _list = [];
-  List<DrugItem> get items {
+  List<dynamic> _list = [];
+  List<dynamic> get items {
     return [..._list];
   }
 
@@ -41,21 +43,8 @@ class Drugs with ChangeNotifier {
       'Authorization': 'JWT $token',
     });
     final extractedData = json.decode(respone.body) as Map<String, dynamic>;
-    for (var i = 0; i < extractedData['count']; i++) {
-      if (respone.statusCode == 200) {
-        loadedCat.add(
-          DrugItem(
-            id: extractedData['results'][i]['id'],
-            name: extractedData['results'][i]['name'],
-            imgURL: extractedData['results'][i]['medicine_images'][0]['image'],
-            price: extractedData['results'][i]['price'],
-          ),
-        );
-      } else {
-        errorMSG = 'Category has no Drugs!';
-      }
-    }
-    _list = loadedCat;
+    log('$extractedData');
+    _list = extractedData['results'];
     notifyListeners();
   }
 }
