@@ -83,6 +83,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     SizedBox(
                       height: mediaquery.height * 0.06,
                       child: CustomScrollView(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
                         slivers: [
                           SliverAppBar(
                             pinned: true,
