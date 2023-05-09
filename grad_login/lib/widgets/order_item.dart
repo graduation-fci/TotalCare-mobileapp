@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Container orderItem() {
+Container orderItem(List<dynamic> orderResponse, int index) {
   return Container(
     height: 120,
     padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -16,8 +16,8 @@ Container orderItem() {
       children: [
         Row(
           children: [
-            const Text(
-              'Total price: ',
+            Text(
+              'Total price: ${orderResponse[index]['total_price']}',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
@@ -42,7 +42,7 @@ Container orderItem() {
           ],
         ),
         Text(
-          'Address: ',
+          'Address: ${orderResponse[index]['address']['street']} ${orderResponse[index]['address']['city']}',
           style: customTextStyle(),
         ),
         const Spacer(),
@@ -53,13 +53,13 @@ Container orderItem() {
                   text: TextSpan(
                 children: [
                   TextSpan(
-                    text: 'Placed at: ',
+                    text: 'Placed at: }',
                     style: customTextStyle(),
                   ),
-                  TextSpan(
-                    text: '5 May 2023',
-                    style: customTextStyle(),
-                  )
+                  // TextSpan(
+                  //   text: '${orderResponse[index]['placed_at']}',
+                  //   style: customTextStyle(),
+                  // )
                 ],
               )),
               const Spacer(),
