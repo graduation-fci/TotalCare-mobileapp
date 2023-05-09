@@ -44,7 +44,7 @@ class _DrugDetailScreenState extends State<DrugDetailScreen> {
             extendBody: true,
             body: Stack(children: [
               Image.network(
-                args.imgURL,
+                args.imgURL[0]['image'],
                 width: double.infinity,
                 height: 300,
                 fit: BoxFit.cover,
@@ -195,6 +195,26 @@ class _DrugDetailScreenState extends State<DrugDetailScreen> {
                         //     ))
                       ],
                     ),
+                    const Text(
+                      'Ingredients: ',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    args.drugsList.isEmpty
+                        ? const Text(
+                            'No ingredients found for this item',
+                          )
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return Text('${args.drugsList[index]['name']}');
+                            },
+                            itemCount: args.drugsList.length,
+                          ),
                   ],
                 ),
                 floatingActionButton: Padding(
@@ -218,10 +238,9 @@ class _DrugDetailScreenState extends State<DrugDetailScreen> {
                           // log(args.id.toString());
                           // log(number.toString());
                         },
-                        label: const Text(
+                        label: Text(
                           'Add to cart',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 24),
+                          style: Theme.of(context).textTheme.button,
                         ),
                       )
                       //  ElevatedButton(
