@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:grad_login/providers/authProvider.dart';
-import 'package:grad_login/screens/address_screen.dart';
-import 'package:grad_login/screens/cart_screen.dart';
-import 'package:grad_login/screens/edit_profile_screen.dart';
-import 'package:grad_login/screens/login_screen.dart';
 import 'package:provider/provider.dart';
+
+import '../providers/authProvider.dart';
+import 'address_screen.dart';
+import 'edit_profile_screen.dart';
+import 'login_screen.dart';
+import 'my_orders_screen.dart';
 
 import '../providers/userProvider.dart';
 import 'user_medications.dart';
@@ -173,7 +174,7 @@ class _ProfilesState extends State<Profiles> {
                     buildAccountOption(
                         context, 'My Orders', Icons.shopping_cart_outlined,
                         myFunc: () {
-                      Navigator.of(context).pushNamed(CartScreen.routeName);
+                      Navigator.of(context).pushNamed(MyOrdersScreen.routeName);
                     }),
                     buildDivider(),
                     buildAccountOption(
