@@ -14,7 +14,6 @@ class AuthService {
     String username,
     String password,
   ) async {
-    // final loginEndPoint = getEndPoint(context, '/auth/jwt/create/');
     final loginEndPoint = Uri.parse(Config.login);
 
     final response = await http.post(
@@ -32,7 +31,9 @@ class AuthService {
     if (responseData['detail'] != null) {
       return responseData;
     }
-    storage.setToken(responseData['access']);
+    storage.setAccessToken(responseData['access']);
+    storage.setRefreshToken(responseData['refresh']);
+    log('${responseData['access']}');
     return responseData;
   }
 
@@ -50,18 +51,42 @@ class AuthService {
           'username': user.username,
           'password': user.password,
           'email': user.email,
-          'firstName': user.firstName,
-          'lastName': user.lastName,
-          'profile_type': user.profile_type,
-          // 'birthdate': user.birthdate,
+          'first_name': user.first_name,
+          'last_name': user.last_name,
+          'profile_type': user.profileType,
         },
       ),
     );
     final responseData = json.decode(response.body);
-    if (responseData['detail'] != null) {
-      return responseData;
+    log('$responseData');
+    switch (responseData.keys.first) {
+      case 'username':
+        return responseData;
+      case 'password':
+        return responseData;
+      default:
+        return responseData;
+      // handle other cases if necessary
     }
-    return responseData;
+  }
+
+  Future<void> refreshJwt() async {
+    final refreshEndPoint = Uri.parse(Config.refreshJWT);
+
+    //problem: not sending request to server!
+    final response = await http.post(
+      refreshEndPoint,
+      headers: {
+        "content-type": "application/json",
+        "accept": "application/json",
+      },
+      body: json.encode(
+        {'refresh', storage.refToken},
+      ),
+    );
+
+    final responseData = json.decode(response.body);
+    print(responseData['access']);
   }
 
   Future<void> logout() async {

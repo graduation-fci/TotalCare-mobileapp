@@ -3,17 +3,22 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:grad_login/widgets/error_dialog_box.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../providers/examProvider.dart';
+import '../app_state.dart';
+import '../providers/medicineProvider.dart';
 import '../providers/authProvider.dart';
 
-import '.././screens/login_screen.dart';
-import '.././screens/exams_screen.dart';
-import '.././models/user.dart';
+import '../screens/tabs_screen.dart';
+import '../screens/login_screen.dart';
+
+import '../models/user.dart';
+
+import '../widgets/input_field.dart';
 
 class RegisterFormScreen extends StatefulWidget {
   static const routeName = '/register';
@@ -27,11 +32,11 @@ class RegisterFormScreen extends StatefulWidget {
 class _RegisterFormScreenState extends State<RegisterFormScreen> {
   final User _userData = User(
     username: '',
-    firstName: '',
-    lastName: '',
+    first_name: '',
+    last_name: '',
     email: '',
     password: '',
-    profile_type: 'STD',
+    profileType: '',
   );
   Locale? locale;
 
@@ -43,6 +48,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController rePasswordController = TextEditingController();
 
+  FocusNode emailFocus = FocusNode();
   FocusNode firstNameFocus = FocusNode();
   FocusNode lastNameFocus = FocusNode();
   FocusNode userNameFocus = FocusNode();
@@ -61,41 +67,34 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
 
   bool passwordVisible = true;
   bool rePasswordVisible = true;
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  String? _selectedItem;
 
   final formKey = GlobalKey<FormState>();
-
-  // void loginNav(BuildContext context) {
-  void register() {
-    // if (formKey.currentState!.validate()) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(content: Text('Processing Data')),
-    //   );
-    // }
-  }
+  final Map<String, String> _dropDownItems = {
+    'PAT': 'Patient',
+    'DOC': 'Doctor'
+  };
 
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
     final appLocalization = AppLocalizations.of(context)!;
     final authResponse = Provider.of<AuthProvider>(context);
-    final examResponse = Provider.of<ExamProvider>(context);
+    final medicineResponse = Provider.of<MedicineProvider>(context);
     String countryName = appLocalization.countryName;
 
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Center(
+        child: GestureDetector(
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: SingleChildScrollView(
             child: Form(
               key: formKey,
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                    horizontal: mediaQuery.width * 0.13,
-                    vertical: mediaQuery.height * 0.08),
+                  horizontal: mediaQuery.width * 0.05,
+                  vertical: mediaQuery.height * 0.08,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -110,19 +109,14 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
-                    Text(
-                      appLocalization.email,
-                    ),
-                    SizedBox(
-                      height: mediaQuery.height * 0.02,
-                    ),
-                    TextFormField(
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      onEditingComplete: () {
-                        firstNameFocus.requestFocus();
-                      },
+                    InputField(
+                      labelText: appLocalization.email,
                       controller: emailController,
                       keyboardType: TextInputType.emailAddress,
+                      prefixIcon: const Icon(
+                        MdiIcons.email,
+                        color: Colors.grey,
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return appLocalization.emailNotEmpty;
@@ -134,122 +128,97 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       onSaved: (value) {
                         _userData.email = value!;
                       },
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(MdiIcons.email),
-                        contentPadding: const EdgeInsets.all(5),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        labelText: appLocalization.email,
-                        labelStyle: labelStyle(),
-                        // focusedBorder: const OutlineInputBorder(),
-                      ),
+                      focusNode: emailFocus,
+                      nextFocusNode: firstNameFocus,
+                      textInputAction: TextInputAction.next,
+                      obsecureText: false,
                     ),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
-                    Text(appLocalization.firstName),
-                    SizedBox(
-                      height: mediaQuery.height * 0.02,
-                    ),
-                    TextFormField(
-                      onEditingComplete: () => lastNameFocus.requestFocus(),
-                      focusNode: firstNameFocus,
+                    InputField(
+                      labelText: appLocalization.firstName,
                       controller: firstNameController,
                       keyboardType: TextInputType.name,
-                      onSaved: (value) {
-                        _userData.firstName = value!;
-                      },
+                      prefixIcon: const Icon(
+                        Icons.account_box,
+                        color: Colors.grey,
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return appLocalization.firstNameNotEmpty;
                         }
+                        return null;
                       },
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.account_box),
-                        contentPadding: const EdgeInsets.all(5),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0)),
-                        labelText: appLocalization.firstName,
-                        labelStyle: labelStyle(),
-
-                        // focusedBorder: OutlineInputBorder(),
-                      ),
+                      onSaved: (value) {
+                        _userData.first_name = value!;
+                      },
+                      focusNode: firstNameFocus,
+                      nextFocusNode: lastNameFocus,
+                      textInputAction: TextInputAction.next,
+                      obsecureText: false,
                     ),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
-                    Text(appLocalization.lastName),
-                    SizedBox(
-                      height: mediaQuery.height * 0.02,
-                    ),
-                    TextFormField(
-                      onEditingComplete: () => userNameFocus.requestFocus(),
-                      focusNode: lastNameFocus,
+                    InputField(
+                      labelText: appLocalization.lastName,
                       controller: lastNameController,
                       keyboardType: TextInputType.name,
-                      onSaved: (value) {
-                        _userData.lastName = value!;
-                      },
+                      prefixIcon: const Icon(
+                        Icons.account_box,
+                        color: Colors.grey,
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return appLocalization.lastNameNotEmpty;
                         }
                         return null;
                       },
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.account_box),
-                        contentPadding: const EdgeInsets.all(5),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0)),
-                        labelText: appLocalization.lastName,
-                        labelStyle: labelStyle(),
-
-                        // focusedBorder: OutlineInputBorder(),
-                      ),
-                    ),
-                    SizedBox(
-                      height: mediaQuery.height * 0.02,
-                    ),
-                    Text(appLocalization.username),
-                    SizedBox(
-                      height: mediaQuery.height * 0.02,
-                    ),
-                    TextFormField(
-                      focusNode: userNameFocus,
-                      onEditingComplete: () => countryFocus.requestFocus(),
-                      controller: userNameController,
                       onSaved: (value) {
-                        _userData.username = value!;
+                        _userData.last_name = value!;
                       },
+                      focusNode: lastNameFocus,
+                      nextFocusNode: userNameFocus,
+                      textInputAction: TextInputAction.next,
+                      obsecureText: false,
+                    ),
+                    SizedBox(
+                      height: mediaQuery.height * 0.02,
+                    ),
+                    InputField(
+                      labelText: appLocalization.username,
+                      controller: userNameController,
                       keyboardType: TextInputType.text,
+                      prefixIcon: const Icon(
+                        Icons.person_add_alt_1,
+                        color: Colors.grey,
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return appLocalization.usernameNotEmpty;
                         }
                         return null;
                       },
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.person_add_alt_1),
-                        contentPadding: const EdgeInsets.all(5),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0)),
-                        labelText: appLocalization.username,
-                        labelStyle: labelStyle(),
-
-                        // focusedBorder: OutlineInputBorder(),
-                      ),
+                      onSaved: (value) {
+                        _userData.username = value!;
+                      },
+                      focusNode: userNameFocus,
+                      nextFocusNode: countryFocus,
+                      textInputAction: TextInputAction.next,
+                      obsecureText: false,
                     ),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
-                    Text(appLocalization.country),
-                    // SizedBox(
-                    //   height: mediaQuery.height * 0.02,
-                    // ),
                     TextButton.icon(
                       focusNode: countryFocus,
-                      label: Text(countryName),
+                      label: Text(
+                        countryName,
+                        style: const TextStyle(
+                          color: Colors.grey,
+                        ),
+                      ),
                       onPressed: () => showCountryPicker(
                         context: context,
                         showPhoneCode: true,
@@ -261,98 +230,95 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                           setState(() {});
                         },
                       ),
-                      icon: const Icon(Icons.arrow_drop_down),
-                    ),
-                    SizedBox(
-                      height: mediaQuery.height * 0.02,
-                    ),
-                    Text(appLocalization.phoneNumber),
-                    SizedBox(
-                      height: mediaQuery.height * 0.02,
-                    ),
-                    TextFormField(
-                      onEditingComplete: () => passwordFocus.requestFocus(),
-                      controller: mobileController,
-                      focusNode: phoneFocus,
-                      keyboardType: TextInputType.phone,
-                      onSaved: (value) {
-                        // _authData!. = value;
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return appLocalization.phoneNumberNotEmpty;
-                        }
-                      },
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.phone),
-                        contentPadding: const EdgeInsets.all(5),
-                        border: const OutlineInputBorder(),
-                        labelText: appLocalization.phoneNumber,
-                        labelStyle: labelStyle(),
-
-                        // focusedBorder: OutlineInputBorder(),
+                      icon: const Icon(
+                        Icons.arrow_drop_down,
+                        color: Colors.grey,
                       ),
                     ),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
-                    Text(appLocalization.password),
+                    InputField(
+                      labelText: appLocalization.phoneNumber,
+                      controller: mobileController,
+                      keyboardType: TextInputType.phone,
+                      prefixIcon: const Icon(
+                        Icons.phone,
+                        color: Colors.grey,
+                      ),
+                      validator: (_) {
+                        // if (value == null || value.isEmpty) {
+                        //   return appLocalization.phoneNumberNotEmpty;
+                        // }
+                        return null;
+                      },
+                      focusNode: phoneFocus,
+                      nextFocusNode: passwordFocus,
+                      textInputAction: TextInputAction.next,
+                      obsecureText: false,
+                    ),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
-                    TextFormField(
-                      onEditingComplete: () => rePasswordFocus.requestFocus(),
-                      focusNode: passwordFocus,
+                    InputField(
+                      labelText: appLocalization.password,
                       controller: passwordController,
                       keyboardType: TextInputType.text,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      prefixIcon: const Icon(
+                        Icons.lock,
+                        color: Colors.grey,
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
+                          print(value);
                           return appLocalization.passwordNotEmpty;
-                        } else if (value.contains(RegExp(
-                            r'(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&~*]).{8,}$'))) {
-                          return '''Password must be atleast 8 characters, 
-include an uppercase letter, number and symbol''';
+                        }
+                        final passwordRegex = RegExp(
+                            r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+                        if (!passwordRegex.hasMatch(value)) {
+                          return '''Password must contain:
+     - at least one uppercase letter
+     - at least one lowercase letter
+     - at least one number
+     - at least one special character
+     - at least 8 characters''';
                         }
                         return null;
                       },
                       onSaved: (value) {
                         _userData.password = value!;
                       },
-                      obscureText: passwordVisible,
-                      decoration: InputDecoration(
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            passwordVisible = !passwordVisible;
-                            setState(() {});
-                          },
-                          icon: passwordVisible
-                              ? const Icon(Icons.visibility_off)
-                              : const Icon(Icons.visibility),
-                        ),
-                        prefixIcon: const Icon(Icons.lock),
-                        contentPadding: const EdgeInsets.all(5),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0)),
-                        labelText: appLocalization.password,
-                        labelStyle: labelStyle(),
-
-                        //hintText: 'password',
-                        // focusedBorder: const OutlineInputBorder(),
+                      obsecureText: passwordVisible,
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          passwordVisible = !passwordVisible;
+                          setState(() {});
+                        },
+                        icon: passwordVisible
+                            ? const Icon(
+                                Icons.visibility_off,
+                                color: Colors.grey,
+                              )
+                            : const Icon(
+                                Icons.visibility,
+                                color: Colors.grey,
+                              ),
                       ),
+                      focusNode: passwordFocus,
+                      nextFocusNode: rePasswordFocus,
+                      textInputAction: TextInputAction.next,
                     ),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
-                    Text(appLocalization.confirmPassword),
-                    SizedBox(
-                      height: mediaQuery.height * 0.02,
-                    ),
-                    TextFormField(
-                      focusNode: rePasswordFocus,
-                      // controller: rePasswordController,
+                    InputField(
+                      labelText: appLocalization.confirmPassword,
+                      controller: rePasswordController,
                       keyboardType: TextInputType.text,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      prefixIcon: const Icon(
+                        Icons.lock,
+                        color: Colors.grey,
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return appLocalization.confirmPasswordNotEmpty;
@@ -361,67 +327,83 @@ include an uppercase letter, number and symbol''';
                         }
                         return null;
                       },
-                      obscureText: rePasswordVisible,
-                      decoration: InputDecoration(
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            rePasswordVisible = !rePasswordVisible;
-                            setState(() {});
-                          },
-                          icon: rePasswordVisible
-                              ? const Icon(Icons.visibility_off)
-                              : const Icon(Icons.visibility),
-                        ),
-                        prefixIcon: const Icon(Icons.lock),
-                        contentPadding: const EdgeInsets.all(5),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0)),
-                        labelText: appLocalization.confirmPassword,
-                        labelStyle: labelStyle(),
-
-                        // focusedBorder: const OutlineInputBorder(),
+                      obsecureText: rePasswordVisible,
+                      focusNode: rePasswordFocus,
+                      nextFocusNode: rePasswordFocus,
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          rePasswordVisible = !rePasswordVisible;
+                          setState(() {});
+                        },
+                        icon: rePasswordVisible
+                            ? const Icon(
+                                Icons.visibility_off,
+                                color: Colors.grey,
+                              )
+                            : const Icon(
+                                Icons.visibility,
+                                color: Colors.grey,
+                              ),
                       ),
+                      textInputAction: TextInputAction.next,
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.03,
+                      height: mediaQuery.height * 0.02,
                     ),
-                    TextButton(
-                      style: ButtonStyle(
-                          shape: MaterialStatePropertyAll(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20))),
-                          fixedSize: MaterialStateProperty.all(Size(
-                              mediaQuery.width * 0.77,
-                              mediaQuery.height * 0.06)),
-                          foregroundColor: MaterialStateProperty.all(
-                              Theme.of(context).colorScheme.primary),
-                          backgroundColor: MaterialStateProperty.all(
-                              Theme.of(context).colorScheme.secondary)),
-                      onPressed: () => {
-                        if (formKey.currentState!.validate())
-                          {
-                            formKey.currentState!.save(),
-                            log('$_userData'),
-                            authResponse
-                                .register(_userData)
-                                .then((_) => authResponse.login(
-                                    username: _userData.username,
-                                    password: _userData.password))
-                                .then((_) => {
-                                      examResponse.getExams(),
-                                      Navigator.of(context)
-                                          .pushReplacementNamed(
-                                              ExamsScreen.routeName),
-                                    }),
-                          },
-                      },
-                      child: Text(
-                        appLocalization.register,
-                        style: const TextStyle(
-                          fontSize: 18,
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        // vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey, width: 1),
+                        borderRadius: BorderRadius.circular(40),
+                      ),
+                      child: DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
                         ),
+                        onSaved: ((value) => _userData.profileType = value!),
+                        hint: const Text(
+                          'Select ...',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                        value: _selectedItem,
+                        items: _dropDownItems.entries
+                            .map<DropdownMenuItem<String>>((value) {
+                          return DropdownMenuItem(
+                            value: value.key,
+                            child: Text(value.value),
+                          );
+                        }).toList(),
+                        onChanged: (newValue) {
+                          setState(() {
+                            _selectedItem = newValue;
+                          });
+                        },
                       ),
                     ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        fixedSize: Size(
+                          mediaQuery.width * 0.85,
+                          mediaQuery.height * 0.06,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(40),
+                        ),
+                      ),
+                      onPressed: () =>
+                          regBtn(authResponse, medicineResponse, context),
+                      child: Text(
+                        appLocalization.register,
+                        style: Theme.of(context).textTheme.button,
+                      ),
+                    ),
+                    if (authResponse.appState == AppState.loading)
+                      const CircularProgressIndicator.adaptive(),
                     SizedBox(
                       height: mediaQuery.height * 0.02,
                     ),
@@ -458,14 +440,10 @@ include an uppercase letter, number and symbol''';
                               height: 20,
                               width: 20,
                             ),
-                            const SizedBox(
-                              width: 10,
-                            ),
+                            const SizedBox(width: 10),
                             Text(
-                              appLocalization.signInWithGoogle,
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
+                              appLocalization.signUpWithGoogle,
+                              style: Theme.of(context).textTheme.button,
                             ),
                           ],
                         ),
@@ -477,7 +455,10 @@ include an uppercase letter, number and symbol''';
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(appLocalization.alreadyHaveAnAccount),
+                        Text(
+                          appLocalization.alreadyHaveAnAccount,
+                          style: Theme.of(context).textTheme.button,
+                        ),
                         TextButton(
                             onPressed: () => {
                                   Navigator.of(context).pushReplacementNamed(
@@ -488,7 +469,20 @@ include an uppercase letter, number and symbol''';
                                         .isRegister = false;
                                   }),
                                 },
-                            child: Text(appLocalization.login))
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: Colors.grey.shade600,
+                                    width: 1,
+                                  ),
+                                ),
+                              ),
+                              child: Text(
+                                appLocalization.login,
+                                style: Theme.of(context).textTheme.button,
+                              ),
+                            ))
                       ],
                     )
                   ],
@@ -499,5 +493,39 @@ include an uppercase letter, number and symbol''';
         ),
       ),
     );
+  }
+
+  Future<Set<Set<void>>> regBtn(AuthProvider authResponse,
+      MedicineProvider medicineResponse, BuildContext context) async {
+    return {
+      if (formKey.currentState!.validate())
+        {
+          formKey.currentState!.save(),
+          // log('$_userData'),
+          await authResponse
+              .register(_userData)
+              .then((_) => {
+                    if (authResponse.appState == AppState.error)
+                      {
+                        showAlertDialog(
+                          context: context,
+                          content: authResponse.errorMessage!,
+                          confirmButtonText: 'Dismiss',
+                        ),
+                      }
+                  })
+              .then((_) => {
+                    if (authResponse.appState == AppState.done)
+                      {
+                        authResponse.login(
+                            username: _userData.username,
+                            password: _userData.password),
+                        medicineResponse.getMedicines(),
+                        Navigator.of(context)
+                            .pushReplacementNamed(TabsScreen.routeName),
+                      }
+                  }),
+        },
+    };
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'category_item.dart';
 
+import 'category_item.dart';
 import 'notification_widget.dart';
 
 class HomeScreen extends StatefulWidget {
