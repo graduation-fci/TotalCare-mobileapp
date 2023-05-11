@@ -4,15 +4,17 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:grad_login/providers/userProvider.dart';
+import 'package:grad_login/screens/tabs_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../widgets/error_dialog_box.dart';
 import 'register_screen.dart';
 
 import '../app_state.dart';
 import '../providers/authProvider.dart';
 import '../widgets/input_field.dart';
-import '../widgets/login_button.dart';
+import '../widgets/sign_button.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String routeName = '/login';
@@ -159,11 +161,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ],
                   ),
-                  LoginButton(
-                    nameController: nameController,
-                    passwordController: passwordController,
-                    formKey: _formKey,
+                  SignButton(
                     mediaQuery: mediaQuery,
+                    onPressed: () => onPressed(authProvider, userProvider), label: appLocalization.login,
                   ),
                   if (authProvider.appState == AppState.loading)
                     CircularProgressIndicator.adaptive(),
@@ -236,6 +236,34 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  void onPressed(authProvider, userProvider) async {
+    if (_formKey.currentState!.validate()) {
+      await authProvider
+          .login(
+              username: nameController.text, password: passwordController.text)
+          .then((_) {
+        if (authProvider.appState == AppState.error) {
+          showAlertDialog(
+            context: context,
+            content: authProvider.errorMessage!,
+            confirmButtonText: 'Dismiss',
+          );
+          return;
+        }
+      }).then((_) async {
+        if (authProvider.appState == AppState.done) {
+          await userProvider.getUserProfile().then((value) {
+            userProvider.getUserMedications();
+            Navigator.of(context).pushReplacementNamed(
+              TabsScreen.routeName,
+            );
+          });
+        }
+      });
+    }
+    FocusManager.instance.primaryFocus?.unfocus();
   }
 }
 
