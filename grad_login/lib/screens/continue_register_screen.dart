@@ -1,7 +1,7 @@
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:grad_login/widgets/blood_type_input.dart';
+import 'package:grad_login/widgets/blood_type_field.dart';
 import 'package:grad_login/widgets/date_selector.dart';
 import 'package:grad_login/widgets/sign_button.dart';
 
