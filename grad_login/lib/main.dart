@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:grad_login/providers/orders_provider.dart';
-import 'package:grad_login/screens/my_orders_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -12,6 +10,7 @@ import 'providers/userProvider.dart';
 import 'providers/interactionsProvider.dart';
 import 'providers/medicineProvider.dart';
 import 'providers/authProvider.dart';
+import 'providers/orders_provider.dart';
 
 import 'screens/cart_screen.dart';
 import 'screens/tabs_screen.dart';
@@ -31,6 +30,8 @@ import 'screens/medicine_screen.dart';
 import 'screens/show_medication_profile_details.dart';
 import 'screens/profile_screen.dart';
 import 'screens/edit_profile_screen.dart';
+import 'screens/my_orders_screen.dart';
+import 'screens/continue_register_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -75,7 +76,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        title: 'first demo',
+        title: 'TotalCare',
         theme: _buildThemeData(),
         home: const LoginScreen(),
         routes: {
@@ -102,6 +103,8 @@ class MyApp extends StatelessWidget {
           EditProfileScreen.routeName: (ctx) => const EditProfileScreen(),
           MyOrdersScreen.routeName: (context) => const MyOrdersScreen(),
           CartScreen.routeName: (context) => const CartScreen(),
+          ContinueRegisterScreen.routeName: (context) =>
+              const ContinueRegisterScreen(),
         },
       ),
     );
