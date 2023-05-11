@@ -47,27 +47,24 @@ class LoginButton extends StatelessWidget {
                     username: nameController.text,
                     password: passwordController.text)
                 .then((_) {
-                  if (authProvider.appState == AppState.error) {
-                    showAlertDialog(
-                      context: context,
-                      content: authProvider.errorMessage!,
-                      confirmButtonText: 'Dismiss',
-                    );
-                    return;
-                  }
-                })
-                .then((_) => {
-                      if (authProvider.appState == AppState.done)
-                        {
-                          userProvider.getUserProfile(),
-                          userProvider.getUserMedications(),
-                        }
-                    })
-                .then(
-                  (_) => Navigator.of(context).pushReplacementNamed(
-                      TabsScreen.routeName,
-                      arguments: nameController.text),
+              if (authProvider.appState == AppState.error) {
+                showAlertDialog(
+                  context: context,
+                  content: authProvider.errorMessage!,
+                  confirmButtonText: 'Dismiss',
                 );
+                return;
+              }
+            }).then((_) async {
+              if (authProvider.appState == AppState.done) {
+                await userProvider.getUserProfile().then((value) {
+                  userProvider.getUserMedications();
+                  Navigator.of(context).pushReplacementNamed(
+                    TabsScreen.routeName,
+                  );
+                });
+              }
+            });
           }
           FocusManager.instance.primaryFocus?.unfocus();
         },

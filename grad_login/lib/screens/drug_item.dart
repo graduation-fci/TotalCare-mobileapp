@@ -49,10 +49,12 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
         onTap: () => Navigator.of(context).pushNamed(
           DrugDetailScreen.routeName,
           arguments: DrugItem(
-              id: drugs[index].id,
-              name: drugs[index].name,
-              price: drugs[index].price,
-              imgURL: drugs[index].imgURL),
+              id: drugs[index]['id'],
+              name: drugs[index]['name'],
+              price: drugs[index]['price'],
+              imgURL: drugs[index]
+                  ['medicine_images'],
+              drugsList: drugs[index]['drug'],), //medicine images is a list
         ),
         child: Ink(
           decoration: ShapeDecoration(
@@ -66,11 +68,11 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
           child: GridTile(
             footer: GridTileBar(
               title: Text(
-                drugs[index].name,
+                drugs[index]['name'],
                 style: const TextStyle(color: Colors.black),
               ),
               subtitle: Text(
-                '${drugs[index].price.toString()} L.E.',
+                '${drugs[index]['price'].toString()} L.E.',
                 style: const TextStyle(color: Colors.black),
               ),
             ),
@@ -78,7 +80,7 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
               alignment: Alignment.topRight,
               children: [
                 Image.network(
-                  drugs[index].imgURL,
+                  drugs[index]['medicine_images'][0]['image'],
                   fit: BoxFit.cover,
                 ),
                 const Padding(

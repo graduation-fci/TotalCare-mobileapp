@@ -53,9 +53,7 @@ class MedicineService {
       },
     );
     final responseData = json.decode(response.body);
-    if (responseData['details'] == null) {
-      return responseData;
-    }
+
     return responseData;
   }
 

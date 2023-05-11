@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:grad_login/my_config.dart';
@@ -44,7 +45,7 @@ class Address with ChangeNotifier {
       'Authorization': 'JWT $token',
     });
     final extractedData = json.decode(respone.body) as List<dynamic>;
-
+    
     if (respone.statusCode == 200) {
       for (var i = 0; i < extractedData.length; i++) {
         loadedCat.add(
@@ -62,9 +63,8 @@ class Address with ChangeNotifier {
         _list = loadedCat;
       }
       notifyListeners();
-    }else{
-        errorMSG = 'There is no addresses';
-      
+    } else {
+      errorMSG = 'There is no addresses';
     }
   }
 
@@ -107,8 +107,7 @@ class Address with ChangeNotifier {
       _list.add(newAddress);
       notifyListeners();
     } else {
-              errorMSG = 'Failed to add address, Please try again later!';
-
+      errorMSG = 'Failed to add address, Please try again later!';
     }
   }
 
@@ -117,11 +116,10 @@ class Address with ChangeNotifier {
   }
 
   Future<void> updateAddress(
-    int id, AddressItem addressItem, String type) async {
-  String? token = await storage.getToken();
-  final addressIndex =
-      _list.indexWhere((element) => element.id == id);
-  final url = Uri.parse('${Config.addresses}$id/');
+      int id, AddressItem addressItem, String type) async {
+    String? token = await storage.getToken();
+    final addressIndex = _list.indexWhere((element) => element.id == id);
+    final url = Uri.parse('${Config.addresses}$id/');
 
     final response = await http.patch(
       url,
@@ -140,16 +138,13 @@ class Address with ChangeNotifier {
     );
     print(response.body);
     if (response.statusCode == 200) {
-    
-  _list[addressIndex] = addressItem;
+      _list[addressIndex] = addressItem;
     } else {
-            errorMSG = 'Failed to update address, try again later!';
-
+      errorMSG = 'Failed to update address, try again later!';
     }
 
-  notifyListeners();
-}
-
+    notifyListeners();
+  }
 
   Future<void> deleteAddress(int id) async {
     String? token;
@@ -172,8 +167,7 @@ class Address with ChangeNotifier {
     if (response.statusCode >= 400) {
       _list.insert(addressIndex, existingProduct);
       notifyListeners();
-              errorMSG = 'Failed to delete address, try again later!';
-
+      errorMSG = 'Failed to delete address, try again later!';
     }
 
     existingProduct = null;

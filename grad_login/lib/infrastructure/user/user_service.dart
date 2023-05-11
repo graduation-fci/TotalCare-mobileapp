@@ -55,9 +55,6 @@ class UserService {
 
     final responseData = json.decode(response.body);
     // log('$responseData');
-    if (responseData['details'] == null) {
-      return responseData;
-    }
     return responseData;
   }
 
