@@ -1,20 +1,22 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:grad_login/providers/userProvider.dart';
-import 'package:grad_login/screens/tabs_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../infrastructure/shared/storage.dart';
 import '../widgets/error_dialog_box.dart';
 import 'register_screen.dart';
 
 import '../app_state.dart';
+import '../providers/userProvider.dart';
 import '../providers/authProvider.dart';
 import '../widgets/input_field.dart';
 import '../widgets/sign_button.dart';
+import 'tabs_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String routeName = '/login';
@@ -30,6 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   String errorMessage = '';
+  Storage storage = Storage();
 
   @override
   void dispose() {
@@ -163,7 +166,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SignButton(
                     mediaQuery: mediaQuery,
-                    onPressed: () => onPressed(authProvider, userProvider), label: appLocalization.login,
+                    onPressed: () => onPressed(authProvider, userProvider),
+                    label: appLocalization.login,
                   ),
                   if (authProvider.appState == AppState.loading)
                     CircularProgressIndicator.adaptive(),
@@ -254,12 +258,21 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       }).then((_) async {
         if (authProvider.appState == AppState.done) {
-          await userProvider.getUserProfile().then((value) {
-            userProvider.getUserMedications();
-            Navigator.of(context).pushReplacementNamed(
-              TabsScreen.routeName,
-            );
-          });
+          final token = await storage.getToken();
+          List<String> parts = token!.split('.');
+          String payload = parts[1];
+          while (payload.length % 4 != 0) {
+            payload += '=';
+          }
+          Map<String, dynamic> data =
+              json.decode(utf8.decode(base64Url.decode(payload)));
+
+          userProvider.userProfileData = data;
+          userProvider
+              .getUserMedications()
+              .then((_) => Navigator.of(context).pushReplacementNamed(
+                    TabsScreen.routeName,
+                  ));
         }
       });
     }
