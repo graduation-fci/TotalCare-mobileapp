@@ -67,30 +67,15 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
             return SingleChildScrollView(
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight,
-                ),
+                    minHeight: constraints.maxHeight,
+                    minWidth: constraints.maxWidth),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // ignore: avoid_unnecessary_containers
-                    Container(
-                      width: mediaQuery.width,
-                      margin: const EdgeInsets.all(12),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 5),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Colors.grey.shade300),
-                      child: const Text(
-                        'You can press on a profile to check the interaction between its medicines.',
-                        style: TextStyle(color: Colors.black54, fontSize: 10),
-                      ),
-                    ),
                     Image.asset(
                       'assets/images/TotalCare.png',
                       height: mediaQuery.height * 0.24,
                       width: mediaQuery.width * 0.3,
-                      alignment: Alignment.center,
                     ),
                     Text(
                       '${userProfileData['first_name']} ${userProfileData['last_name']}',
@@ -98,19 +83,15 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
                           .textTheme
                           .titleMedium!
                           .copyWith(fontSize: mediaQuery.width * 0.055),
-                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 20),
                     userMedications.isEmpty
-                        ? Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: Text(
-                              'You have no medication profiles.',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey.shade700,
-                              ),
+                        ? Text(
+                            'You have no medication profiles.',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey.shade700,
                             ),
                           )
                         : Container(
@@ -153,8 +134,8 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
                                           ),
                                           const PopupMenuDivider(),
                                           PopupMenuItem<int>(
-                                            textStyle:
-                                                const TextStyle(color: Colors.red),
+                                            textStyle: const TextStyle(
+                                                color: Colors.red),
                                             height: mediaQuery.height * 0.03,
                                             value: 1,
                                             child: const Text('Delete'),
