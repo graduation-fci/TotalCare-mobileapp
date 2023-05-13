@@ -108,17 +108,22 @@ class Cart with ChangeNotifier {
         "quantity": num,
       }),
     );
-    log(id.toString());
-    log(drugID.toString());
-    log(num.toString());
-    if (response.statusCode == 201) {
+    final responseData = json.decode(response.body);
+    if (responseData['quantity'] != null) {
+      errorMSG = responseData['quantity'][0];
       notifyListeners();
-      // log('Added!');
-    } else {
-      errorMSG = 'Failed to add item to cart. Please try again later!';
-      // log(response.statusCode.toString());
-      // log('A7A');
     }
+    // log(id.toString());
+    // log(drugID.toString());
+    // log(num.toString());
+    // if (response.statusCode == 201) {
+    //   notifyListeners();
+    //   // log('Added!');
+    // } else {
+    //   errorMSG = 'Failed to add item to cart. Please try again later!';
+    //   // log(response.statusCode.toString());
+    //   // log('A7A');
+    // }
   }
 
   Future<void> updateCart(String id, int drugID, int number) async {

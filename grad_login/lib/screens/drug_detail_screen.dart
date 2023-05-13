@@ -4,7 +4,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../widgets/sign_button.dart';
 import '../providers/drugProvider.dart';
 import '../providers/cartProvider.dart';
 import 'love_button.dart';
@@ -34,6 +33,7 @@ class _DrugDetailScreenState extends State<DrugDetailScreen> {
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as DrugItem;
     final mediaQuery = MediaQuery.of(context);
+    final error = Provider.of<Cart>(context).errorMSG;
 
     return SafeArea(
       child: Stack(
@@ -144,11 +144,13 @@ class _DrugDetailScreenState extends State<DrugDetailScreen> {
                                 size: 18,
                               ),
                               color: Colors.grey,
-                              onPressed: () {
-                                setState(() {
-                                  number--;
-                                });
-                              },
+                              onPressed: number == 1
+                                  ? null
+                                  : () {
+                                      setState(() {
+                                        number--;
+                                      });
+                                    },
                             ),
                           ),
                         ),
@@ -218,25 +220,62 @@ class _DrugDetailScreenState extends State<DrugDetailScreen> {
                           ),
                   ],
                 ),
-
-                // FloatingActionButton(
-                //   backgroundColor: Theme.of(context).primaryColor,
-                //   onPressed: () async {
-                //     await Provider.of<Cart>(context, listen: false)
-                //         .addCart(cartID, args.id, number)
-                //         .then((_) {
-                //       setState(() {
-                //         ScaffoldMessenger.of(context).showSnackBar(
-                //             const SnackBar(
-                //                 content: Text('Item added Successfully!')));
-                //       });
-                //     });
-                //   },
-                //   child: Text(
-                //     'Add to cart',
-                //     style: Theme.of(context).textTheme.button,
-                //   ),
-                // ),
+                floatingActionButton: Padding(
+                  padding: const EdgeInsets.only(left: 28),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: FloatingActionButton.extended(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      onPressed: () async {
+                        await Provider.of<Cart>(context, listen: false)
+                            .addCart(cartID, args.id, number)
+                            .then((_) {
+                          if (error == null) {
+                            setState(() {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content:
+                                          Text('Item added Successfully!')));
+                            });
+                          } else {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    contentPadding: const EdgeInsets.all(20),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                    ),
+                                    title:
+                                        const Text('Something went wrong...'),
+                                    content: Text(error),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          'Ok',
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                });
+                          }
+                        });
+                      },
+                      label: Text(
+                        'Add to cart',
+                        style: Theme.of(context).textTheme.button,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
