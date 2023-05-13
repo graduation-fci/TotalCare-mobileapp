@@ -18,21 +18,6 @@ class UserProvider with ChangeNotifier {
     return [..._userMedications];
   }
 
-  Future<void> getUserProfile() async {
-    appState = AppState.loading;
-    notifyListeners();
-    final responseData = await userService.getMyProfile();
-    if (responseData['detail'] != null) {
-      errorMessage = responseData['detail'];
-      appState = AppState.error;
-    } else {
-      userProfileData = responseData;
-      appState = AppState.done;
-    }
-    // log("$userProfileData");
-    notifyListeners();
-  }
-
   Future<void> addUserMedication(Medication med) async {
     appState = AppState.loading;
     notifyListeners();

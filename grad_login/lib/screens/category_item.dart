@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:grad_login/providers/drugProvider.dart';
-import 'package:grad_login/screens/medicine_screen.dart';
-
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
+import 'medicine_screen.dart';
+import '../providers/drugProvider.dart';
 import '../providers/categoriesProvider.dart';
 
 class CategoryItem extends StatefulWidget {
@@ -62,8 +62,16 @@ class _CategoryItemState extends State<CategoryItem> {
               ),
             ),
           ),
-          child: Image.network(
-            categories[index]['image']['image'],
+          child: CachedNetworkImage(
+            imageUrl: categories[index]['image']['image'],
+            placeholder: (context, url) =>
+                const Center(child: CircularProgressIndicator()),
+            errorWidget: (context, url, error) => const Center(
+              child: Icon(
+                Icons.error,
+                color: Colors.red,
+              ),
+            ),
             fit: BoxFit.cover,
           ),
         ),

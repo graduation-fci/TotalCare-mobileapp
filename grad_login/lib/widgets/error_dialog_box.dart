@@ -17,9 +17,12 @@ class CustomAlertDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text(
-        'Oops... Something went wrong!',
-        style: TextStyle(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      title: Text(
+        title!,
+        style: const TextStyle(
           fontSize: 18,
         ),
       ),
@@ -38,8 +41,7 @@ class CustomAlertDialog extends StatelessWidget {
               backgroundColor: Colors.red,
             ),
             onPressed: () {
-              Navigator.of(context).pop();
-              // onConfirmPressed();
+              onConfirmPressed;
             },
             child: Text(
               confirmButtonText!,
@@ -55,19 +57,19 @@ class CustomAlertDialog extends StatelessWidget {
 }
 
 void showAlertDialog(
-    {BuildContext? context,
-    String? title,
-    String? content,
-    String? confirmButtonText,
-    Function? onConfirmPressed}) {
+    {required BuildContext context,
+    required String title,
+    required String content,
+    required String confirmButtonText,
+    required Function onConfirmPressed}) {
   showDialog(
-    context: context!,
+    context: context,
     builder: (context) {
       return CustomAlertDialog(
         title: title,
         content: content,
         confirmButtonText: confirmButtonText,
-        // onConfirmPressed: onConfirmPressed,
+        onConfirmPressed: onConfirmPressed,
       );
     },
   );

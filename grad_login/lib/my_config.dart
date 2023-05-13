@@ -12,4 +12,5 @@ class Config {
   static const String addresses = '$apiUrl/users/addresses/';
   static const String carts = '$apiUrl/store/carts/';
   static const String orders = '$apiUrl/store/orders/';
+  static const String contRegister = '$apiUrl/users/patients/me/';
 }

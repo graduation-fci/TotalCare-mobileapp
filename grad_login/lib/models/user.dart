@@ -7,6 +7,9 @@ class User {
   String email;
   String password;
   String profileType;
+  String? phoneNumber;
+  String? birthDate;
+  String? bloodType;
 
   User({
     required this.username,
@@ -15,5 +18,8 @@ class User {
     required this.email,
     required this.password,
     required this.profileType,
+    this.phoneNumber,
+    this.birthDate,
+    this.bloodType,
   });
 }

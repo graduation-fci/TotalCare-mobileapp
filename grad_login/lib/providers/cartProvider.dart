@@ -142,8 +142,8 @@ class Cart with ChangeNotifier {
         },
       ),
     );
-    log(url.toString());
-    log(response.statusCode.toString());
+    // log(url.toString());
+    // log(response.statusCode.toString());
     if (response.statusCode == 200) {
       log('Updated');
       // _list[addressIndex] = addressItem;
@@ -163,11 +163,10 @@ class Cart with ChangeNotifier {
     });
     final addressIndex = _list.indexWhere((element) => element.id == id);
     final url = Uri.parse('${Config.carts}$cartID/items/$id/');
-    log(_list.toString());
-    log(url.toString());
+    // log(_list.toString());
+    // log(url.toString());
     CartItem? existingProduct = _list[addressIndex];
     _list.removeAt(addressIndex);
-    notifyListeners();
     final response = await http.delete(
       url,
       headers: {
@@ -175,13 +174,15 @@ class Cart with ChangeNotifier {
         'Content-Type': 'application/json',
       },
     );
+    getCartID();
+    notifyListeners();
 
     if (response.statusCode >= 400) {
       _list.insert(addressIndex, existingProduct);
       notifyListeners();
       errorMSG = 'Failed to delete item, try again later!';
     }
-    log('Deleted !');
+    // log('Deleted !');
     existingProduct = null;
   }
 }

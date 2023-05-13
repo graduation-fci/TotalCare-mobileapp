@@ -1,36 +1,13 @@
 import 'dart:convert';
 
-import 'package:grad_login/models/medication.dart';
 import 'package:http/http.dart' as http;
 
 import '../../my_config.dart';
 import '../shared/storage.dart';
+import '/models/medication.dart';
 
 class UserService {
   Storage storage = Storage();
-
-  Future<Map<String, dynamic>> getMyProfile() async {
-    final url = Uri.parse(Config.myProfile);
-    String? token;
-    await storage.getToken().then((value) {
-      token = value;
-    });
-
-    final response = await http.get(
-      url,
-      headers: {
-        "content-type": "application/json",
-        "Authorization": "JWT $token",
-      },
-    );
-
-    final responseData = json.decode(response.body);
-    // log('$responseData');
-    if (responseData['details'] == null) {
-      return responseData;
-    }
-    return responseData;
-  }
 
   Future<Map<String, dynamic>> addMedicationProfile(Medication med) async {
     final url = Uri.parse(Config.userMedications);

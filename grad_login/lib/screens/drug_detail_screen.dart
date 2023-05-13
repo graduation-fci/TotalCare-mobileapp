@@ -1,11 +1,13 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:grad_login/providers/drugProvider.dart';
-import 'package:grad_login/screens/love_button.dart';
 import 'package:provider/provider.dart';
 
+import '../widgets/sign_button.dart';
+import '../providers/drugProvider.dart';
 import '../providers/cartProvider.dart';
+import 'love_button.dart';
 
 class DrugDetailScreen extends StatefulWidget {
   const DrugDetailScreen({super.key});
@@ -31,22 +33,26 @@ class _DrugDetailScreenState extends State<DrugDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as DrugItem;
-    final mediaQuery = MediaQuery.of(context).size;
+    final mediaQuery = MediaQuery.of(context);
 
     return SafeArea(
       child: Stack(
         children: [
           Scaffold(
-            // appBar: AppBar(
-            //   automaticallyImplyLeading: true,
-            // ),
-            /*THERE IS NO BACK BUTTON*/
             extendBody: true,
             body: Stack(children: [
-              Image.network(
-                args.imgURL[0]['image'],
+              CachedNetworkImage(
+                imageUrl: args.imgURL[0]['image'],
                 width: double.infinity,
                 height: 300,
+                placeholder: (context, url) =>
+                    const Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) => const Center(
+                  child: Icon(
+                    Icons.error,
+                    color: Colors.red,
+                  ),
+                ),
                 fit: BoxFit.cover,
               ),
               Padding(
@@ -97,7 +103,7 @@ class _DrugDetailScreenState extends State<DrugDetailScreen> {
                       args.name,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: mediaQuery.width * 0.06,
+                        fontSize: mediaQuery.size.width * 0.06,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -105,7 +111,7 @@ class _DrugDetailScreenState extends State<DrugDetailScreen> {
                       '${args.price} L.E.',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: mediaQuery.width * 0.05,
+                        fontSize: mediaQuery.size.width * 0.05,
                         color: Colors.grey[700],
                       ),
                     ),
@@ -118,13 +124,13 @@ class _DrugDetailScreenState extends State<DrugDetailScreen> {
                         Text(
                           'Select Quantity',
                           style: TextStyle(
-                            fontSize: mediaQuery.width * 0.05,
+                            fontSize: mediaQuery.size.width * 0.05,
                           ),
                         ),
                         const SizedBox(width: 10),
                         SizedBox(
-                          width: mediaQuery.width * 0.08,
-                          height: mediaQuery.width * 0.08,
+                          width: mediaQuery.size.width * 0.08,
+                          height: mediaQuery.size.width * 0.08,
                           child: Container(
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -150,13 +156,13 @@ class _DrugDetailScreenState extends State<DrugDetailScreen> {
                         Text(
                           number.toString(),
                           style: TextStyle(
-                            fontSize: mediaQuery.width * 0.05,
+                            fontSize: mediaQuery.size.width * 0.05,
                           ),
                         ),
                         const SizedBox(width: 10),
                         SizedBox(
-                          width: mediaQuery.width * 0.08,
-                          height: mediaQuery.width * 0.08,
+                          width: mediaQuery.size.width * 0.08,
+                          height: mediaQuery.size.width * 0.08,
                           child: Container(
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -178,21 +184,6 @@ class _DrugDetailScreenState extends State<DrugDetailScreen> {
                             ),
                           ),
                         ),
-
-                        // IconButton(
-                        //     iconSize: 30,
-                        //     onPressed: () {
-                        //       setState(() {
-                        //         number++;
-                        //       });
-                        //     },
-                        //     icon: widget(
-                        //       child: Icon(
-                        //         Icons.add,
-                        //         color: Colors.white,
-                        //         // color: Colors.red,
-                        //       ),
-                        //     ))
                       ],
                     ),
                     const Text(
@@ -207,51 +198,45 @@ class _DrugDetailScreenState extends State<DrugDetailScreen> {
                         ? const Text(
                             'No ingredients found for this item',
                           )
-                        : ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              return Text('${args.drugsList[index]['name']}');
-                            },
-                            itemCount: args.drugsList.length,
+                        : Expanded(
+                            child: Scrollbar(
+                              child: SizedBox(
+                                height: double.infinity,
+                                child: ListView.builder(
+                                  itemExtent: 25,
+                                  shrinkWrap: true,
+                                  itemBuilder: (context, index) {
+                                    return SizedBox(
+                                      child: Text(
+                                          '- ${args.drugsList[index]['name']}'),
+                                    );
+                                  },
+                                  itemCount: args.drugsList.length,
+                                ),
+                              ),
+                            ),
                           ),
                   ],
                 ),
-                floatingActionButton: Padding(
-                  padding: const EdgeInsets.only(left: 28),
-                  child: SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: FloatingActionButton.extended(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        onPressed: () async {
-                          await Provider.of<Cart>(context, listen: false)
-                              .addCart(cartID, args.id, number)
-                              .then((_) {
-                            setState(() {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content:
-                                          Text('Item added Successfully!')));
-                            });
-                          });
-                          // log(args.id.toString());
-                          // log(number.toString());
-                        },
-                        label: Text(
-                          'Add to cart',
-                          style: Theme.of(context).textTheme.button,
-                        ),
-                      )
-                      //  ElevatedButton(
-                      //   style: ButtonStyle(
-                      //       backgroundColor: MaterialStatePropertyAll(
-                      //           Theme.of(context).primaryColor)),
-                      //   onPressed: () {},
-                      //   child: const Text('Add to Cart'),
-                      // ),
-                      ),
-                ),
+
+                // FloatingActionButton(
+                //   backgroundColor: Theme.of(context).primaryColor,
+                //   onPressed: () async {
+                //     await Provider.of<Cart>(context, listen: false)
+                //         .addCart(cartID, args.id, number)
+                //         .then((_) {
+                //       setState(() {
+                //         ScaffoldMessenger.of(context).showSnackBar(
+                //             const SnackBar(
+                //                 content: Text('Item added Successfully!')));
+                //       });
+                //     });
+                //   },
+                //   child: Text(
+                //     'Add to cart',
+                //     style: Theme.of(context).textTheme.button,
+                //   ),
+                // ),
               ),
             ),
           ),
