@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:grad_login/screens/drug_detail_screen.dart';
 import '../providers/drugProvider.dart';
@@ -13,19 +14,11 @@ class DrugItemScreen extends StatefulWidget {
 }
 
 class _DrugItemScreenState extends State<DrugItemScreen> {
-  bool _dataFetched = false;
-
   @override
   void initState() {
     // print('widgetID: ${widget.catID}');
     Future.delayed(Duration.zero).then((value) {
-      Provider.of<Drugs>(context, listen: false)
-          .fetchDrug(widget.catID)
-          .then((_) {
-        setState(() {
-          _dataFetched = true;
-        });
-      });
+      Provider.of<Drugs>(context, listen: false).fetchDrug(widget.catID);
     });
     super.initState();
   }
@@ -49,12 +42,12 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
         onTap: () => Navigator.of(context).pushNamed(
           DrugDetailScreen.routeName,
           arguments: DrugItem(
-              id: drugs[index]['id'],
-              name: drugs[index]['name'],
-              price: drugs[index]['price'],
-              imgURL: drugs[index]
-                  ['medicine_images'],
-              drugsList: drugs[index]['drug'],), //medicine images is a list
+            id: drugs[index]['id'],
+            name: drugs[index]['name'],
+            price: drugs[index]['price'],
+            imgURL: drugs[index]['medicine_images'],
+            drugsList: drugs[index]['drug'],
+          ), //medicine images is a list
         ),
         child: Ink(
           decoration: ShapeDecoration(
@@ -79,8 +72,16 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
             child: Stack(
               alignment: Alignment.topRight,
               children: [
-                Image.network(
-                  drugs[index]['medicine_images'][0]['image'],
+                CachedNetworkImage(
+                  imageUrl: drugs[index]['medicine_images'][0]['image'],
+                  placeholder: (context, url) =>
+                      const Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) => const Center(
+                    child: Icon(
+                      Icons.error,
+                      color: Colors.red,
+                    ),
+                  ),
                   fit: BoxFit.cover,
                 ),
                 const Padding(
