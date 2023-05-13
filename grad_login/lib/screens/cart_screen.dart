@@ -5,9 +5,6 @@ import '../providers/cartProvider.dart';
 import '../providers/orders_provider.dart';
 import '../providers/addressProvider.dart';
 
-import 'my_orders_screen.dart';
-import 'address_screen.dart';
-
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
   static const routeName = '/cart-screen';
@@ -61,9 +58,13 @@ class _CartScreenState extends State<CartScreen> {
             ? const Center(
                 child: CircularProgressIndicator.adaptive(),
               )
-            : carts == []
+            : carts.isEmpty
                 ? const Center(
-                    child: Text('No items in cart!'),
+                    child: Text(
+                      'You have not added items to cart yet!',
+                      style:
+                        TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                    ),
                   )
                 : LayoutBuilder(builder: (context, constraints) {
                     return Column(
@@ -104,19 +105,9 @@ class _CartScreenState extends State<CartScreen> {
                                           direction:
                                               DismissDirection.endToStart,
                                           onDismissed: (direction) {
-                                            print('Deleting');
                                             try {
-                                              Provider.of<Cart>(context,
-                                                      listen: false)
-                                                  .deleteCart(
-                                                      _cartID, carts[index].id);
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                const SnackBar(
-                                                  content: Text(
-                                                      'Item Deleted Successfully!'),
-                                                ),
-                                              );
+                                              deleteCartItem(
+                                                  context, carts, index);
                                             } catch (e) {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(
@@ -196,39 +187,41 @@ class _CartScreenState extends State<CartScreen> {
                                                                 padding:
                                                                     const EdgeInsets
                                                                         .all(0),
-                                                                icon:
-                                                                    const Icon(
-                                                                  Icons.remove,
-                                                                  size: 18,
-                                                                ),
+                                                                icon: carts[index]
+                                                                            .quantity ==
+                                                                        1
+                                                                    ? const Icon(
+                                                                        Icons
+                                                                            .delete,
+                                                                        color: Colors
+                                                                            .red,
+                                                                        size:
+                                                                            18,
+                                                                      )
+                                                                    : const Icon(
+                                                                        Icons
+                                                                            .remove,
+                                                                        size:
+                                                                            18,
+                                                                      ),
                                                                 color:
                                                                     Colors.grey,
-                                                                onPressed:
-                                                                    () async {
-                                                                  carts[index]
-                                                                      .quantity--;
-                                                                  await Provider.of<
-                                                                              Cart>(
+                                                                onPressed: carts[index]
+                                                                            .quantity ==
+                                                                        1
+                                                                    ? () =>
+                                                                        deleteCartItem(
                                                                           context,
-                                                                          listen:
-                                                                              false)
-                                                                      .updateCart(
-                                                                          _cartID,
-                                                                          carts[index]
-                                                                              .id,
-                                                                          carts[index]
-                                                                              .quantity)
-                                                                      .then(
-                                                                          (_) {
-                                                                    ScaffoldMessenger.of(
-                                                                            context)
-                                                                        .showSnackBar(const SnackBar(
-                                                                            content:
-                                                                                Text('Item upadted Successfully!')));
-                                                                    setState(
-                                                                        () {});
-                                                                  });
-                                                                },
+                                                                          carts,
+                                                                          index,
+                                                                        )
+                                                                    : () async {
+                                                                        await updateCartItem(
+                                                                          carts,
+                                                                          index,
+                                                                          context,
+                                                                        );
+                                                                      },
                                                               ),
                                                             ),
                                                           ),
@@ -285,9 +278,12 @@ class _CartScreenState extends State<CartScreen> {
                                                                           (_) {
                                                                     ScaffoldMessenger.of(
                                                                             context)
+                                                                        .removeCurrentSnackBar();
+                                                                    ScaffoldMessenger.of(
+                                                                            context)
                                                                         .showSnackBar(const SnackBar(
                                                                             content:
-                                                                                Text('Item upadted Successfully!')));
+                                                                                Text('Item updated Successfully!')));
                                                                     setState(
                                                                         () {});
                                                                   });
@@ -317,76 +313,104 @@ class _CartScreenState extends State<CartScreen> {
                             ),
                           ),
                         ),
-                        Container(
-                          height: 120,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
-                          decoration: BoxDecoration(
-                            color: Colors.white70.withOpacity(0.8),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.grey,
-                                spreadRadius: 1,
-                                blurRadius: 5,
-                                offset: Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    'Total Price: ',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
+                        cartPrice == '0'
+                            ? Container()
+                            : Container(
+                                height: 120,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: Colors.white70.withOpacity(0.8),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Colors.grey,
+                                      spreadRadius: 1,
+                                      blurRadius: 5,
+                                      offset: Offset(0, 3),
                                     ),
-                                  ),
-                                  Text(
-                                    ' $cartPrice L.E.',
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
+                                  ],
+                                ),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text(
+                                          'Total Price: ',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          ' $cartPrice L.E.',
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 50,
-                                width: double.infinity,
-                                child: ElevatedButton(
-                                  onPressed: () async {
-                                    await showBottomSheet.showBottomSheet(
-                                        context,
-                                        myAddresses,
-                                        ordersProvider,
-                                        cartId);
-                                    // ordersProvider.placeOrder(
-                                    //     addressId, cartId);
-                                  },
-                                  child: Text(
-                                    'Continue',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .button!
-                                        .copyWith(
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.05),
-                                  ),
+                                    SizedBox(
+                                      height: 50,
+                                      width: double.infinity,
+                                      child: ElevatedButton(
+                                        onPressed: () async {
+                                          await showBottomSheet.showBottomSheet(
+                                              context,
+                                              myAddresses,
+                                              ordersProvider,
+                                              cartId);
+                                          // ordersProvider.placeOrder(
+                                          //     addressId, cartId);
+                                        },
+                                        child: Text(
+                                          'Continue',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .button!
+                                              .copyWith(
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.05),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
                       ],
                     );
                   }),
+      ),
+    );
+  }
+
+  Future<void> updateCartItem(
+      List<CartItem> carts, int index, BuildContext context) async {
+    carts[index].quantity--;
+    await Provider.of<Cart>(context, listen: false)
+        .updateCart(_cartID, carts[index].id, carts[index].quantity)
+        .then((_) {
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Item updated Successfully!')));
+      setState(() {});
+    });
+  }
+
+  void deleteCartItem(BuildContext context, List<CartItem> carts, int index) {
+    Provider.of<Cart>(context, listen: false)
+        .deleteCart(_cartID, carts[index].id);
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Item Deleted Successfully!'),
       ),
     );
   }
