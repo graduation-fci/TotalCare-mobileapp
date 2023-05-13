@@ -2,9 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:grad_login/app_state.dart';
-import 'package:grad_login/models/simple_medicine.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:grad_login/screens/interaction_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'package:grad_login/providers/interactionsProvider.dart';
@@ -188,6 +186,7 @@ class _ShowInteractionsResultsScreenState
                                       children: [
                                         Text(
                                           namesOfMedicines[k],
+                                          overflow: TextOverflow.clip,
                                           style: customTextStyle(
                                               mediaQuery.width * 0.048,
                                               weight: FontWeight.w700),

@@ -241,9 +241,14 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(
                                                 SnackBar(
+                                                  behavior:
+                                                      SnackBarBehavior.floating,
+                                                  duration: const Duration(
+                                                      milliseconds: 2000),
                                                   content: Text(
                                                       '${deletedMed['name']} dismissed'),
                                                   action: SnackBarAction(
+                                                    textColor: Colors.white,
                                                     label: 'Undo',
                                                     onPressed: () {
                                                       setState(() {

@@ -18,7 +18,6 @@ class TabsScreen extends StatefulWidget {
 
 class _TabsScreenState extends State<TabsScreen> {
   List<Map<String, dynamic>> _pages = [];
-  String? settings;
 
   @override
   void initState() {
