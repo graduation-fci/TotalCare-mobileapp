@@ -253,6 +253,10 @@ class _LoginScreenState extends State<LoginScreen> {
             context: context,
             content: authProvider.errorMessage!,
             confirmButtonText: 'Dismiss',
+            onConfirmPressed: () {
+              Navigator.pop(context);
+            },
+            title: 'Oops something went wrong...'
           );
           return;
         }
