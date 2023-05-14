@@ -21,6 +21,12 @@ class OrdersProvider with ChangeNotifier {
     return [..._getOrdersData];
   }
 
+  Map<String, dynamic> _getSingleOrderData = {};
+
+  Map<String, dynamic> get getSingleOrderData {
+    return {..._getSingleOrderData};
+  }
+
   String? _nextPageEndPoint;
   String? _previousPageEndPoint;
 
@@ -57,5 +63,14 @@ class OrdersProvider with ChangeNotifier {
       appState = AppState.error;
       notifyListeners();
     }
+  }
+
+  Future<void> getSingleOrder(int id) async {
+    appState = AppState.loading;
+    notifyListeners();
+    _getSingleOrderData = await ordersService.getSingleOrder(id);
+    log(_getSingleOrderData.toString());
+    appState = AppState.done;
+    notifyListeners();
   }
 }
