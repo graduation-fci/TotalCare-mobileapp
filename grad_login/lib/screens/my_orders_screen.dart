@@ -88,7 +88,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
-                          return orderItem(ordersData, index);
+                          return orderItem(context ,ordersData, index);
                         },
                         itemCount: ordersData.length,
                       ),
