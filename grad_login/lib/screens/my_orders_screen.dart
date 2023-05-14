@@ -49,6 +49,13 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                       backgroundColor: Colors.white,
                       pinned: true,
                       elevation: 0,
+                      leading: IconButton(
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                      ),
                       title: Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 10,
