@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:grad_login/widgets/show_bottom_sheet.dart';
 import 'package:provider/provider.dart';
@@ -18,13 +20,14 @@ class _CartScreenState extends State<CartScreen> {
   ShowBottomSheet showBottomSheet = ShowBottomSheet();
   int? addressId;
   String _cartID = '';
+
   @override
   void initState() {
     Future.delayed(Duration.zero).then((value) {
       Provider.of<Cart>(context, listen: false).getCartID().then((_) {
-        final token = Provider.of<Cart>(context, listen: false).cartID;
-        Provider.of<Cart>(context, listen: false).fetchCart(token);
-        _cartID = token;
+        final cardId = Provider.of<Cart>(context, listen: false).cartID;
+        Provider.of<Cart>(context, listen: false).fetchCart(cardId);
+        _cartID = cardId;
         _isLoading = false;
       }).then((_) async =>
           await Provider.of<Address>(context, listen: false).fetchAddress());
@@ -63,7 +66,7 @@ class _CartScreenState extends State<CartScreen> {
                     child: Text(
                       'You have not added items to cart yet!',
                       style:
-                        TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                     ),
                   )
                 : LayoutBuilder(builder: (context, constraints) {
