@@ -4,7 +4,7 @@ class CustomAlertDialog extends StatelessWidget {
   String? title;
   String? content;
   String? confirmButtonText;
-  Function? onConfirmPressed;
+  Function()? onConfirmPressed;
 
   CustomAlertDialog({
     super.key,
@@ -40,9 +40,7 @@ class CustomAlertDialog extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
             ),
-            onPressed: () {
-              onConfirmPressed;
-            },
+            onPressed: onConfirmPressed,
             child: Text(
               confirmButtonText!,
               style: const TextStyle(
@@ -61,7 +59,7 @@ void showAlertDialog(
     required String title,
     required String content,
     required String confirmButtonText,
-    required Function onConfirmPressed}) {
+    required Function() onConfirmPressed}) {
   showDialog(
     context: context,
     builder: (context) {
