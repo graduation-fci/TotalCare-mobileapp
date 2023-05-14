@@ -169,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   SignButton(
                     mediaQuery: mediaQuery,
                     onPressed: () =>
-                        onPressed(authProvider, userProvider, cartProvider),
+                        onPressed(authProvider, userProvider, cartProvider, context),
                     label: appLocalization.login,
                   ),
                   if (authProvider.appState == AppState.loading)
@@ -245,7 +245,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void onPressed(authProvider, userProvider, cartProvider) async {
+  void onPressed(authProvider, userProvider, cartProvider, context) async {
     if (_formKey.currentState!.validate()) {
       await authProvider
           .login(
@@ -264,7 +264,6 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       }).then((_) async {
         if (authProvider.appState == AppState.done) {
-          final cartId = cartProvider.cartID;
           final token = await storage.getToken();
 
           List<String> parts = token!.split('.');
