@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:provider/provider.dart';
+import '../providers/cartProvider.dart';
+import 'cart_screen.dart';
 import 'drug_item.dart';
 
 class MedicinesScreen extends StatelessWidget {
@@ -9,6 +13,7 @@ class MedicinesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final mediaquery = MediaQuery.of(context).size;
     final args = ModalRoute.of(context)!.settings.arguments as List;
+    final cartItems = Provider.of<Cart>(context).items;
     return SafeArea(
       child: Scaffold(
         body: LayoutBuilder(builder: (context, constraints) {
@@ -32,6 +37,45 @@ class MedicinesScreen extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
+                            actions: [
+                              IconButton(
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .pushNamed(CartScreen.routeName);
+                                },
+                                icon: Stack(
+                                  children: [
+                                    Icon(
+                                      MdiIcons.cartOutline,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                      size: 28,
+                                    ),
+                                    Positioned(
+                                      top: 0,
+                                      right: 0,
+                                      child: Container(
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.red,
+                                        ),
+                                        width: 13,
+                                        height: 13,
+                                        child: Text(
+                                          cartItems.length.toString(),
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 10,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
                             elevation: 0,
                             backgroundColor: Colors.white10,
                             foregroundColor: Colors.black,
