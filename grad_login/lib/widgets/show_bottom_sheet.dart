@@ -1,5 +1,9 @@
-import 'package:flutter/material.dart';
+import 'dart:developer';
 
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/cartProvider.dart';
 import '../providers/addressProvider.dart';
 import '../providers/orders_provider.dart';
 import '../screens/address_screen.dart';
@@ -10,6 +14,7 @@ class ShowBottomSheet {
   int? addressId;
   showBottomSheet(BuildContext context, List<AddressItem> myAddresses,
       OrdersProvider ordersProvider, String cartId) async {
+    addressId = myAddresses.isEmpty ? null : myAddresses[0].id;
     showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -97,11 +102,12 @@ class ShowBottomSheet {
                           onPressed: () async {
                             await ordersProvider
                                 .placeOrder(addressId!, cartId)
-                                .then(
-                                  (_) => Navigator.of(context)
-                                      .pushReplacementNamed(
-                                          MyOrdersScreen.routeName),
-                                );
+                                .then((_) {
+                              Provider.of<Cart>(context, listen: false)
+                                  .fetchCart(cartId);
+                              Navigator.of(context).pushReplacementNamed(
+                                  MyOrdersScreen.routeName);
+                            });
                           },
                           child: Text(
                             'Place Order',
