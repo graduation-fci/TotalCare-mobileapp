@@ -69,6 +69,11 @@ class Cart with ChangeNotifier {
     });
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
     if (response.statusCode == 200) {
+      if (extractedData['items'].length == 0) {
+        _list = [];
+        notifyListeners();
+        return;
+      }
       log(extractedData.toString());
       for (var i = 0; i < extractedData['items'].length; i++) {
         // log(extractedData['items'].length.toString());
