@@ -18,8 +18,9 @@ GestureDetector orderItem(
     onTap: () async {
       await Provider.of<OrdersProvider>(context, listen: false)
           .getSingleOrder(singleOrder['id'])
-          .then((value) => Navigator.of(context)
-              .pushNamed(SingleOrderScreen.routeName, arguments: singleOrder['id']));
+          .then((value) => Navigator.of(context).pushNamed(
+              SingleOrderScreen.routeName,
+              arguments: singleOrder['id']));
     },
     child: Container(
       height: 120,
@@ -67,7 +68,7 @@ GestureDetector orderItem(
                     BoxShadow(
                       blurStyle: BlurStyle.inner,
                       blurRadius: 3,
-                      color: orderStatus == 'CAN' ? Colors.red : Colors.green,
+                      color: orderStatus == 'PEN' ? Colors.green : Colors.red,
                     ),
                   ],
                 ),
