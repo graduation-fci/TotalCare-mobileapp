@@ -56,14 +56,14 @@ class Cart with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchCart(String id) async {
+  Future<void> fetchCart() async {
     final List<CartItem> loadedCat = [];
-
+    await getCartID();
     String? token;
     await storage.getToken().then((value) {
       token = value;
     });
-    final url = Uri.parse('${Config.carts}$id');
+    final url = Uri.parse('${Config.carts}$cartID');
     final response = await http.get(url, headers: {
       'Authorization': 'JWT $token',
     });
@@ -114,10 +114,11 @@ class Cart with ChangeNotifier {
       }),
     );
     final responseData = json.decode(response.body);
-    if (responseData['quantity'] != null) {
+    if (responseData['quantity'] is List) {
       errorMSG = responseData['quantity'][0];
       notifyListeners();
     }
+    fetchCart();
     // log(id.toString());
     // log(drugID.toString());
     // log(num.toString());
@@ -131,15 +132,14 @@ class Cart with ChangeNotifier {
     // }
   }
 
-  Future<void> updateCart(String id, int drugID, int number) async {
-    log('cart ID: $id');
+  Future<void> updateCart(int drugID, int number) async {
     log('drug ID: ${drugID.toString()}');
     log('new quantity: ${number.toString()}');
     String? token;
     await storage.getToken().then((value) {
       token = value;
     });
-    final url = Uri.parse('${Config.carts}$id/items/$drugID/');
+    final url = Uri.parse('${Config.carts}$cartID/items/$drugID/');
     final response = await http.patch(
       url,
       headers: {
@@ -161,12 +161,12 @@ class Cart with ChangeNotifier {
       log('A7A');
       errorMSG = 'Failed to update address, try again later!';
     }
-    fetchCart(id);
+    fetchCart();
     getCartID();
     notifyListeners();
   }
 
-  Future<void> deleteCart(String cartid, int id) async {
+  Future<void> deleteCart(int id) async {
     String? token;
     await storage.getToken().then((value) {
       token = value;
