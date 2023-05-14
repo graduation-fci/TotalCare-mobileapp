@@ -73,4 +73,13 @@ class OrdersProvider with ChangeNotifier {
     appState = AppState.done;
     notifyListeners();
   }
+
+  Future<void> cancelOrder(int id) async {
+    appState = AppState.loading;
+    notifyListeners();
+    await ordersService.cancelOrder(id);
+    await getOrders();
+    appState = AppState.done;
+    notifyListeners();
+  }
 }
