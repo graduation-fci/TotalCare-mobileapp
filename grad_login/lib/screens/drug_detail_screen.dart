@@ -16,11 +16,16 @@ class DrugDetailScreen extends StatefulWidget {
   State<DrugDetailScreen> createState() => _DrugDetailScreenState();
 }
 
-class _DrugDetailScreenState extends State<DrugDetailScreen> {
+class _DrugDetailScreenState extends State<DrugDetailScreen>
+    with SingleTickerProviderStateMixin {
   int number = 1;
   String cartID = '';
+  late AnimationController _animationController;
+
   @override
   void initState() {
+    _animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 500));
     Provider.of<Cart>(context, listen: false).getCartID().then((_) {
       final token = Provider.of<Cart>(context, listen: false).cartID;
       cartID = token;
@@ -44,7 +49,7 @@ class _DrugDetailScreenState extends State<DrugDetailScreen> {
               CachedNetworkImage(
                 imageUrl: args.imgURL[0]['image'],
                 width: double.infinity,
-                height: 300,
+                height: mediaQuery.size.height * 0.4,
                 placeholder: (context, url) =>
                     const Center(child: CircularProgressIndicator()),
                 errorWidget: (context, url, error) => const Center(
@@ -74,7 +79,7 @@ class _DrugDetailScreenState extends State<DrugDetailScreen> {
             right: 0,
             top: 280,
             child: Container(
-              height: 580,
+              height: mediaQuery.size.height * 0.6,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -220,8 +225,8 @@ class _DrugDetailScreenState extends State<DrugDetailScreen> {
                           ),
                   ],
                 ),
-                floatingActionButton: Padding(
-                  padding: const EdgeInsets.only(left: 28),
+                bottomNavigationBar: Padding(
+                  padding: const EdgeInsets.only(top: 20),
                   child: SizedBox(
                     width: double.infinity,
                     height: 50,
@@ -234,9 +239,8 @@ class _DrugDetailScreenState extends State<DrugDetailScreen> {
                           if (error == null) {
                             setState(() {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content:
-                                          Text('Item added Successfully!')));
+                                customSnackBar(),
+                              );
                             });
                           } else {
                             showDialog(
@@ -281,6 +285,20 @@ class _DrugDetailScreenState extends State<DrugDetailScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  SnackBar customSnackBar() {
+    return SnackBar(
+      animation:
+          Tween<double>(begin: 0.0, end: 1).animate(_animationController),
+      // backgroundColor: Colors.transparent,
+      elevation: 0,
+      content: const Text(
+        'Item added Successfully!',
+      ),
+      duration: const Duration(milliseconds: 1200),
+      behavior: SnackBarBehavior.floating,
     );
   }
 }
