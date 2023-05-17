@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:grad_login/providers/cartProvider.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 import 'cart_screen.dart';
 import 'profile_screen.dart';
@@ -39,6 +41,9 @@ class _TabsScreenState extends State<TabsScreen> {
         'title': 'Settings',
       },
     ];
+
+    Future.delayed(Duration.zero)
+        .then((_) => Provider.of<Cart>(context, listen: false).fetchCart());
     super.initState();
   }
 

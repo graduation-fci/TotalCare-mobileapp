@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:grad_login/providers/cartProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -49,6 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final userProvider = Provider.of<UserProvider>(context);
     final appLocalization = AppLocalizations.of(context)!;
     final GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
+    final cartProvider = Provider.of<Cart>(context);
 
     return SafeArea(
       child: GestureDetector(
@@ -166,7 +168,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SignButton(
                     mediaQuery: mediaQuery,
-                    onPressed: () => onPressed(authProvider, userProvider),
+                    onPressed: () =>
+                        onPressed(authProvider, userProvider, cartProvider, context),
                     label: appLocalization.login,
                   ),
                   if (authProvider.appState == AppState.loading)
@@ -242,7 +245,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void onPressed(authProvider, userProvider) async {
+  void onPressed(authProvider, userProvider, cartProvider, context) async {
     if (_formKey.currentState!.validate()) {
       await authProvider
           .login(
@@ -250,19 +253,19 @@ class _LoginScreenState extends State<LoginScreen> {
           .then((_) {
         if (authProvider.appState == AppState.error) {
           showAlertDialog(
-            context: context,
-            content: authProvider.errorMessage!,
-            confirmButtonText: 'Dismiss',
-            onConfirmPressed: () {
-              Navigator.pop(context);
-            },
-            title: 'Oops something went wrong...'
-          );
+              context: context,
+              content: authProvider.errorMessage!,
+              confirmButtonText: 'Dismiss',
+              onConfirmPressed: () {
+                Navigator.pop(context);
+              },
+              title: 'Oops something went wrong...');
           return;
         }
       }).then((_) async {
         if (authProvider.appState == AppState.done) {
           final token = await storage.getToken();
+
           List<String> parts = token!.split('.');
           String payload = parts[1];
           while (payload.length % 4 != 0) {
@@ -272,6 +275,7 @@ class _LoginScreenState extends State<LoginScreen> {
               json.decode(utf8.decode(base64Url.decode(payload)));
 
           userProvider.userProfileData = data;
+          cartProvider.fetchCart();
           userProvider
               .getUserMedications()
               .then((_) => Navigator.of(context).pushReplacementNamed(

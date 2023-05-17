@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:grad_login/screens/singe_order_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -95,7 +96,7 @@ class MyApp extends StatelessWidget {
               Map<String, dynamic> data =
                   json.decode(utf8.decode(base64Url.decode(payload)));
 
-              Provider.of<UserProvider>(context).userProfileData= data;
+              Provider.of<UserProvider>(context).userProfileData = data;
               return const TabsScreen();
             } else {
               // User is not logged in, navigate to the login screen
@@ -129,6 +130,7 @@ class MyApp extends StatelessWidget {
           CartScreen.routeName: (context) => const CartScreen(),
           ContinueRegisterScreen.routeName: (context) =>
               const ContinueRegisterScreen(),
+          SingleOrderScreen.routeName: (context) => const SingleOrderScreen(),
         },
       ),
     );

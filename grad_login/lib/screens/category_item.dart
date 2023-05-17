@@ -23,7 +23,7 @@ class _CategoryItemState extends State<CategoryItem> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+        crossAxisCount: 3,
         childAspectRatio: 4 / 5,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,

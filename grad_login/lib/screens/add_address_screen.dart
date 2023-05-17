@@ -213,14 +213,15 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     if (!isValid) {
       return;
     } else {
-      await Provider.of<Address>(context, listen: false).addAddress(
-          _streetController.text,
-          _cityController.text,
-          _descController.text,
-          _phoneController.text,
-          _addressType.name,
-          _titleController.text);
-      setState(() {
+      await Provider.of<Address>(context, listen: false)
+          .addAddress(
+              _streetController.text,
+              _cityController.text,
+              _descController.text,
+              _phoneController.text,
+              _addressType.name,
+              _titleController.text)
+          .then((_) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Address added Successfully!')));
