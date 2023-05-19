@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:grad_login/screens/drug_detail_screen.dart';
 import '../providers/drugProvider.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'love_button.dart';
 
@@ -32,6 +33,8 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appLocalization = AppLocalizations.of(context)!.localeName;
+
     final drugs = Provider.of<Drugs>(context).items;
     //print(drugs.length);
     final mediaquery = MediaQuery.of(context).size;
@@ -49,12 +52,14 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
         onTap: () => Navigator.of(context).pushNamed(
           DrugDetailScreen.routeName,
           arguments: DrugItem(
-              id: drugs[index]['id'],
-              name: drugs[index]['name'],
-              price: drugs[index]['price'],
-              imgURL: drugs[index]
-                  ['medicine_images'],
-              drugsList: drugs[index]['drug'],), //medicine images is a list
+            id: drugs[index]['id'],
+            name: appLocalization == 'en'
+                ? drugs[index]['name']
+                : drugs[index]['name_ar'],
+            price: drugs[index]['price'],
+            imgURL: drugs[index]['medicine_images'],
+            drugsList: drugs[index]['drug'],
+          ), //medicine images is a list
         ),
         child: Ink(
           decoration: ShapeDecoration(
@@ -68,7 +73,9 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
           child: GridTile(
             footer: GridTileBar(
               title: Text(
-                drugs[index]['name'],
+                appLocalization == 'en'
+                    ? drugs[index]['name']
+                    : drugs[index]['name_ar'],
                 style: const TextStyle(color: Colors.black),
               ),
               subtitle: Text(
@@ -77,15 +84,24 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
               ),
             ),
             child: Stack(
-              alignment: Alignment.topRight,
+              alignment: Alignment.topCenter,
+              //alignment: Alignment.topRight,
               children: [
-                Image.network(
-                  drugs[index]['medicine_images'][0]['image'],
-                  fit: BoxFit.cover,
+                SizedBox(
+                  width: mediaquery.width * 0.5,
+                  height: mediaquery.height * 0.18,
+                  child: Image.network(
+                    drugs[index]['medicine_images'][0]['image'],
+                    fit: BoxFit.contain,
+                  ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: LoveBtn(),
+                const Positioned(
+                  top: 2,
+                  right: 5,
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: LoveBtn(),
+                  ),
                 ),
               ],
             ),
