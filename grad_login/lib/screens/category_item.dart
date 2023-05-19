@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'medicine_screen.dart';
@@ -16,6 +17,8 @@ class CategoryItem extends StatefulWidget {
 class _CategoryItemState extends State<CategoryItem> {
   @override
   Widget build(BuildContext context) {
+    final appLocalization = AppLocalizations.of(context)!.localeName;
+
     final categories = Provider.of<Categories>(context).items;
     final mediaquery = MediaQuery.of(context).size;
 
@@ -38,7 +41,9 @@ class _CategoryItemState extends State<CategoryItem> {
                   MedicinesScreen.routeName,
                   arguments: [
                     categories[index]['id'],
-                    categories[index]['name'],
+                    appLocalization == 'en'
+                        ? categories[index]['name']
+                        : categories[index]['name_ar'],
                   ],
                 )
               : ScaffoldMessenger.of(context)
@@ -51,7 +56,9 @@ class _CategoryItemState extends State<CategoryItem> {
             child: GridTileBar(
               backgroundColor: Colors.white,
               title: Text(
-                categories[index]['name'],
+                appLocalization == 'en'
+                    ? categories[index]['name']
+                    : categories[index]['name_ar'],
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 softWrap: true,

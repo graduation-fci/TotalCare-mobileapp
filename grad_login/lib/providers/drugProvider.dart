@@ -41,8 +41,10 @@ class Drugs with ChangeNotifier {
     print(url);
     final respone = await http.get(url, headers: {
       'Authorization': 'JWT $token',
+      "Accept-Language": "ar",
     });
-    final extractedData = json.decode(respone.body) as Map<String, dynamic>;
+    final extractedData =
+        json.decode(utf8.decode(respone.bodyBytes)) as Map<String, dynamic>;
     log('$extractedData');
     _list = extractedData['results'];
     notifyListeners();

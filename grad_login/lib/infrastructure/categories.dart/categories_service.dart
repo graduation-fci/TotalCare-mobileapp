@@ -22,11 +22,9 @@ class CategoriesService {
         Uri.parse('${Config.categories}?${_getQueryString(queryParams)}');
     final respone = await http.get(
       url,
-      headers: {
-        'Authorization': 'JWT $token',
-      },
+      headers: {'Authorization': 'JWT $token', "Accept-Language": "ar"},
     );
-    final extractedData = json.decode(respone.body);
+    final extractedData = json.decode(utf8.decode(respone.bodyBytes));
     // log('$extractedData');
     return extractedData;
   }
@@ -39,11 +37,9 @@ class CategoriesService {
     final url = Uri.parse(nextUrl);
     final respone = await http.get(
       url,
-      headers: {
-        'Authorization': 'JWT $token',
-      },
+      headers: {'Authorization': 'JWT $token', "Accept-Language": "ar"},
     );
-    final extractedData = json.decode(respone.body);
+    final extractedData = json.decode(utf8.decode(respone.bodyBytes));
     // log('$extractedData');
     return extractedData;
   }
@@ -56,11 +52,9 @@ class CategoriesService {
     final url = Uri.parse(previousUrl);
     final respone = await http.get(
       url,
-      headers: {
-        'Authorization': 'JWT $token',
-      },
+      headers: {'Authorization': 'JWT $token', "Accept-Language": "ar"},
     );
-    final extractedData = json.decode(respone.body);
+    final extractedData = json.decode(utf8.decode(respone.bodyBytes));
     // log('$extractedData');
     return extractedData;
   }
