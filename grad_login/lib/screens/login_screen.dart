@@ -1,18 +1,23 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:grad_login/providers/cartProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../infrastructure/shared/storage.dart';
+import '../widgets/error_dialog_box.dart';
 import 'register_screen.dart';
-import 'home_screen.dart';
 
 import '../app_state.dart';
-import '../providers/medicineProvider.dart';
+import '../providers/userProvider.dart';
 import '../providers/authProvider.dart';
 import '../widgets/input_field.dart';
-import '../widgets/login_button.dart';
-
+import '../widgets/sign_button.dart';
+import 'tabs_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String routeName = '/login';
@@ -28,6 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   String errorMessage = '';
+  Storage storage = Storage();
 
   @override
   void dispose() {
@@ -39,12 +45,12 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-    final mainTopPadding =
-        AppBar().preferredSize.height + mediaQuery.size.height * 0.07;
-    final authResponse = Provider.of<AuthProvider>(context);
-    final medicineResponse = Provider.of<MedicineProvider>(context);
+    final mainTopPadding = mediaQuery.size.height * 0.13;
+    final authProvider = Provider.of<AuthProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
     final appLocalization = AppLocalizations.of(context)!;
     final GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
+    final cartProvider = Provider.of<Cart>(context);
 
     return SafeArea(
       child: GestureDetector(
@@ -66,14 +72,20 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: EdgeInsets.all(10),
                     child: Text(
                       'Total Care',
-                      style: Theme.of(context).primaryTextTheme.titleLarge,
+                      style: Theme.of(context)
+                          .primaryTextTheme
+                          .titleLarge!
+                          .copyWith(fontSize: mediaQuery.size.width * 0.095),
                     ),
                   ),
                   Container(
                     padding: const EdgeInsets.all(10),
                     child: Text(
                       appLocalization.signIn,
-                      style: Theme.of(context).primaryTextTheme.titleMedium,
+                      style: Theme.of(context)
+                          .primaryTextTheme
+                          .titleMedium!
+                          .copyWith(fontSize: mediaQuery.size.width * 0.055),
                     ),
                   ),
                   InputField(
@@ -144,21 +156,23 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           child: Text(
                             appLocalization.forgetPassword,
-                            style: Theme.of(context).primaryTextTheme.bodySmall,
+                            style: Theme.of(context)
+                                .primaryTextTheme
+                                .bodySmall!
+                                .copyWith(
+                                    fontSize: mediaQuery.size.width * 0.033),
                           ),
                         ),
                       ),
                     ],
                   ),
-                  LoginButton(
-                    authResponse: authResponse,
-                    nameController: nameController,
-                    passwordController: passwordController,
-                    formKey: _formKey,
-                    examResponse: medicineResponse,
+                  SignButton(
                     mediaQuery: mediaQuery,
+                    onPressed: () =>
+                        onPressed(authProvider, userProvider, cartProvider, context),
+                    label: appLocalization.login,
                   ),
-                  if (authResponse.appState == AppState.loading)
+                  if (authProvider.appState == AppState.loading)
                     CircularProgressIndicator.adaptive(),
                   Column(
                     children: [
@@ -181,7 +195,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           children: [
                             Text(
                               '${appLocalization.dontHaveAnAccount} ',
-                              style: Theme.of(context).textTheme.button,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .button!
+                                  .copyWith(
+                                      fontSize: mediaQuery.size.width * 0.038),
                             ),
                             TextButton(
                               onPressed: () {
@@ -204,7 +222,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 child: Text(
                                   appLocalization.register,
-                                  style: Theme.of(context).textTheme.button,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .button!
+                                      .copyWith(
+                                          fontSize:
+                                              mediaQuery.size.width * 0.038),
                                 ),
                               ),
                             ),
@@ -220,6 +243,48 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  void onPressed(authProvider, userProvider, cartProvider, context) async {
+    if (_formKey.currentState!.validate()) {
+      await authProvider
+          .login(
+              username: nameController.text, password: passwordController.text)
+          .then((_) {
+        if (authProvider.appState == AppState.error) {
+          showAlertDialog(
+              context: context,
+              content: authProvider.errorMessage!,
+              confirmButtonText: 'Dismiss',
+              onConfirmPressed: () {
+                Navigator.pop(context);
+              },
+              title: 'Oops something went wrong...');
+          return;
+        }
+      }).then((_) async {
+        if (authProvider.appState == AppState.done) {
+          final token = await storage.getToken();
+
+          List<String> parts = token!.split('.');
+          String payload = parts[1];
+          while (payload.length % 4 != 0) {
+            payload += '=';
+          }
+          Map<String, dynamic> data =
+              json.decode(utf8.decode(base64Url.decode(payload)));
+
+          userProvider.userProfileData = data;
+          cartProvider.fetchCart();
+          userProvider
+              .getUserMedications()
+              .then((_) => Navigator.of(context).pushReplacementNamed(
+                    TabsScreen.routeName,
+                  ));
+        }
+      });
+    }
+    FocusManager.instance.primaryFocus?.unfocus();
   }
 }
 
@@ -267,7 +332,10 @@ class SignWithGoogleButton extends StatelessWidget {
             ),
             Text(
               appLocalization.signInWithGoogle,
-              style: Theme.of(context).textTheme.button,
+              style: Theme.of(context)
+                  .textTheme
+                  .button!
+                  .copyWith(fontSize: mediaQuery.size.width * 0.038),
             ),
           ],
         ),

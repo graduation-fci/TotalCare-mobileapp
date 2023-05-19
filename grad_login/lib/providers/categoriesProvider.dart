@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import '../my_config.dart';
-import '../infrastructure/shared/storage.dart';
+
+import 'package:grad_login/infrastructure/categories.dart/categories_service.dart';
 
 class CatItem with ChangeNotifier {
   int id;
@@ -17,39 +15,53 @@ class CatItem with ChangeNotifier {
 }
 
 class Categories with ChangeNotifier {
-  Storage storage = Storage();
-  List<CatItem> _list = [];
-  final loginEndPoint = Uri.parse(Config.categories);
+  CategoriesService categoryService = CategoriesService();
+  List<dynamic> _list = [];
+  String? _nextPageEndPoint;
+  String? _previousPageEndPoint;
 
-  List<CatItem> get items {
+  String? get nextPageEndPoint {
+    return _nextPageEndPoint;
+  }
+
+  String? get previousPageEndPoint {
+    return _previousPageEndPoint;
+  }
+
+  List<dynamic> get items {
     return [..._list];
   }
 
-  Future<void> fetchCat(int pageNumber) async {
-    String? token;
-    await storage.getToken().then((value) {
-      token = value;
-    });
-    final List<CatItem> loadedCat = [];
-    final url = Uri.parse('${Config.categories}?page=$pageNumber');
-    final respone = await http.get(url, headers: {
-      'Authorization': 'JWT $token',
-    });
-    final extractedData = json.decode(respone.body) as Map<String, dynamic>;
+  Future<void> getCategories({String? searchQuery}) async {
+    final extractedData =
+        await categoryService.fetchCat(searchQuery: searchQuery);
+    // log('$extractedData');
+    _list = extractedData['results'];
+    _nextPageEndPoint = extractedData['next'];
+    _previousPageEndPoint = extractedData['previous'];
 
-    for (var i = 0; i < 10; i++) {
-      if (respone.statusCode == 200) {
-        loadedCat.add(
-          CatItem(
-            id: extractedData['results'][i]['id'],
-            name: extractedData['results'][i]['name'],
-            imgURL: extractedData['results'][i]['image']['image'],
-          ),
-        );
-      } else {}
-    }
-
-    _list.addAll(loadedCat);
     notifyListeners();
+  }
+
+  Future<void> getNextCat(String? nextUrl) async {
+    if (nextUrl != null) {
+      final extractedData = await categoryService.fetchNextCat(nextUrl);
+      // log('$extractedData');
+      _list.addAll(extractedData['results']);
+      _nextPageEndPoint = extractedData['next'];
+      _previousPageEndPoint = extractedData['previous'];
+      notifyListeners();
+    }
+  }
+
+  Future<void> getPreviousCat(String? previousUrl) async {
+    if (previousUrl != null) {
+      final extractedData = await categoryService.fetchPreviousCat(previousUrl);
+      // log('$extractedData');
+      // _list.addAll(extractedData['results']);
+      _nextPageEndPoint = extractedData['next'];
+      _previousPageEndPoint = extractedData['previous'];
+      notifyListeners();
+    }
   }
 }

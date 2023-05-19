@@ -12,11 +12,11 @@ class AddressDetailScreen extends StatelessWidget {
     return SafeArea(
         child: Scaffold(
       appBar: AppBar(
-        title: Center(
-            child: Padding(
+        centerTitle: true,
+        title: Padding(
           padding: const EdgeInsets.only(right: 30),
           child: Text(args.title),
-        )),
+        ),
       ),
       body: Padding(
           padding: EdgeInsets.all(20),

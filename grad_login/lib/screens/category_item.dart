@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:grad_login/providers/drugProvider.dart';
-import 'package:grad_login/screens/medicine_screen.dart';
-
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
+import 'medicine_screen.dart';
+import '../providers/drugProvider.dart';
 import '../providers/categoriesProvider.dart';
 
 class CategoryItem extends StatefulWidget {
@@ -14,101 +14,65 @@ class CategoryItem extends StatefulWidget {
 }
 
 class _CategoryItemState extends State<CategoryItem> {
-  int _page = 1;
-
-  bool _isLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadCategories();
-  }
-
-  void _loadCategories() {
-    setState(() {
-      _isLoading = true;
-    });
-    Provider.of<Categories>(context, listen: false).fetchCat(_page).then((_) {
-      setState(() {
-        _isLoading = false;
-      });
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final categories = Provider.of<Categories>(context).items;
     final mediaquery = MediaQuery.of(context).size;
-    return RefreshIndicator(
-      onRefresh: () async {
-        setState(() {
-          _page = 1;
-        });
-        _loadCategories();
-      },
-      child: NotificationListener<ScrollNotification>(
-        onNotification: (scrollInfo) {
-          if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-            setState(() {
-              _page++;
-            });
-            _loadCategories();
-          }
-          return true;
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        childAspectRatio: 4 / 5,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+      ),
+      itemCount: categories.length,
+      itemBuilder: (context, index) => InkWell(
+        onTap: () {
+          String? errorMSG =
+              Provider.of<Drugs>(context, listen: false).errorMSG;
+          errorMSG == null
+              ? Navigator.of(context).pushNamed(
+                  MedicinesScreen.routeName,
+                  arguments: [
+                    categories[index]['id'],
+                    categories[index]['name'],
+                  ],
+                )
+              : ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(errorMSG)));
         },
-        child: SizedBox(
-          width: double.infinity,
-          height: mediaquery.height * 0.5,
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 4 / 5,
-              crossAxisSpacing: 5,
-              mainAxisSpacing: 5,
+        child: GridTile(
+          footer: SizedBox(
+            width: double.infinity,
+            height: mediaquery.height * 0.05,
+            child: GridTileBar(
+              backgroundColor: Colors.white,
+              title: Text(
+                categories[index]['name'],
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                softWrap: true,
+                style: const TextStyle(
+                  color: Colors.black,
+                ),
+                textAlign: TextAlign.center,
+              ),
             ),
-            itemCount: categories.length,
-            itemBuilder: (context, index) => _isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : InkWell(
-                    onTap: () {
-                      String? errorMSG = Provider.of<Drugs>(context).errorMSG;
-                      errorMSG == null
-                          ? Navigator.of(context).pushNamed(
-                              MedicinesScreen.routeName,
-                              arguments: [
-                                categories[index].id,
-                                categories[index].name,
-                              ],
-                            )
-                          : ScaffoldMessenger.of(context)
-                              .showSnackBar(SnackBar(content: Text(errorMSG)));
-                    },
-                    child: GridTile(
-                      footer: SizedBox(
-                        width: double.infinity,
-                        height: mediaquery.height * 0.05,
-                        child: GridTileBar(
-                          backgroundColor: Colors.white,
-                          title: Text(
-                            categories[index].name,
-                            maxLines: null,
-                            overflow: TextOverflow.visible,
-                            softWrap: true,
-                            style: const TextStyle(
-                              color: Colors.black,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                      child: Image.network(
-                        categories[index].imgURL,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
+          ),
+          child: CachedNetworkImage(
+            imageUrl: categories[index]['image']['image'],
+            placeholder: (context, url) =>
+                const Center(child: CircularProgressIndicator()),
+            errorWidget: (context, url, error) => const Center(
+              child: Icon(
+                Icons.error,
+                color: Colors.red,
+              ),
+            ),
+            fit: BoxFit.cover,
           ),
         ),
       ),

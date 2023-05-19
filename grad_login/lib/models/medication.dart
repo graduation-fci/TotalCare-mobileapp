@@ -1,6 +1,6 @@
 class Medication {
   String title;
-  List medicines;
+  List medicineIds;
 
-  Medication({required this.title, required this.medicines});
+  Medication({required this.title, required this.medicineIds});
 }

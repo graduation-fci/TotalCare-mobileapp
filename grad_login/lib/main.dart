@@ -1,15 +1,23 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:grad_login/screens/singe_order_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'infrastructure/shared/storage.dart';
 import 'providers/addressProvider.dart';
+import 'providers/cartProvider.dart';
 import 'providers/categoriesProvider.dart';
 import 'providers/drugProvider.dart';
 import 'providers/userProvider.dart';
-import 'providers/categories.dart';
 import 'providers/interactionsProvider.dart';
 import 'providers/medicineProvider.dart';
 import 'providers/authProvider.dart';
+import 'providers/orders_provider.dart';
+
+import 'screens/cart_screen.dart';
 import 'screens/tabs_screen.dart';
 import 'screens/add_medication.dart';
 import 'screens/edit_medication.dart';
@@ -19,19 +27,24 @@ import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/add_address_screen.dart';
 import 'screens/edit_address_screen.dart';
-import 'screens/edit_user_details_screen.dart.dart';
 import 'screens/address_detail_screen.dart';
 import 'screens/address_screen.dart';
 import 'screens/drug_detail_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/medicine_screen.dart';
+import 'screens/show_medication_profile_details.dart';
+import 'screens/profile_screen.dart';
+import 'screens/edit_profile_screen.dart';
+import 'screens/my_orders_screen.dart';
+import 'screens/continue_register_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key});
+  final storage = Storage();
+  MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -58,14 +71,39 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(
           value: Address(),
         ),
+        ChangeNotifierProvider.value(
+          value: Cart(),
+        ),
+        ChangeNotifierProvider.value(
+          value: OrdersProvider(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        title: 'first demo',
+        title: 'TotalCare',
         theme: _buildThemeData(),
-        home: const LoginScreen(),
+        home: FutureBuilder(
+          future: storage.getToken(),
+          builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
+            if (snapshot.hasData && snapshot.data != null) {
+              List<String> parts = snapshot.data!.split('.');
+              String payload = parts[1];
+              while (payload.length % 4 != 0) {
+                payload += '=';
+              }
+              Map<String, dynamic> data =
+                  json.decode(utf8.decode(base64Url.decode(payload)));
+
+              Provider.of<UserProvider>(context).userProfileData = data;
+              return const TabsScreen();
+            } else {
+              // User is not logged in, navigate to the login screen
+              return const LoginScreen();
+            }
+          },
+        ),
         routes: {
           ShowInteractionsResultsScreen.routeName: (ctx) =>
               const ShowInteractionsResultsScreen(),
@@ -84,6 +122,15 @@ class MyApp extends StatelessWidget {
           AddressDetailScreen.routeName: (context) =>
               const AddressDetailScreen(),
           TabsScreen.routeName: (ctx) => const TabsScreen(),
+          ShowMedicationProfile.routeName: (ctx) =>
+              const ShowMedicationProfile(),
+          Profiles.routeName: (ctx) => const Profiles(),
+          EditProfileScreen.routeName: (ctx) => const EditProfileScreen(),
+          MyOrdersScreen.routeName: (context) => const MyOrdersScreen(),
+          CartScreen.routeName: (context) => const CartScreen(),
+          ContinueRegisterScreen.routeName: (context) =>
+              const ContinueRegisterScreen(),
+          SingleOrderScreen.routeName: (context) => const SingleOrderScreen(),
         },
       ),
     );
@@ -91,6 +138,7 @@ class MyApp extends StatelessWidget {
 
   ThemeData _buildThemeData() {
     return ThemeData(
+      fontFamily: 'Heebo',
       colorScheme: ColorScheme.fromSwatch().copyWith(
         primary: const Color(0xFFC5EEFF),
         secondary: const Color(0xFF003745),
@@ -99,22 +147,18 @@ class MyApp extends StatelessWidget {
         titleLarge: TextStyle(
           color: Colors.grey.shade800,
           fontWeight: FontWeight.w600,
-          fontSize: 32,
         ),
         titleMedium: TextStyle(
           color: Colors.grey.shade800,
           fontWeight: FontWeight.w600,
-          fontSize: 20,
         ),
         bodySmall: TextStyle(
           color: Colors.grey.shade800,
-          fontSize: 12,
         ),
       ),
       textTheme: const TextTheme(
         button: TextStyle(
           fontFamily: 'NotoSans',
-          fontSize: 14,
           color: Color(0xFF003B4A),
         ),
         headlineLarge: TextStyle(
@@ -126,10 +170,9 @@ class MyApp extends StatelessWidget {
       ),
       appBarTheme: const AppBarTheme(
         titleTextStyle: TextStyle(
-          fontFamily: 'Heebo',
           color: Color(0xFF003745),
           fontWeight: FontWeight.w600,
-          fontSize: 20,
+          letterSpacing: 1,
         ),
         elevation: 1,
       ),

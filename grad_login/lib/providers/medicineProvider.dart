@@ -32,4 +32,8 @@ class MedicineProvider with ChangeNotifier {
     return medicineService.filterSimpleMedsData(
         search: searchQuery, ordering: ordering);
   }
+
+  Future<Map<String, dynamic>?> getFilteredCategories({searchQuery}) {
+    return medicineService.filterCategories(search: searchQuery);
+  }
 }

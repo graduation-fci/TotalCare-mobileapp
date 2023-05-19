@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:grad_login/my_config.dart';
@@ -24,6 +25,8 @@ class AddressItem with ChangeNotifier {
 }
 
 class Address with ChangeNotifier {
+  String? errorMSG;
+
   Storage storage = Storage();
   List<AddressItem> _list = [];
 
@@ -42,7 +45,7 @@ class Address with ChangeNotifier {
       'Authorization': 'JWT $token',
     });
     final extractedData = json.decode(respone.body) as List<dynamic>;
-
+    
     if (respone.statusCode == 200) {
       for (var i = 0; i < extractedData.length; i++) {
         loadedCat.add(
@@ -60,6 +63,8 @@ class Address with ChangeNotifier {
         _list = loadedCat;
       }
       notifyListeners();
+    } else {
+      errorMSG = 'There is no addresses';
     }
   }
 
@@ -87,12 +92,7 @@ class Address with ChangeNotifier {
         },
       ),
     );
-    print('Street:$street');
-    print('City:$city');
-    print('Description:$description');
-    print('Phone$phone');
-    print('type:$type');
-    print('title:$title');
+
     if (response.statusCode == 201) {
       final responseData = json.decode(response.body);
       final newAddress = AddressItem(
@@ -107,7 +107,7 @@ class Address with ChangeNotifier {
       _list.add(newAddress);
       notifyListeners();
     } else {
-      throw Exception('Failed to create address: ${response.statusCode}');
+      errorMSG = 'Failed to add address, Please try again later!';
     }
   }
 
@@ -123,29 +123,28 @@ class Address with ChangeNotifier {
     });
     final addressIndex = _list.indexWhere((element) => element.id == id);
     final url = Uri.parse('${Config.addresses}$id/');
-    try {
-      final response = await http.patch(url,
-          headers: {
-            'Authorization': 'JWT $token',
-            'Content-Type': 'application/json',
-          },
-          body: json.encode({
-            'street': addressItem.street,
-            'city': addressItem.city,
-            'description': addressItem.description,
-            'phone': addressItem.phone,
-            'type': type,
-            'title': addressItem.title
-          }));
-      if (response.statusCode == 200) {
-        print('Address updated successfully');
-      } else {
-        print('Failed to update address, status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error updating address: $e');
+
+    final response = await http.patch(
+      url,
+      headers: {
+        'Authorization': 'JWT $token',
+        'Content-Type': 'application/json',
+      },
+      body: json.encode({
+        'street': addressItem.street,
+        'city': addressItem.city,
+        'description': addressItem.description,
+        'phone': addressItem.phone,
+        'type': type,
+        'title': addressItem.title
+      }),
+    );
+    print(response.body);
+    if (response.statusCode == 200) {
+      _list[addressIndex] = addressItem;
+    } else {
+      errorMSG = 'Failed to update address, try again later!';
     }
-    _list[addressIndex] = addressItem;
     notifyListeners();
   }
 
@@ -170,7 +169,7 @@ class Address with ChangeNotifier {
     if (response.statusCode >= 400) {
       _list.insert(addressIndex, existingProduct);
       notifyListeners();
-      throw ('Could not delete product!');
+      errorMSG = 'Failed to delete address, try again later!';
     }
 
     existingProduct = null;
