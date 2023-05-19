@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
+import '../models/medication.dart';
+import '../providers/userProvider.dart';
 import '../screens/show_interactions_results_screen.dart';
 import '../providers/interactionsProvider.dart';
 import '../providers/medicineProvider.dart';
@@ -20,21 +22,17 @@ class InteractionScreen extends StatefulWidget {
 
 class _InteractionScreenState extends State<InteractionScreen> {
   final TextEditingController searchController = TextEditingController();
+  final TextEditingController titleController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+  final Medication _med = Medication(title: '', medicineIds: []);
 
   List<Map<String, dynamic>> _interactionMedicines = [];
   AppState appState = AppState.init;
-  Map<String, dynamic>? filteredMeds;
-  Map<String, dynamic>? meds;
   bool _isVisible = true;
-  List<int> medicineIds = [];
-  Timer? _debounce;
-
   List<dynamic>? results;
 
   @override
   void initState() {
-    // TODO: implement initState
     _focusNode.addListener(() {
       setState(() {
         _isVisible = _focusNode.hasFocus;
@@ -45,13 +43,18 @@ class _InteractionScreenState extends State<InteractionScreen> {
 
   @override
   void dispose() {
+    searchController.dispose();
+    titleController.dispose();
     _focusNode.dispose();
     super.dispose();
   }
 
   Future<List<dynamic>?> _filterDataList(String searchValue) async {
-    _debounce?.cancel(); // Cancel previous debounce timer
-    _debounce = Timer(const Duration(milliseconds: 500), () async {
+    Map<String, dynamic>? filteredMeds;
+    Timer? debounce;
+
+    debounce?.cancel(); // Cancel previous debounce timer
+    debounce = Timer(const Duration(milliseconds: 300), () async {
       // Perform search/filtering here
       filteredMeds = await Provider.of<MedicineProvider>(context, listen: false)
           .getFilteredMedsData(searchQuery: searchValue);
@@ -69,12 +72,12 @@ class _InteractionScreenState extends State<InteractionScreen> {
     final med =
         newData.firstWhere((element) => element['name'] == medicineName);
     // Make each object unique in the new list of interactionMedicines.
-    if (!medicineIds.contains(med['id'])) {
-      medicineIds.add(med['id']);
+    if (!_med.medicineIds.contains(med['id'])) {
+      _med.medicineIds.add(med['id']);
       _interactionMedicines.add(med);
     }
 
-    log('$_interactionMedicines');
+    // log('$_interactionMedicines');
   }
 
   void startOver() {
@@ -126,58 +129,22 @@ class _InteractionScreenState extends State<InteractionScreen> {
                       children: <Widget>[
                         SizedBox(
                           height: 40,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  padding: const EdgeInsets.only(left: 15),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.grey, width: 1),
-                                      borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(10),
-                                        bottomLeft: Radius.circular(10),
-                                      )),
-                                  child: TextFormField(
-                                    focusNode: _focusNode,
-                                    onChanged: _filterDataList,
-                                    controller: searchController,
-                                    decoration: InputDecoration(
-                                      contentPadding:
-                                          const EdgeInsets.only(top: -10),
-                                      hintText:
-                                          appLocalization.enterMedicineName,
-                                      border: InputBorder.none,
-                                    ),
-                                  ),
-                                ),
+                          child: Container(
+                            padding: const EdgeInsets.only(left: 15),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey, width: 1),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: TextFormField(
+                              focusNode: _focusNode,
+                              onChanged: _filterDataList,
+                              controller: searchController,
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.only(top: -10),
+                                hintText: appLocalization.enterMedicineName,
+                                border: InputBorder.none,
                               ),
-                              SizedBox(
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    FocusManager.instance.primaryFocus
-                                        ?.unfocus();
-                                    _addSearchedMedicine(searchController.text);
-                                    setState(() {
-                                      appState = AppState.loading;
-                                      searchController.text.isNotEmpty
-                                          ? hasContent = false
-                                          : hasContent = true;
-                                      appState = AppState.done;
-                                    });
-                                    searchController.text = '';
-                                  },
-                                  child: Text(
-                                    appLocalization.add,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .button!
-                                        .copyWith(
-                                            fontSize: mediaQuery.width * 0.038),
-                                  ),
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
                         ),
                         const SizedBox(
@@ -249,10 +216,24 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                                               thickness: 0.6,
                                                               color: Colors
                                                                   .black87),
-                                                      Text(
-                                                        '${_interactionMedicines[index]['name']}',
-                                                        style: const TextStyle(
-                                                            fontSize: 15),
+                                                      Row(
+                                                        children: [
+                                                          SizedBox(
+                                                            width: mediaQuery
+                                                                    .width *
+                                                                0.65,
+                                                            child: Text(
+                                                              '${_interactionMedicines[index]['name']}',
+                                                              style:
+                                                                  const TextStyle(
+                                                                      fontSize:
+                                                                          15),
+                                                            ),
+                                                          ),
+                                                          const Spacer(),
+                                                          removeIconButton(
+                                                              index, context),
+                                                        ],
                                                       ),
                                                     ],
                                                   );
@@ -299,9 +280,11 @@ class _InteractionScreenState extends State<InteractionScreen> {
                                             children: [
                                               Expanded(
                                                 child: ElevatedButton(
-                                                  onPressed: () {},
+                                                  onPressed: () {
+                                                    showTitleDialogBox(context);
+                                                  },
                                                   child: Text(
-                                                    appLocalization.save,
+                                                    '${appLocalization.save} as Medication profile',
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .button,
@@ -430,6 +413,107 @@ class _InteractionScreenState extends State<InteractionScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  GestureDetector removeIconButton(int index, BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        final deletedMed = _interactionMedicines[index];
+        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            duration: const Duration(milliseconds: 2000),
+            content: Text('${deletedMed['name']} removed'),
+            action: SnackBarAction(
+              textColor: Colors.grey.shade600,
+              label: 'Undo',
+              onPressed: () {
+                setState(() {
+                  _interactionMedicines.insert(index, deletedMed);
+                  _med.medicineIds.insert(index, deletedMed['id']);
+                  _interactionMedicines.isNotEmpty ? hasContent = true : null;
+                });
+              },
+            ),
+          ),
+        );
+        setState(() {
+          _interactionMedicines.removeAt(index);
+          _med.medicineIds.remove(deletedMed['id']);
+          _interactionMedicines.isEmpty ? hasContent = false : null;
+        });
+      },
+      child: Icon(
+        Icons.remove,
+        color: Colors.red.shade600,
+      ),
+    );
+  }
+
+  showTitleDialogBox(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          title: const Text('Medication profile title'),
+          content: Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                width: 1,
+                color: Colors.grey,
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: TextFormField(
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(10),
+                border: InputBorder.none,
+                hintText: 'e.g. My profile',
+                hintStyle: TextStyle(
+                  color: Colors.grey.withOpacity(0.7),
+                  fontSize: 14,
+                ),
+              ),
+              cursorColor: Colors.grey,
+              controller: titleController,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: Colors.red.shade600),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(right: 20),
+              width: 70,
+              height: 35,
+              child: ElevatedButton(
+                onPressed: () async {
+                  _med.title = titleController.text;
+                  await Provider.of<UserProvider>(context, listen: false)
+                      .addUserMedication(_med)
+                      .then((value) => Navigator.pop(context));
+                },
+                child: Text(
+                  'Save',
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.secondary),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

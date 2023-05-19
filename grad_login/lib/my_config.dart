@@ -1,6 +1,5 @@
 class Config {
-  static const String apiUrl = "http://10.41.1.47:8000/";
-  // static const String apiUrl = "http://64.225.110.140:8000";
+  static const String apiUrl = "http://64.225.110.140:8000";
   static const String simpleMeds = '$apiUrl/medicine/simple_meds/';
   static const String interactionMain = '$apiUrl/medicine/interactions/';
   static const String login = '$apiUrl/auth/jwt/create/';
@@ -13,4 +12,5 @@ class Config {
   static const String addresses = '$apiUrl/users/addresses/';
   static const String carts = '$apiUrl/store/carts/';
   static const String orders = '$apiUrl/store/orders/';
+  static const String contRegister = '$apiUrl/users/patients/me/';
 }

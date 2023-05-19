@@ -69,7 +69,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
       _medicineList.add(med);
     }
 
-    log('$_medicineList');
+    // log('$_medicineList');
   }
 
   @override
@@ -100,24 +100,6 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                   .titleTextStyle!
                   .copyWith(fontSize: mediaQuery.width * 0.05),
             ),
-            actions: [
-              IconButton(
-                  padding: const EdgeInsets.only(right: 10),
-                  iconSize: 30,
-                  onPressed: () async {
-                    if (formKey.currentState!.validate()) {
-                      formKey.currentState!.save();
-                      await Provider.of<UserProvider>(context, listen: false)
-                          .addUserMedication(_med);
-                      // ignore: use_build_context_synchronously
-                      Navigator.pop(context);
-                    }
-                  },
-                  icon: Icon(
-                    Icons.save_as,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ))
-            ],
           ),
           body: Form(
             key: formKey,
@@ -313,7 +295,9 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                                       return ListTile(
                                         title: Text(
                                           '${results![index]['name']}',
-                                          style: TextStyle(fontSize: mediaQuery.width * 0.041),
+                                          style: TextStyle(
+                                              fontSize:
+                                                  mediaQuery.width * 0.041),
                                         ),
                                         onTap: () async {
                                           FocusManager.instance.primaryFocus

@@ -1,5 +1,9 @@
-import 'package:flutter/material.dart';
+import 'dart:developer';
 
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/cartProvider.dart';
 import '../providers/addressProvider.dart';
 import '../providers/orders_provider.dart';
 import '../screens/address_screen.dart';
@@ -8,8 +12,12 @@ import '../screens/my_orders_screen.dart';
 class ShowBottomSheet {
   int? _selectedItem = 0;
   int? addressId;
-  showBottomSheet(BuildContext context, List<AddressItem> myAddresses,
-      OrdersProvider ordersProvider, String cartId) async {
+  showBottomSheet(BuildContext context, OrdersProvider ordersProvider,
+      List<AddressItem> myAddresses, String cartId) async {
+    log(myAddresses.toString());
+    addressId = myAddresses.isEmpty ? null : myAddresses[0].id;
+    final double listviewHeight = myAddresses.isEmpty ? 325 : 265;
+    const double buttonHeight = 60;
     showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -20,8 +28,8 @@ class ShowBottomSheet {
             return Column(
               children: [
                 SizedBox(
-                  height: 300,
-                  child: addressId == null
+                  height: listviewHeight,
+                  child: myAddresses.isEmpty
                       ? const Center(
                           child: Text(
                             'You have no Address',
@@ -63,32 +71,12 @@ class ShowBottomSheet {
                           itemCount: myAddresses.length,
                         ),
                 ),
-                addressId == null
-                    ? Container(
-                        width: double.infinity,
-                        height: 80,
-                        padding: const EdgeInsets.all(15),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          )),
-                          onPressed: () {
-                            Navigator.of(context)
-                                .pushNamed(AddressScreen.routeName);
-                          },
-                          child: Text(
-                            'Add address',
-                            style: Theme.of(context).textTheme.button!.copyWith(
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.05),
-                          ),
-                        ),
-                      )
+                myAddresses.isEmpty
+                    ? Container()
                     : Container(
                         width: double.infinity,
-                        height: 80,
-                        padding: const EdgeInsets.all(15),
+                        height: buttonHeight,
+                        padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
@@ -97,20 +85,42 @@ class ShowBottomSheet {
                           onPressed: () async {
                             await ordersProvider
                                 .placeOrder(addressId!, cartId)
-                                .then(
-                                  (_) => Navigator.of(context)
-                                      .pushReplacementNamed(
-                                          MyOrdersScreen.routeName),
-                                );
+                                .then((_) {
+                              Provider.of<Cart>(context, listen: false)
+                                  .fetchCart();
+                              Navigator.of(context).pushReplacementNamed(
+                                  MyOrdersScreen.routeName);
+                            });
                           },
                           child: Text(
-                            'Place Order',
+                            'Place order',
                             style: Theme.of(context).textTheme.button!.copyWith(
                                 fontSize:
-                                    MediaQuery.of(context).size.width * 0.05),
+                                    MediaQuery.of(context).size.width * 0.045),
                           ),
                         ),
-                      )
+                      ),
+                Container(
+                  width: double.infinity,
+                  height: buttonHeight,
+                  margin: const EdgeInsets.only(bottom: 15),
+                  padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    )),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.of(context).pushNamed(AddressScreen.routeName);
+                    },
+                    child: Text(
+                      'Add address',
+                      style: Theme.of(context).textTheme.button!.copyWith(
+                          fontSize: MediaQuery.of(context).size.width * 0.045),
+                    ),
+                  ),
+                ),
               ],
             );
           }),

@@ -53,9 +53,48 @@ class OrdersService {
     final responseData = json.decode(response.body);
     if (responseData['results'].isEmpty || responseData['results'] == null) {
       error['errorMsg'] = 'You have no orders yet';
-    log('${error['errorMsg']}');
+      log('${error['errorMsg']}');
       return error;
     }
     return responseData;
+  }
+
+  Future<Map<String, dynamic>> getSingleOrder(int id) async {
+    final url = Uri.parse('${Config.orders}$id/');
+    String? token;
+    await storage.getToken().then((value) {
+      token = value;
+    });
+
+    final response = await http.get(
+      url,
+      headers: {
+        "content-type": "application/json",
+        "Authorization": "JWT $token",
+      },
+    );
+
+    final responseData = json.decode(response.body);
+    return responseData;
+  }
+
+  Future<void> cancelOrder(int id) async {
+    final url = Uri.parse('${Config.orders}$id/');
+    String? token;
+    await storage.getToken().then((value) {
+      token = value;
+    });
+
+    final response = await http.patch(url,
+        headers: {
+          "content-type": "application/json",
+          "accept": "application/json",
+          "Authorization": "JWT $token",
+        },
+        body: json.encode({
+          'order_status': 'CAN',
+        }));
+    final responseData = json.decode(response.body);
+    log(responseData.toString());
   }
 }

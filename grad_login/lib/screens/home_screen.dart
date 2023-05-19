@@ -7,8 +7,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/categoriesProvider.dart';
-import 'category_item.dart';
 
+import 'category_item.dart';
 import 'notification_widget.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -25,8 +25,6 @@ class _HomeScreenState extends State<HomeScreen> {
   String? nextUrl;
   String? previousUrl;
   dynamic categoriesProvider;
-
-  bool _isLoading = false;
 
   TextEditingController searchController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
@@ -48,16 +46,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _loadCategories({String? searchQuery}) async {
-    setState(() {
-      _isLoading = true;
-    });
     await Provider.of<Categories>(context, listen: false)
-        .getCategories(searchQuery: searchQuery)
-        .then((_) {
-      setState(() {
-        _isLoading = false;
-      });
-    });
+        .getCategories(searchQuery: searchQuery);
   }
 
   @override
@@ -282,11 +272,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                           const CategoryItem(),
-                          _isLoading
-                              ? const Center(
-                                  child: CircularProgressIndicator(),
-                                )
-                              : Container(),
                         ],
                       ),
                     )

@@ -38,7 +38,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                 : MainAxisAlignment.start,
             children: [
               SizedBox(
-                height: 110,
+                height: 60,
                 width: double.infinity,
                 child: CustomScrollView(
                   physics: const NeverScrollableScrollPhysics(),
@@ -46,9 +46,16 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                   slivers: [
                     SliverAppBar(
                       centerTitle: true,
-                      backgroundColor: Colors.white,
+                      backgroundColor: Colors.transparent,
                       pinned: true,
                       elevation: 0,
+                      leading: IconButton(
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                      ),
                       title: Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 10,
@@ -81,7 +88,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
-                          return orderItem(ordersData, index);
+                          return orderItem(context, ordersData, index);
                         },
                         itemCount: ordersData.length,
                       ),

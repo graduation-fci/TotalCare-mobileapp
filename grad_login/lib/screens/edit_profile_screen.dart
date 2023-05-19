@@ -3,9 +3,10 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:grad_login/providers/userProvider.dart';
-import 'package:intl/intl.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:provider/provider.dart';
+
+import '../widgets/date_selector.dart';
 
 class EditProfileScreen extends StatefulWidget {
   static const routeName = '/edit-profile-screen';
@@ -56,7 +57,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2010),
+      firstDate: DateTime(1920),
       lastDate: DateTime.now(),
     );
     if (pickedDate != null && pickedDate != selectdate) {
@@ -312,37 +313,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             SizedBox(
                               height: mediaQuery.height * 0.02,
                             ),
-                            Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: TextFormField(
-                                    cursorColor: labelColor,
-                                    decoration: InputDecoration(
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        fillColor: containerFillColor,
-                                        filled: true,
-                                        labelText: selectdate == null
-                                            ? 'No Date Chosen!'
-                                            : 'Picked Date: ${DateFormat.yMd().format(selectdate!)}',
-                                        labelStyle:
-                                            TextStyle(color: labelColor),
-                                        suffixIcon: IconButton(
-                                          icon:
-                                              const Icon(Icons.calendar_today),
-                                          onPressed: () =>
-                                              _presentDatePicker(context),
-                                        ),
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                horizontal: 16)),
-                                    readOnly: true,
-                                    onTap: () => _presentDatePicker(context),
-                                  ),
-                                ),
-                              ],
+                            DateSelector(
+                              context: context,
                             ),
                             SizedBox(
                               height: mediaQuery.height * 0.02,

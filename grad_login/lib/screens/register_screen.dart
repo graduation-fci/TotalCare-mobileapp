@@ -3,7 +3,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:grad_login/widgets/error_dialog_box.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -12,11 +11,13 @@ import '../app_state.dart';
 import '../providers/medicineProvider.dart';
 import '../providers/authProvider.dart';
 
-import '../screens/tabs_screen.dart';
-import '../screens/login_screen.dart';
+import 'continue_register_screen.dart';
+import 'login_screen.dart';
 
 import '../models/user.dart';
 
+import '../widgets/error_dialog_box.dart';
+import '../widgets/sign_button.dart';
 import '../widgets/input_field.dart';
 
 class RegisterFormScreen extends StatefulWidget {
@@ -70,7 +71,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context).size;
+    final mediaQuery = MediaQuery.of(context);
     final appLocalization = AppLocalizations.of(context)!;
     final authResponse = Provider.of<AuthProvider>(context);
     final medicineResponse = Provider.of<MedicineProvider>(context);
@@ -84,8 +85,8 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
               key: formKey,
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                  horizontal: mediaQuery.width * 0.05,
-                  vertical: mediaQuery.height * 0.08,
+                  horizontal: mediaQuery.size.width * 0.05,
+                  vertical: mediaQuery.size.height * 0.08,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,12 +95,12 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       alignment: Alignment.center,
                       child: Image.asset(
                         'assets/images/TotalCare.png',
-                        height: mediaQuery.height * 0.2,
-                        width: mediaQuery.height * 0.2,
+                        height: mediaQuery.size.height * 0.2,
+                        width: mediaQuery.size.height * 0.2,
                       ),
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.02,
+                      height: mediaQuery.size.height * 0.02,
                     ),
                     InputField(
                       labelText: appLocalization.username,
@@ -123,9 +124,8 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       textInputAction: TextInputAction.next,
                       obsecureText: false,
                     ),
-
                     SizedBox(
-                      height: mediaQuery.height * 0.02,
+                      height: mediaQuery.size.height * 0.02,
                     ),
                     InputField(
                       labelText: appLocalization.firstName,
@@ -150,7 +150,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       obsecureText: false,
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.02,
+                      height: mediaQuery.size.height * 0.02,
                     ),
                     InputField(
                       labelText: appLocalization.lastName,
@@ -175,7 +175,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       obsecureText: false,
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.02,
+                      height: mediaQuery.size.height * 0.02,
                     ),
                     InputField(
                       labelText: appLocalization.email,
@@ -202,9 +202,8 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       obsecureText: false,
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.02,
+                      height: mediaQuery.size.height * 0.02,
                     ),
-                    
                     InputField(
                       labelText: appLocalization.password,
                       controller: passwordController,
@@ -254,7 +253,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       textInputAction: TextInputAction.next,
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.02,
+                      height: mediaQuery.size.height * 0.02,
                     ),
                     InputField(
                       labelText: appLocalization.confirmPassword,
@@ -293,40 +292,25 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                       textInputAction: TextInputAction.next,
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.02,
+                      height: mediaQuery.size.height * 0.02,
                     ),
                     const SizedBox(height: 16),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        fixedSize: Size(
-                          mediaQuery.width * 0.85,
-                          mediaQuery.height * 0.06,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(40),
-                        ),
-                      ),
+                    SignButton(
+                      mediaQuery: mediaQuery,
                       onPressed: () =>
                           regBtn(authResponse, medicineResponse, context),
-                      child: Text(
-                        appLocalization.register,
-                        style: Theme.of(context)
-                            .textTheme
-                            .button!
-                            .copyWith(fontSize: mediaQuery.width * 0.038),
-                      ),
+                      label: appLocalization.register,
                     ),
                     if (authResponse.appState == AppState.loading)
                       const CircularProgressIndicator.adaptive(),
                     SizedBox(
-                      height: mediaQuery.height * 0.02,
+                      height: mediaQuery.size.height * 0.02,
                     ),
                     const Divider(
                       thickness: 2,
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.02,
+                      height: mediaQuery.size.height * 0.02,
                     ),
                     TextButton(
                       onPressed: () {
@@ -337,8 +321,8 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                           borderRadius: BorderRadius.circular(40),
                         ),
                         minimumSize: Size(
-                          mediaQuery.width * 0.85,
-                          mediaQuery.height * 0.06,
+                          mediaQuery.size.width * 0.85,
+                          mediaQuery.size.height * 0.06,
                         ),
                         side: const BorderSide(
                           width: 0.8,
@@ -346,7 +330,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         ),
                       ),
                       child: SizedBox(
-                        width: mediaQuery.width * 0.8,
+                        width: mediaQuery.size.width * 0.8,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -361,24 +345,23 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                               style: Theme.of(context)
                                   .textTheme
                                   .button!
-                                  .copyWith(fontSize: mediaQuery.width * 0.038),
+                                  .copyWith(
+                                      fontSize: mediaQuery.size.width * 0.038),
                             ),
                           ],
                         ),
                       ),
                     ),
                     SizedBox(
-                      height: mediaQuery.height * 0.02,
+                      height: mediaQuery.size.height * 0.02,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           appLocalization.alreadyHaveAnAccount,
-                          style: Theme.of(context)
-                              .textTheme
-                              .button!
-                              .copyWith(fontSize: mediaQuery.width * 0.038),
+                          style: Theme.of(context).textTheme.button!.copyWith(
+                              fontSize: mediaQuery.size.width * 0.038),
                         ),
                         TextButton(
                             onPressed: () => {
@@ -405,7 +388,8 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                                     .textTheme
                                     .button!
                                     .copyWith(
-                                        fontSize: mediaQuery.width * 0.038),
+                                        fontSize:
+                                            mediaQuery.size.width * 0.038),
                               ),
                             ))
                       ],
@@ -436,20 +420,26 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                           context: context,
                           content: authResponse.errorMessage!,
                           confirmButtonText: 'Dismiss',
+                          onConfirmPressed: () => Navigator.pop(context),
+                          title: 'Oops something went wrong...',
                         ),
                       }
                   })
-              .then((_) => {
-                    if (authResponse.appState == AppState.done)
-                      {
-                        authResponse.login(
-                            username: _userData.username,
-                            password: _userData.password),
-                        medicineResponse.getMedicines(),
-                        Navigator.of(context)
-                            .pushReplacementNamed(TabsScreen.routeName),
-                      }
-                  }),
+              .then(
+                (_) => {
+                  if (authResponse.appState == AppState.done)
+                    {
+                      authResponse.login(
+                          username: _userData.username,
+                          password: _userData.password),
+                      medicineResponse.getMedicines(),
+                      Navigator.of(context).pushReplacementNamed(
+                        ContinueRegisterScreen.routeName,
+                        arguments: _userData,
+                      ),
+                    }
+                },
+              ),
         },
     };
   }

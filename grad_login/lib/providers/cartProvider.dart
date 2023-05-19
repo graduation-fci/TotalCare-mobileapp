@@ -56,19 +56,24 @@ class Cart with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchCart(String id) async {
+  Future<void> fetchCart() async {
     final List<CartItem> loadedCat = [];
-
+    await getCartID();
     String? token;
     await storage.getToken().then((value) {
       token = value;
     });
-    final url = Uri.parse('${Config.carts}$id');
+    final url = Uri.parse('${Config.carts}$cartID');
     final response = await http.get(url, headers: {
       'Authorization': 'JWT $token',
     });
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
     if (response.statusCode == 200) {
+      if (extractedData['items'].length == 0) {
+        _list = [];
+        notifyListeners();
+        return;
+      }
       log(extractedData.toString());
       for (var i = 0; i < extractedData['items'].length; i++) {
         // log(extractedData['items'].length.toString());
@@ -108,28 +113,33 @@ class Cart with ChangeNotifier {
         "quantity": num,
       }),
     );
-    log(id.toString());
-    log(drugID.toString());
-    log(num.toString());
-    if (response.statusCode == 201) {
+    final responseData = json.decode(response.body);
+    if (responseData['quantity'] is List) {
+      errorMSG = responseData['quantity'][0];
       notifyListeners();
-      // log('Added!');
-    } else {
-      errorMSG = 'Failed to add item to cart. Please try again later!';
-      // log(response.statusCode.toString());
-      // log('A7A');
     }
+    fetchCart();
+    // log(id.toString());
+    // log(drugID.toString());
+    // log(num.toString());
+    // if (response.statusCode == 201) {
+    //   notifyListeners();
+    //   // log('Added!');
+    // } else {
+    //   errorMSG = 'Failed to add item to cart. Please try again later!';
+    //   // log(response.statusCode.toString());
+    //   // log('A7A');
+    // }
   }
 
-  Future<void> updateCart(String id, int drugID, int number) async {
-    log('cart ID: $id');
+  Future<void> updateCart(int drugID, int number) async {
     log('drug ID: ${drugID.toString()}');
     log('new quantity: ${number.toString()}');
     String? token;
     await storage.getToken().then((value) {
       token = value;
     });
-    final url = Uri.parse('${Config.carts}$id/items/$drugID/');
+    final url = Uri.parse('${Config.carts}$cartID/items/$drugID/');
     final response = await http.patch(
       url,
       headers: {
@@ -142,8 +152,8 @@ class Cart with ChangeNotifier {
         },
       ),
     );
-    log(url.toString());
-    log(response.statusCode.toString());
+    // log(url.toString());
+    // log(response.statusCode.toString());
     if (response.statusCode == 200) {
       log('Updated');
       // _list[addressIndex] = addressItem;
@@ -151,23 +161,22 @@ class Cart with ChangeNotifier {
       log('A7A');
       errorMSG = 'Failed to update address, try again later!';
     }
-    fetchCart(id);
+    fetchCart();
     getCartID();
     notifyListeners();
   }
 
-  Future<void> deleteCart(String cartid, int id) async {
+  Future<void> deleteCart(int id) async {
     String? token;
     await storage.getToken().then((value) {
       token = value;
     });
     final addressIndex = _list.indexWhere((element) => element.id == id);
     final url = Uri.parse('${Config.carts}$cartID/items/$id/');
-    log(_list.toString());
-    log(url.toString());
+    // log(_list.toString());
+    // log(url.toString());
     CartItem? existingProduct = _list[addressIndex];
     _list.removeAt(addressIndex);
-    notifyListeners();
     final response = await http.delete(
       url,
       headers: {
@@ -175,13 +184,15 @@ class Cart with ChangeNotifier {
         'Content-Type': 'application/json',
       },
     );
+    getCartID();
+    notifyListeners();
 
     if (response.statusCode >= 400) {
       _list.insert(addressIndex, existingProduct);
       notifyListeners();
       errorMSG = 'Failed to delete item, try again later!';
     }
-    log('Deleted !');
+    // log('Deleted !');
     existingProduct = null;
   }
 }
