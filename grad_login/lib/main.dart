@@ -18,6 +18,7 @@ import 'providers/authProvider.dart';
 import 'providers/orders_provider.dart';
 
 import 'screens/cart_screen.dart';
+import 'screens/sub_categories_screen.dart';
 import 'screens/tabs_screen.dart';
 import 'screens/add_medication.dart';
 import 'screens/edit_medication.dart';
@@ -84,26 +85,27 @@ class MyApp extends StatelessWidget {
         supportedLocales: AppLocalizations.supportedLocales,
         title: 'TotalCare',
         theme: _buildThemeData(),
-        home: FutureBuilder(
-          future: storage.getToken(),
-          builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
-            if (snapshot.hasData && snapshot.data != null) {
-              List<String> parts = snapshot.data!.split('.');
-              String payload = parts[1];
-              while (payload.length % 4 != 0) {
-                payload += '=';
-              }
-              Map<String, dynamic> data =
-                  json.decode(utf8.decode(base64Url.decode(payload)));
+        home: const SubCategoriesScreen(),
+        //  FutureBuilder(
+        //   future: storage.getToken(),
+        //   builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
+        //     if (snapshot.hasData && snapshot.data != null) {
+        //       List<String> parts = snapshot.data!.split('.');
+        //       String payload = parts[1];
+        //       while (payload.length % 4 != 0) {
+        //         payload += '=';
+        //       }
+        //       Map<String, dynamic> data =
+        //           json.decode(utf8.decode(base64Url.decode(payload)));
 
-              Provider.of<UserProvider>(context).userProfileData = data;
-              return const TabsScreen();
-            } else {
-              // User is not logged in, navigate to the login screen
-              return const LoginScreen();
-            }
-          },
-        ),
+        //       Provider.of<UserProvider>(context).userProfileData = data;
+        //       return const TabsScreen();
+        //     } else {
+        //       // User is not logged in, navigate to the login screen
+        //       return const LoginScreen();
+        //     }
+        //   },
+        // ),
         routes: {
           ShowInteractionsResultsScreen.routeName: (ctx) =>
               const ShowInteractionsResultsScreen(),

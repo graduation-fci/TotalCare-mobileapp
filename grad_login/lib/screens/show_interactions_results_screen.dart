@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 
 import 'package:grad_login/providers/interactionsProvider.dart';
 
+import 'package:translator/translator.dart';
+
 class ShowInteractionsResultsScreen extends StatefulWidget {
   static const routeName = 'show-interactions-results-screen';
   const ShowInteractionsResultsScreen({super.key});
@@ -24,6 +26,8 @@ class _ShowInteractionsResultsScreenState
   List<bool> _selections = [true, false];
   bool isProfessional = false;
   String? errorMsg;
+
+  final translator = GoogleTranslator();
 
   @override
   Widget build(BuildContext context) {
@@ -241,19 +245,55 @@ class _ShowInteractionsResultsScreenState
                                   ),
                                   const SizedBox(height: 12),
                                   isProfessional
-                                      ? Text(
-                                          '${interactionList[i]['professionalEffect']}',
-                                          textAlign: TextAlign.justify,
-                                          style: customTextStyle(
-                                            mediaQuery.width * 0.042,
+                                      ? FutureBuilder<Translation>(
+                                          future: translator.translate(
+                                            interactionList[i]
+                                                ['professionalEffect'],
+                                            to: 'ar',
                                           ),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return const Center(
+                                                  child:
+                                                      CircularProgressIndicator());
+                                            } else if (snapshot.hasError) {
+                                              return const Text(
+                                                  'Translation Error');
+                                            } else {
+                                              return Text(
+                                                snapshot.data.toString(),
+                                                textAlign: TextAlign.justify,
+                                                style: customTextStyle(
+                                                    mediaQuery.width * 0.042),
+                                              );
+                                            }
+                                          },
                                         )
-                                      : Text(
-                                          '${interactionList[i]['consumerEffect']}',
-                                          textAlign: TextAlign.justify,
-                                          style: customTextStyle(
-                                            mediaQuery.width * 0.042,
+                                      : FutureBuilder<Translation>(
+                                          future: translator.translate(
+                                            interactionList[i]
+                                                ['consumerEffect'],
+                                            to: 'ar',
                                           ),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return const Center(
+                                                  child:
+                                                      CircularProgressIndicator());
+                                            } else if (snapshot.hasError) {
+                                              return const Text(
+                                                  'Translation Error');
+                                            } else {
+                                              return Text(
+                                                snapshot.data.toString(),
+                                                textAlign: TextAlign.justify,
+                                                style: customTextStyle(
+                                                    mediaQuery.width * 0.042),
+                                              );
+                                            }
+                                          },
                                         ),
                                   const SizedBox(height: 24),
                                   const Divider(

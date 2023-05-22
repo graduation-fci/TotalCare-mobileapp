@@ -130,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     left: mediaquery.height * 0.02,
                                     top: mediaquery.height * 0.03),
                                 child: Text(
-                                  '${appLocalization.check} '
+                                  '${appLocalization.check}\n '
                                   '${appLocalization.interactions}',
                                   //  == 'en'
                                   //     ? 'Check\nInteractions'
@@ -158,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         top: mediaquery.height * 0.05,
                                         left: mediaquery.width * 0.09,
                                         child: Text(
-                                          appLocalization == 'en'
+                                          appLocalization.localeName == 'en'
                                               ? 'Learn more'
                                               : 'معرفة المزيد',
                                           softWrap: false,
@@ -203,9 +203,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                           borderRadius: BorderRadius.circular(
                                               mediaquery.height * 0.02),
                                           borderSide: BorderSide.none),
-                                      hintText: appLocalization == 'en'
-                                          ? 'Search'
-                                          : 'بحث',
+                                      hintText:
+                                          appLocalization.localeName == 'en'
+                                              ? 'Search'
+                                              : 'بحث',
                                       hintStyle: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: Colors.grey,
@@ -262,7 +263,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                appLocalization == 'en'
+                                appLocalization.localeName == 'en'
                                     ? 'Categories'
                                     : 'الفئات',
                                 style: TextStyle(
