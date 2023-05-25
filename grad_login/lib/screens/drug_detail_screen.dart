@@ -65,7 +65,10 @@ class _DrugDetailScreenState extends State<DrugDetailScreen>
                 child: Row(
                   children: [
                     IconButton(
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                        },
                         icon: const Icon(Icons.arrow_back)),
                     const Spacer(),
                     const LoveBtn(),
