@@ -47,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _loadCategories({String? searchQuery}) async {
     await Provider.of<Categories>(context, listen: false)
-        .getCategories(searchQuery: searchQuery);
+        .getGeneralCategories(searchQuery: searchQuery);
   }
 
   @override

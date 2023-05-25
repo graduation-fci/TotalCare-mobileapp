@@ -1,7 +1,15 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:grad_login/providers/categoriesProvider.dart';
+import 'package:provider/provider.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'medicine_screen.dart';
 
 class SubCategoriesScreen extends StatefulWidget {
   const SubCategoriesScreen({super.key});
+  static const routeName = '/sub-category';
 
   @override
   State<SubCategoriesScreen> createState() => _SubCategoriesScreenState();
@@ -12,6 +20,9 @@ class _SubCategoriesScreenState extends State<SubCategoriesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final subCategories = Provider.of<Categories>(context).subCatItems;
+    final appLocalization = AppLocalizations.of(context)!.localeName;
+
     return SafeArea(
       child: Scaffold(
         // backgroundColor: Colors.white,
@@ -33,60 +44,58 @@ class _SubCategoriesScreenState extends State<SubCategoriesScreen> {
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
               ),
-              // itemCount: categories.length,
-              itemBuilder: (context, index) => const InkWell(
-                // onTap: () {
-                // String? errorMSG =
-                // Provider.of<Drugs>(context, listen: false).errorMSG;
-                // errorMSG == null
-                // ? Navigator.of(context).pushNamed(
-                // MedicinesScreen.routeName,
-                // arguments: [
-                // categories[index]['id'],
-                // appLocalization == 'en'
-                // ? categories[index]['name']
-                // : categories[index]['name_ar'],
-                // ],
-                // )
-                // : ScaffoldMessenger.of(context)
-                // .showSnackBar(SnackBar(content: Text(errorMSG)));
-                // },
+              itemCount: subCategories.length,
+              itemBuilder: (context, index) => InkWell(
+                onTap: () {
+                  // String? errorMSG =
+                  // Provider.of<Categories>(context, listen: false).errorMSG;
+                  // errorMSG == null
+                  // ?
+                  Navigator.of(context)
+                      .pushNamed(MedicinesScreen.routeName, arguments: [
+                    subCategories[index]['id'],
+                    appLocalization == 'en'
+                        ? subCategories[index]['name']
+                        : subCategories[index]['name_ar'],
+                  ]);
+                  // : ScaffoldMessenger.of(context)
+                  // .showSnackBar(SnackBar(content: Text('Error')));
+                },
                 child: GridTile(
                   footer: SizedBox(
                     width: double.infinity,
                     // height: mediaquery.height * 0.05,
                     child: GridTileBar(
                       backgroundColor: Colors.white,
-                      /* title: Text(
-                appLocalization == 'en'
-                    ? categories[index]['name']
-                    : categories[index]['name_ar'],
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                softWrap: true,
-                style: const TextStyle(
-                  color: Colors.black,
-                ),
-                textAlign: TextAlign.center,
-              ), */
+                      title: Text(
+                        appLocalization == 'en'
+                            ? subCategories[index]['name']
+                            : subCategories[index]['name_ar'],
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: true,
+                        style: const TextStyle(
+                          color: Colors.black,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ),
-                  child: Placeholder(),
-                  // child: CachedNetworkImage(
-                  // imageUrl: categories[index]['image']['image'],
-                  // placeholder: (context, url) =>
-                  // const Center(child: CircularProgressIndicator()),
-                  // errorWidget: (context, url, error) => const Center(
-                  // child: Icon(
-                  // Icons.error,
-                  // color: Colors.red,
+                  child: CachedNetworkImage(
+                    imageUrl: subCategories[index]['image']['image'],
+                    placeholder: (context, url) =>
+                        const Center(child: CircularProgressIndicator()),
+                    errorWidget: (context, url, error) => const Center(
+                      child: Icon(
+                        Icons.error,
+                        color: Colors.red,
+                      ),
+                    ),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-              // fit: BoxFit.cover,
             ),
-            // ),
-            // ),
-            // );,
           );
         }),
       ),

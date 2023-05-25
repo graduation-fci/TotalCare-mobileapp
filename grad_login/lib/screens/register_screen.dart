@@ -219,14 +219,43 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         }
                         final passwordRegex = RegExp(
                             r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+
                         if (!passwordRegex.hasMatch(value)) {
-                          return '''Password must contain:
-     - at least one uppercase letter
-     - at least one lowercase letter
-     - at least one number
-     - at least one special character
-     - at least 8 characters''';
+                          String errorMessage = '';
+
+                          // Check for an uppercase letter
+                          if (!RegExp(r'.*?[A-Z]').hasMatch(value)) {
+                            errorMessage +=
+                                "- Must contain at least one uppercase letter\n";
+                          }
+
+                          // Check for a lowercase letter
+                          if (!RegExp(r'.*?[a-z]').hasMatch(value)) {
+                            errorMessage +=
+                                "- Must contain at least one lowercase letter\n";
+                          }
+
+                          // Check for a number
+                          if (!RegExp(r'.*?[0-9]').hasMatch(value)) {
+                            errorMessage +=
+                                "- Must contain at least one number\n";
+                          }
+
+                          // Check for a special character
+                          if (!RegExp(r'.*?[!@#\$&*~]').hasMatch(value)) {
+                            errorMessage +=
+                                "- Must contain at least one special character\n";
+                          }
+
+                          // Check for minimum length
+                          if (value.length < 8) {
+                            errorMessage +=
+                                "- Must be at least 8 characters long\n";
+                          }
+
+                          return errorMessage;
                         }
+
                         return null;
                       },
                       onSaved: (value) {
