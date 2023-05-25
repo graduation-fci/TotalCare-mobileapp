@@ -1,11 +1,23 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../models/user.dart';
+
 class DateSelector extends StatefulWidget {
   final BuildContext context;
-  const DateSelector({
+  final TextEditingController dateController;
+  final User userData;
+
+  String? selectdate;
+
+  DateSelector({
     super.key,
+    this.selectdate,
     required this.context,
+    required this.dateController,
+    required this.userData,
   });
 
   @override
@@ -13,8 +25,7 @@ class DateSelector extends StatefulWidget {
 }
 
 class _DateSelectorState extends State<DateSelector> {
-  DateTime? selectdate;
-
+  String? dataString;
   void _presentDatePicker(context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -22,9 +33,11 @@ class _DateSelectorState extends State<DateSelector> {
       firstDate: DateTime(1920),
       lastDate: DateTime.now(),
     );
-    if (pickedDate != null && pickedDate != selectdate) {
+    if (pickedDate != null) {
       setState(() {
-        selectdate = pickedDate;
+        dataString = DateFormat('yyyy-MM-dd').format(pickedDate);
+        dataString = dataString!.substring(0, 10);
+        widget.selectdate = dataString;
       });
     }
   }
@@ -47,7 +60,19 @@ class _DateSelectorState extends State<DateSelector> {
             ]),
             padding: const EdgeInsets.all(10),
             child: TextFormField(
+              controller: widget.dateController,
               cursorColor: labelColor,
+              validator: (_) {
+                if (widget.selectdate != null) {
+                  widget.userData.birthDate = widget.selectdate;
+                }
+                return null;
+              },
+              onChanged: (_) {
+                setState(() {
+                  widget.dateController.text = dataString!;
+                });
+              },
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -58,12 +83,13 @@ class _DateSelectorState extends State<DateSelector> {
                 ),
                 fillColor: containerFillColor,
                 filled: true,
-                labelText: selectdate == null
-                    ? 'No Date Chosen!'
-                    : 'Picked Date: ${DateFormat.yMd().format(selectdate!)}',
+                labelText: widget.selectdate == null ? 'No Date Chosen!' : null,
                 labelStyle: TextStyle(color: labelColor),
                 suffixIcon: IconButton(
-                  icon: const Icon(Icons.calendar_today),
+                  icon: const Icon(
+                    Icons.calendar_today,
+                    color: Colors.grey,
+                  ),
                   onPressed: () => _presentDatePicker(widget.context),
                 ),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16),
