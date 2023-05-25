@@ -27,10 +27,9 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
   @override
   Widget build(BuildContext context) {
     final appLocalization = AppLocalizations.of(context)!.localeName;
-
     final drugs = Provider.of<Drugs>(context).items;
-    //print(drugs.length);
     final mediaquery = MediaQuery.of(context).size;
+
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -64,33 +63,55 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
                 borderRadius: BorderRadius.circular(20)),
           ),
           child: GridTile(
-            footer: GridTileBar(
-              title: Text(
-                appLocalization == 'en'
-                    ? drugs[index]['name']
-                    : drugs[index]['name_ar'],
-                style: const TextStyle(color: Colors.black),
+            footer: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(20),
+                    bottomRight: Radius.circular(20)),
               ),
-              subtitle: Text(
-                '${drugs[index]['price'].toString()} L.E.',
-                style: const TextStyle(color: Colors.black),
+              child: GridTileBar(
+                title: Text(
+                  appLocalization == 'en'
+                      ? drugs[index]['name']
+                      : drugs[index]['name_ar'],
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                subtitle: Text(
+                  '${drugs[index]['price'].toString()} L.E.',
+                  style: const TextStyle(color: Colors.black, fontSize: 11),
+                ),
               ),
             ),
             child: Stack(
               alignment: Alignment.topCenter,
-              //alignment: Alignment.topRight,
               children: [
-                CachedNetworkImage(
-                  imageUrl: drugs[index]['medicine_images'][0]['image'],
-                  placeholder: (context, url) =>
-                      const Center(child: CircularProgressIndicator()),
-                  errorWidget: (context, url, error) => const Center(
-                    child: Icon(
-                      Icons.error,
-                      color: Colors.red,
-                    ),
+                Container(
+                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20)),
+                    color: Colors.white,
                   ),
-                  fit: BoxFit.cover,
+                  width: mediaquery.width * 0.5,
+                  height: mediaquery.height * 0.15,
+                  child: CachedNetworkImage(
+                    imageUrl: drugs[index]['medicine_images'][0]['image'],
+                    placeholder: (context, url) =>
+                        const Center(child: CircularProgressIndicator()),
+                    errorWidget: (context, url, error) => const Center(
+                      child: Icon(
+                        Icons.error,
+                        color: Colors.red,
+                      ),
+                    ),
+                    fit: BoxFit.contain,
+                  ),
                 ),
                 const Positioned(
                   top: 2,
@@ -103,51 +124,6 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
               ],
             ),
           ),
-          // Column(
-          //   mainAxisSize: MainAxisSize.min,
-          //   children: [
-          //     Padding(
-          //       padding: const EdgeInsets.all(8.0),
-          //       child: Stack(
-          //         alignment: Alignment.topRight,
-          //         children: [
-          //           ClipRRect(
-          //             borderRadius: BorderRadius.circular(20),
-          //             child:
-          //                 // Image.asset('assets/images/btn.png')
-          //                 Image.network(
-          //               drugs[index].imgURL,
-          //               width: double.infinity,
-          //               height: 150,
-          //               fit: BoxFit.cover,
-          //             ),
-          //           ),
-          //           const LoveBtn(),
-          //         ],
-          //       ),
-          //     ),
-          //     Padding(
-          //       padding: const EdgeInsets.symmetric(horizontal:10),
-          //       child: Column(
-          //         // mainAxisSize: MainAxisSize.min,
-          //         mainAxisAlignment: MainAxisAlignment.spaceAround,
-          //         crossAxisAlignment: CrossAxisAlignment.start,
-          //         children: [
-          //           Text(
-          //             drugs[index].name,
-          //             maxLines: 1,
-          //             overflow: TextOverflow.ellipsis,
-          //             style: const TextStyle(fontWeight: FontWeight.bold),
-          //           ),
-          //           Text(
-          //             '${drugs[index].price.toString()}L.E.',
-          //             style: const TextStyle(fontWeight: FontWeight.bold),
-          //           ),
-          //         ],
-          //       ),
-          //     )
-          //   ],
-          // ),
         ),
       ),
     );
