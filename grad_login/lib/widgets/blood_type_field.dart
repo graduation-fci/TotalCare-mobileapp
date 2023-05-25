@@ -1,10 +1,20 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+
+import '../models/user.dart';
 
 class BloodTypeInput extends StatefulWidget {
   final List bloodTypes;
   final TextEditingController bloodTypeController;
-  const BloodTypeInput(
-      {super.key, required this.bloodTypes, required this.bloodTypeController});
+  User? user;
+
+  BloodTypeInput({
+    super.key,
+    required this.bloodTypes,
+    required this.bloodTypeController,
+    this.user,
+  });
 
   @override
   State<BloodTypeInput> createState() => _BloodTypeInputState();
@@ -62,6 +72,9 @@ class _BloodTypeInputState extends State<BloodTypeInput> {
           setState(() {
             widget.bloodTypeController.text = value!.toString();
           });
+        },
+        validator: (value) {
+          widget.user?.bloodType = value.toString();
         },
       ),
     );
