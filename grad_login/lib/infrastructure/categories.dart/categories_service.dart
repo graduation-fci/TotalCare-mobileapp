@@ -18,8 +18,8 @@ class CategoriesService {
       queryParams['search'] = searchQuery;
     }
 
-    final url =
-        Uri.parse('${Config.categories}?${_getQueryString(queryParams)}');
+    final url = Uri.parse(
+        '${Config.categories}?${_getQueryString(queryParams)}');
     final respone = await http.get(
       url,
       headers: {'Authorization': 'JWT $token', "Accept-Language": "ar"},
