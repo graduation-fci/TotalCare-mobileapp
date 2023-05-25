@@ -64,6 +64,7 @@ class _CategoryItemState extends State<CategoryItem> {
                 softWrap: true,
                 style: const TextStyle(
                   color: Colors.black,
+                  fontSize: 13,
                 ),
                 textAlign: TextAlign.center,
               ),
