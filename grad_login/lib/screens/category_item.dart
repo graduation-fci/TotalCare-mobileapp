@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:grad_login/screens/sub_categories_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -19,7 +20,8 @@ class _CategoryItemState extends State<CategoryItem> {
   Widget build(BuildContext context) {
     final appLocalization = AppLocalizations.of(context)!.localeName;
 
-    final categories = Provider.of<Categories>(context).items;
+    final categoriesProvider = Provider.of<Categories>(context);
+    final categories = categoriesProvider.catItems;
     final mediaquery = MediaQuery.of(context).size;
 
     return GridView.builder(
@@ -36,18 +38,21 @@ class _CategoryItemState extends State<CategoryItem> {
         onTap: () {
           String? errorMSG =
               Provider.of<Drugs>(context, listen: false).errorMSG;
-          errorMSG == null
-              ? Navigator.of(context).pushNamed(
-                  MedicinesScreen.routeName,
-                  arguments: [
-                    categories[index]['id'],
-                    appLocalization == 'en'
-                        ? categories[index]['name']
-                        : categories[index]['name_ar'],
-                  ],
-                )
-              : ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(errorMSG)));
+          categoriesProvider
+              .getSubCategories(id: categories[index]['id'])
+              .then((_) {
+            errorMSG == null
+                ? Navigator.of(context).pushNamed(
+                    SubCategoriesScreen.routeName,
+                    arguments: [
+                      appLocalization == 'en'
+                          ? categories[index]['name']
+                          : categories[index]['name_ar'],
+                    ],
+                  )
+                : ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(errorMSG)));
+          });
         },
         child: GridTile(
           footer: SizedBox(

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,7 +10,7 @@ import '../providers/cartProvider.dart';
 import 'love_button.dart';
 
 class DrugDetailScreen extends StatefulWidget {
-  const DrugDetailScreen({super.key});
+  const DrugDetailScreen({Key? key}) : super(key: key);
   static const routeName = '/drug-detail';
 
   @override
@@ -21,11 +22,14 @@ class _DrugDetailScreenState extends State<DrugDetailScreen>
   int number = 1;
   String cartID = '';
   late AnimationController _animationController;
+  int currentIndex = 0;
 
   @override
   void initState() {
     _animationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 500));
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
     Provider.of<Cart>(context, listen: false).getCartID().then((_) {
       final token = Provider.of<Cart>(context, listen: false).cartID;
       cartID = token;
@@ -39,50 +43,64 @@ class _DrugDetailScreenState extends State<DrugDetailScreen>
     final args = ModalRoute.of(context)!.settings.arguments as DrugItem;
     final mediaQuery = MediaQuery.of(context);
     final error = Provider.of<Cart>(context).errorMSG;
+    final totalImages = args.imgURL.length;
 
     return SafeArea(
       child: Stack(
         children: [
           Scaffold(
+            backgroundColor: Colors.white,
             extendBody: true,
-            body: Stack(children: [
-              CachedNetworkImage(
-                imageUrl: args.imgURL[0]['image'],
-                width: double.infinity,
-                height: mediaQuery.size.height * 0.4,
-                placeholder: (context, url) =>
-                    const Center(child: CircularProgressIndicator()),
-                errorWidget: (context, url, error) => const Center(
-                  child: Icon(
-                    Icons.error,
-                    color: Colors.red,
+            body: SizedBox(
+              height: mediaQuery.size.height * 0.32,
+              width: double.infinity,
+              child: Stack(children: [
+                PageView.builder(
+                  itemCount: totalImages,
+                  onPageChanged: (index) {
+                    setState(() {
+                      currentIndex = index;
+                    });
+                  },
+                  itemBuilder: (context, index) {
+                    return CachedNetworkImage(
+                      imageUrl: args.imgURL[index]['image'],
+                      width: double.infinity,
+                      height: mediaQuery.size.height * 0.4,
+                      placeholder: (context, url) =>
+                          const Center(child: CircularProgressIndicator()),
+                      errorWidget: (context, url, error) => const Center(
+                        child: Icon(
+                          Icons.error,
+                          color: Colors.red,
+                        ),
+                      ),
+                      fit: BoxFit.contain,
+                    );
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 12, right: 15),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.arrow_back),
+                      ),
+                      const Spacer(),
+                      const LoveBtn(),
+                    ],
                   ),
-                ),
-                fit: BoxFit.cover,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 12, right: 15),
-                child: Row(
-                  children: [
-                    IconButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                        },
-                        icon: const Icon(Icons.arrow_back)),
-                    const Spacer(),
-                    const LoveBtn(),
-                  ],
-                ),
-              )
-            ]),
+                )
+              ]),
+            ),
           ),
           Positioned(
             left: 0,
             right: 0,
             top: 280,
             child: Container(
-              height: mediaQuery.size.height * 0.6,
+              height: mediaQuery.size.height * 0.65,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -218,7 +236,8 @@ class _DrugDetailScreenState extends State<DrugDetailScreen>
                                   itemBuilder: (context, index) {
                                     return SizedBox(
                                       child: Text(
-                                          '- ${args.drugsList[index]['name']}'),
+                                        '- ${args.drugsList[index]['name']}',
+                                      ),
                                     );
                                   },
                                   itemCount: args.drugsList.length,
@@ -247,32 +266,33 @@ class _DrugDetailScreenState extends State<DrugDetailScreen>
                             });
                           } else {
                             showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    contentPadding: const EdgeInsets.all(20),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20.0),
-                                    ),
-                                    title:
-                                        const Text('Something went wrong...'),
-                                    content: Text(error),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text(
-                                          'Ok',
-                                          style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary),
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  contentPadding: const EdgeInsets.all(20),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                  title: const Text('Something went wrong...'),
+                                  content: Text(error),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        'Ok',
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary,
                                         ),
                                       ),
-                                    ],
-                                  );
-                                });
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
                           }
                         });
                       },
@@ -283,6 +303,19 @@ class _DrugDetailScreenState extends State<DrugDetailScreen>
                     ),
                   ),
                 ),
+              ),
+            ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            top: 250,
+            child: DotsIndicator(
+              dotsCount: totalImages,
+              position: currentIndex,
+              decorator: DotsDecorator(
+                color: Colors.grey, // Inactive dot color
+                activeColor: Theme.of(context).primaryColor, // Active dot color
               ),
             ),
           ),

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:grad_login/providers/addressProvider.dart';
-import 'package:grad_login/screens/add_address_screen.dart';
-import 'package:grad_login/screens/address_detail_screen.dart';
-import 'package:grad_login/screens/edit_address_screen.dart';
 import 'package:provider/provider.dart';
+
+import 'add_address_screen.dart';
+import 'address_detail_screen.dart';
+import 'edit_address_screen.dart';
 
 class AddressScreen extends StatefulWidget {
   static const routeName = '/address-screen';
@@ -53,7 +54,7 @@ class _AddressScreenState extends State<AddressScreen> {
                 .copyWith(fontSize: mediaQuery.width * 0.045),
           ),
         ),
-        body: addresses.isEmpty
+        body: _isLoading
             ? const Center(
                 child: Text(
                   'You have not added addresses yet!',
@@ -146,10 +147,16 @@ class _AddressScreenState extends State<AddressScreen> {
                                         size: 50,
                                       ),
                                       title: Text(
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        softWrap: true,
                                         addresses[index].description,
                                         style: const TextStyle(fontSize: 20),
                                       ),
                                       subtitle: Text(
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        softWrap: true,
                                         '${addresses[index].street}, ${addresses[index].city}',
                                         style: const TextStyle(fontSize: 16),
                                       ),
