@@ -1,13 +1,10 @@
 import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:grad_login/app_state.dart';
-import 'package:grad_login/infrastructure/auth/authService.dart';
 
+import '../infrastructure/auth/authService.dart';
 import '../models/user.dart';
-import '../models/exam.dart';
-import '../my_config.dart';
+import '../app_state.dart';
 
 class AuthProvider with ChangeNotifier {
   bool isRegister = false;
@@ -59,6 +56,14 @@ class AuthProvider with ChangeNotifier {
         appState = AppState.done;
         break;
     }
+    notifyListeners();
+  }
+
+  Future<void> contRegister(User user) async {
+    appState = AppState.loading;
+    notifyListeners();
+    final responseData = await authService.continueRegistration(user);
+    appState = AppState.done;
     notifyListeners();
   }
 
