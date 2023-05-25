@@ -62,6 +62,37 @@ class AuthService {
     return responseData;
   }
 
+  Future<Map<String, dynamic>?> continueRegistration(User user) async {
+    final registerEndPoint = Uri.parse(Config.contRegister);
+    Map<String, dynamic> body = {};
+    if (user.birthDate != null) {
+      body['birth_date'] = user.birthDate;
+    }
+    if (user.phoneNumber != null) {
+      body['phone'] = user.phoneNumber;
+    }
+    if (user.bloodType != null) {
+      body['bloodType'] = user.bloodType;
+    }
+
+    String? token;
+    await storage.getToken().then((value) {
+      token = value;
+    });
+
+    final response = await http.patch(
+      registerEndPoint,
+      headers: {
+        "content-type": "application/json",
+        "accept": "application/json",
+        "Authorization": "JWT $token",
+      },
+      body: json.encode(body),
+    );
+    final responseData = json.decode(response.body);
+    return responseData;
+  }
+
   Future<void> refreshJwt() async {
     final refreshEndPoint = Uri.parse(Config.refreshJWT);
 
