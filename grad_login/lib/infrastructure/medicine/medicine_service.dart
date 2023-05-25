@@ -58,7 +58,7 @@ class MedicineService {
   }
 
   Future<Map<String, dynamic>?> filterCategories({String? search}) async {
-    const baseUrl = Config.categories;
+    const baseUrl = Config.generalCategories;
     final queryParams = <String, String>{};
     String? token;
     await storage.getToken().then((value) {

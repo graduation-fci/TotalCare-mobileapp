@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:grad_login/infrastructure/categories.dart/categories_service.dart';
 
@@ -15,7 +17,8 @@ class CatItem with ChangeNotifier {
 
 class Categories with ChangeNotifier {
   CategoriesService categoryService = CategoriesService();
-  List<dynamic> _list = [];
+  List<dynamic> _subCatList = [];
+  List<dynamic> _catList = [];
   String? _nextPageEndPoint;
   String? _previousPageEndPoint;
 
@@ -27,15 +30,30 @@ class Categories with ChangeNotifier {
     return _previousPageEndPoint;
   }
 
-  List<dynamic> get items {
-    return [..._list];
+  List<dynamic> get subCatItems {
+    return [..._subCatList];
   }
 
-  Future<void> getCategories({String? searchQuery}) async {
+  List<dynamic> get catItems {
+    return [..._catList];
+  }
+
+  Future<void> getGeneralCategories({String? searchQuery}) async {
     final extractedData =
-        await categoryService.fetchCat(searchQuery: searchQuery);
+        await categoryService.fetchGeneralCat(searchQuery: searchQuery);
+    log('$extractedData');
+    _catList = extractedData['results'];
+    _nextPageEndPoint = extractedData['next'];
+    _previousPageEndPoint = extractedData['previous'];
+
+    notifyListeners();
+  }
+
+  Future<void> getSubCategories({String? searchQuery, int? id}) async {
+    final extractedData =
+        await categoryService.fetchSubCat(id: id, searchQuery: searchQuery);
     // log('$extractedData');
-    _list = extractedData['results'];
+    _subCatList = extractedData['results'];
     _nextPageEndPoint = extractedData['next'];
     _previousPageEndPoint = extractedData['previous'];
 
@@ -46,7 +64,7 @@ class Categories with ChangeNotifier {
     if (nextUrl != null) {
       final extractedData = await categoryService.fetchNextCat(nextUrl);
       // log('$extractedData');
-      _list.addAll(extractedData['results']);
+      _subCatList.addAll(extractedData['results']);
       _nextPageEndPoint = extractedData['next'];
       _previousPageEndPoint = extractedData['previous'];
       notifyListeners();

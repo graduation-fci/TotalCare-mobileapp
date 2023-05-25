@@ -127,11 +127,16 @@ class _CartScreenState extends State<CartScreen> {
                                             leading: ClipRRect(
                                                 borderRadius:
                                                     BorderRadius.circular(10),
-                                                child: CachedNetworkImage(
-                                                  width: 75,
-                                                  height: 75,
-                                                  imageUrl: carts[index].imgURL,
-                                                  fit: BoxFit.cover,
+                                                child: SizedBox(
+                                                  height: 90,
+                                                  width: 90,
+                                                  child: CachedNetworkImage(
+                                                    width: 75,
+                                                    height: 75,
+                                                    imageUrl:
+                                                        carts[index].imgURL,
+                                                    fit: BoxFit.cover,
+                                                  ),
                                                 )),
                                             title: Text(
                                               carts[index].name,

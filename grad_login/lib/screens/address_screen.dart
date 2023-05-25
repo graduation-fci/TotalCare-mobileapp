@@ -137,10 +137,16 @@ class _AddressScreenState extends State<AddressScreen> {
                                     size: 50,
                                   ),
                                   title: Text(
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    softWrap: true,
                                     addresses[index].description,
                                     style: const TextStyle(fontSize: 20),
                                   ),
                                   subtitle: Text(
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    softWrap: true,
                                     '${addresses[index].street}, ${addresses[index].city}',
                                     style: const TextStyle(fontSize: 16),
                                   ),
