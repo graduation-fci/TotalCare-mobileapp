@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:grad_login/providers/userProvider.dart';
@@ -130,11 +131,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     left: mediaquery.height * 0.02,
                                     top: mediaquery.height * 0.03),
                                 child: Text(
-                                  '${appLocalization.check} '
+                                  '${appLocalization.check}\n'
                                   '${appLocalization.interactions}',
-                                  //  == 'en'
-                                  //     ? 'Check\nInteractions'
-                                  //     : 'تحقق من التعارضات',
                                   style: TextStyle(
                                       fontSize: mediaquery.width *
                                           0.075 *
@@ -158,9 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         top: mediaquery.height * 0.05,
                                         left: mediaquery.width * 0.09,
                                         child: Text(
-                                          appLocalization == 'en'
-                                              ? 'Learn more'
-                                              : 'معرفة المزيد',
+                                          appLocalization.learnMore,
                                           softWrap: false,
                                           style: TextStyle(
                                             fontSize: mediaquery.width *
@@ -203,9 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           borderRadius: BorderRadius.circular(
                                               mediaquery.height * 0.02),
                                           borderSide: BorderSide.none),
-                                      hintText: appLocalization == 'en'
-                                          ? 'Search'
-                                          : 'بحث',
+                                      hintText: appLocalization.search,
                                       hintStyle: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: Colors.grey,
@@ -262,9 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                appLocalization == 'en'
-                                    ? 'Categories'
-                                    : 'الفئات',
+                                appLocalization.categories,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: mediaquery.width * 0.055),
