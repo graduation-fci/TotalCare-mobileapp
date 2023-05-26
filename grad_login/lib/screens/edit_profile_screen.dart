@@ -313,9 +313,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             SizedBox(
                               height: mediaQuery.height * 0.02,
                             ),
-                            DateSelector(
-                              context: context,
-                            ),
+                            // DateSelector(
+                            //   context: context,
+                            // ),
                             SizedBox(
                               height: mediaQuery.height * 0.02,
                             ),
