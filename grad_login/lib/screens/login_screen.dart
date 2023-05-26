@@ -168,8 +168,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SignButton(
                     mediaQuery: mediaQuery,
-                    onPressed: () =>
-                        onPressed(authProvider, userProvider, cartProvider, context),
+                    onPressed: () => onPressed(
+                        authProvider, userProvider, cartProvider, context),
                     label: appLocalization.login,
                   ),
                   if (authProvider.appState == AppState.loading)
