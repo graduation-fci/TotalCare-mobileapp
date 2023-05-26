@@ -49,7 +49,7 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
                 ? drugs[index]['name']
                 : drugs[index]['name_ar'],
             price: drugs[index]['price'],
-            imgURL: drugs[index]['medicine_images'],
+            imgURL: drugs[index]['images'],
             drugsList: drugs[index]['drug'],
           ), //medicine images is a list
         ),
@@ -91,28 +91,50 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
               alignment: Alignment.topCenter,
               children: [
                 Container(
-                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20)),
-                    color: Colors.white,
-                  ),
-                  width: mediaquery.width * 0.5,
-                  height: mediaquery.height * 0.15,
-                  child: CachedNetworkImage(
-                    imageUrl: drugs[index]['medicine_images'][0]['image'],
-                    placeholder: (context, url) =>
-                        const Center(child: CircularProgressIndicator()),
-                    errorWidget: (context, url, error) => const Center(
-                      child: Icon(
-                        Icons.error,
-                        color: Colors.red,
-                      ),
+                    padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20)),
+                      color: Colors.white,
                     ),
-                    fit: BoxFit.contain,
-                  ),
-                ),
+                    width: mediaquery.width * 0.5,
+                    height: mediaquery.height * 0.15,
+                    child: drugs[index]['images'].isNotEmpty &&
+                            drugs[index]['images'][0]['image'] != null
+                        ? CachedNetworkImage(
+                            imageUrl: drugs[index]['images'][0]['image'],
+                            placeholder: (context, url) => const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                            errorWidget: (context, url, error) => const Center(
+                              child: Icon(
+                                Icons.error,
+                                color: Colors.red,
+                              ),
+                            ),
+                            fit: BoxFit.contain,
+                          )
+                        :
+                        // Render a placeholder or error widget when imageUrl is null or empty
+                        Stack(
+                            alignment: Alignment.center,
+                            children: const [
+                              Icon(
+                                Icons.error,
+                                color: Colors.red,
+                              ),
+                              Positioned(
+                                top: 70,
+                                child: Text(
+                                  'Error loading this image',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )),
                 const Positioned(
                   top: 2,
                   right: 5,
