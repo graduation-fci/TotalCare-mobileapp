@@ -29,12 +29,12 @@ class _CategoryItemState extends State<CategoryItem> {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
-        childAspectRatio: 4 / 5,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
+        childAspectRatio: 7 / 10,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
       ),
       itemCount: categories.length,
-      itemBuilder: (context, index) => InkWell(
+      itemBuilder: (context, index) => GestureDetector(
         onTap: () {
           String? errorMSG =
               Provider.of<Drugs>(context, listen: false).errorMSG;
@@ -54,39 +54,46 @@ class _CategoryItemState extends State<CategoryItem> {
                     .showSnackBar(SnackBar(content: Text(errorMSG)));
           });
         },
-        child: GridTile(
-          footer: SizedBox(
-            width: double.infinity,
-            height: mediaquery.height * 0.05,
-            child: GridTileBar(
-              backgroundColor: Colors.white,
-              title: Text(
-                appLocalization == 'en'
-                    ? categories[index]['name']
-                    : categories[index]['name_ar'],
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                softWrap: true,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 13,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CachedNetworkImage(
+              height: 100,
+              width: 100,
+              imageUrl: categories[index]['image']['image'],
+              placeholder: (context, url) =>
+                  const Center(child: CircularProgressIndicator()),
+              errorWidget: (context, url, error) => const Center(
+                child: Icon(
+                  Icons.error,
+                  color: Colors.red,
                 ),
-                textAlign: TextAlign.center,
+              ),
+              fit: BoxFit.cover,
+            ),
+            Container(
+              color: Colors.white,
+              // width: 85,
+              height: 40,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Center(
+                child: Text(
+                  appLocalization == 'en'
+                      ? categories[index]['name']
+                      : categories[index]['name_ar'],
+                  maxLines: 2,
+                  // overflow: TextOverflow.ellipsis,
+                  // softWrap: true,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ),
             ),
-          ),
-          child: CachedNetworkImage(
-            imageUrl: categories[index]['image']['image'],
-            placeholder: (context, url) =>
-                const Center(child: CircularProgressIndicator()),
-            errorWidget: (context, url, error) => const Center(
-              child: Icon(
-                Icons.error,
-                color: Colors.red,
-              ),
-            ),
-            fit: BoxFit.cover,
-          ),
+          ],
         ),
       ),
     );
