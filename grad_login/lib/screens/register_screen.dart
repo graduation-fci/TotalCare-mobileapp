@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -7,7 +8,9 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../infrastructure/shared/storage.dart';
 import '../app_state.dart';
+import '../providers/userProvider.dart';
 import '../providers/medicineProvider.dart';
 import '../providers/authProvider.dart';
 
@@ -39,6 +42,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
     profileType: 'PAT',
   );
   Locale? locale;
+  Storage storage = Storage();
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController firstNameController = TextEditingController();
@@ -75,6 +79,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
     final appLocalization = AppLocalizations.of(context)!;
     final authResponse = Provider.of<AuthProvider>(context);
     final medicineResponse = Provider.of<MedicineProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
 
     return Scaffold(
       body: SafeArea(
@@ -326,8 +331,8 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                     const SizedBox(height: 16),
                     SignButton(
                       mediaQuery: mediaQuery,
-                      onPressed: () =>
-                          regBtn(authResponse, medicineResponse, context),
+                      onPressed: () => regBtn(authResponse, medicineResponse,
+                          userProvider, context),
                       label: appLocalization.register,
                     ),
                     if (authResponse.appState == AppState.loading)
@@ -433,8 +438,11 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
     );
   }
 
-  Future<Set<Set<void>>> regBtn(AuthProvider authResponse,
-      MedicineProvider medicineResponse, BuildContext context) async {
+  Future<Set<Set<void>>> regBtn(
+      AuthProvider authResponse,
+      MedicineProvider medicineResponse,
+      UserProvider userProvider,
+      BuildContext context) async {
     return {
       if (formKey.currentState!.validate())
         {
@@ -454,22 +462,30 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
                         ),
                       }
                   })
-              .then(
-                (_) => {
-                  if (authResponse.appState == AppState.done)
-                    {
-                      authResponse.login(
-                          username: _userData.username,
-                          password: _userData.password),
-                      medicineResponse.getMedicines(),
-                      Navigator.of(context).pushReplacementNamed(
-                        ContinueRegisterScreen.routeName,
-                        arguments: _userData,
-                      ),
-                    }
-                },
-              ),
-        },
+              .then((_) async {
+            if (authResponse.appState == AppState.done) {
+              await authResponse.login(
+                username: _userData.username,
+                password: _userData.password,
+              );
+            }
+          }).then((_) async {
+            final token = await storage.getToken();
+
+            List<String> parts = token!.split('.');
+            String payload = parts[1];
+            while (payload.length % 4 != 0) {
+              payload += '=';
+            }
+            Map<String, dynamic> data =
+                json.decode(utf8.decode(base64Url.decode(payload)));
+
+            userProvider.userProfileData = data;
+          }).then((_) => Navigator.of(context).pushReplacementNamed(
+                    ContinueRegisterScreen.routeName,
+                    arguments: _userData,
+                  )),
+        }
     };
   }
 }
