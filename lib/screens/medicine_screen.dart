@@ -34,6 +34,11 @@ class _MedicinesScreenState extends State<MedicinesScreen> {
     }
   }
 
+  Future<void> _loadSearchedMedicines(int id, {String? searchQuery}) async {
+    await Provider.of<Drugs>(context, listen: false)
+        .fetchDrug(id, searchQuery: searchQuery);
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaquery = MediaQuery.of(context).size;
@@ -121,7 +126,9 @@ class _MedicinesScreenState extends State<MedicinesScreen> {
                       children: [
                         Flexible(
                           flex: 1,
-                          child: TextField(
+                          child: TextFormField(
+                            onChanged: (value) =>
+                                _loadSearchedMedicines(args[0], searchQuery: value),
                             cursorColor: Colors.grey,
                             decoration: InputDecoration(
                                 fillColor: Colors.grey.shade200,
