@@ -31,6 +31,15 @@ class _SubCategoriesScreenState extends State<SubCategoriesScreen> {
           elevation: 0,
           centerTitle: true,
           title: const Text('Sub-Categories'),
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Color(0xFF003745),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         ),
         body: LayoutBuilder(builder: (context, constraints) {
           return SingleChildScrollView(
