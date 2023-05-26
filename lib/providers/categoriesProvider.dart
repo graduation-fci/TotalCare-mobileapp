@@ -41,7 +41,6 @@ class Categories with ChangeNotifier {
   Future<void> getGeneralCategories({String? searchQuery}) async {
     final extractedData =
         await categoryService.fetchGeneralCat(searchQuery: searchQuery);
-    log('$extractedData');
     _catList = extractedData['results'];
     _nextPageEndPoint = extractedData['next'];
     _previousPageEndPoint = extractedData['previous'];
