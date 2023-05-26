@@ -91,50 +91,30 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
               alignment: Alignment.topCenter,
               children: [
                 Container(
-                    padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20)),
-                      color: Colors.white,
-                    ),
-                    width: mediaquery.width * 0.5,
-                    height: mediaquery.height * 0.15,
-                    child: drugs[index]['images'].isNotEmpty &&
+                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20)),
+                    color: Colors.white,
+                  ),
+                  width: mediaquery.width * 0.5,
+                  height: mediaquery.height * 0.15,
+                  child: CachedNetworkImage(
+                    imageUrl: drugs[index]['images'].isNotEmpty &&
                             drugs[index]['images'][0]['image'] != null
-                        ? CachedNetworkImage(
-                            imageUrl: drugs[index]['images'][0]['image'],
-                            placeholder: (context, url) => const Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                            errorWidget: (context, url, error) => const Center(
-                              child: Icon(
-                                Icons.error,
-                                color: Colors.red,
-                              ),
-                            ),
-                            fit: BoxFit.contain,
-                          )
-                        :
-                        // Render a placeholder or error widget when imageUrl is null or empty
-                        Stack(
-                            alignment: Alignment.center,
-                            children: const [
-                              Icon(
-                                Icons.error,
-                                color: Colors.red,
-                              ),
-                              Positioned(
-                                top: 70,
-                                child: Text(
-                                  'Error loading this image',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          )),
+                        ? drugs[index]['images'][0]['image']
+                        : '',
+                    placeholder: (context, url) => const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    errorWidget: (context, url, error) => Image.asset(
+                      'assets/images/temp_med.jpeg',
+                      fit: BoxFit.contain,
+                    ),
+                    fit: BoxFit.contain,
+                  ),
+                ),
                 const Positioned(
                   top: 2,
                   right: 5,
