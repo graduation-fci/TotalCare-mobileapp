@@ -1,23 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:grad_login/providers/drugProvider.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import '../providers/cartProvider.dart';
 import 'cart_screen.dart';
 import 'drug_item.dart';
 
-class MedicinesScreen extends StatelessWidget {
+class MedicinesScreen extends StatefulWidget {
   const MedicinesScreen({super.key});
   static const routeName = '/medicine-screen';
+
+  @override
+  State<MedicinesScreen> createState() => _MedicinesScreenState();
+}
+
+class _MedicinesScreenState extends State<MedicinesScreen> {
+  final scrollController = ScrollController();
+  String? nextUrl;
+  String? previousUrl;
+  dynamic drugProvider;
+
+  @override
+  void initState() {
+    scrollController.addListener(_scrollListener);
+    super.initState();
+  }
+
+  void _scrollListener() {
+    if (scrollController.position.pixels ==
+            scrollController.position.maxScrollExtent &&
+        nextUrl != null) {
+      drugProvider.fetchNextDrug(nextUrl);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final mediaquery = MediaQuery.of(context).size;
     final args = ModalRoute.of(context)!.settings.arguments as List;
     final cartItems = Provider.of<Cart>(context).items;
+    drugProvider = Provider.of<Drugs>(context);
+    nextUrl = drugProvider.nextPageEndPoint;
+    previousUrl = drugProvider.previousPageEndPoint;
+
     return SafeArea(
       child: Scaffold(
         body: LayoutBuilder(builder: (context, constraints) {
           return SingleChildScrollView(
+            controller: scrollController,
             child: ConstrainedBox(
               constraints: BoxConstraints(minHeight: constraints.maxHeight),
               child: Padding(
