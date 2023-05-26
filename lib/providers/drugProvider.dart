@@ -43,13 +43,17 @@ class Drugs with ChangeNotifier {
     return _previousPageEndPoint;
   }
 
-  Future<void> fetchDrug(int catID) async {
+  Future<void> fetchDrug(int catID, {String? searchQuery}) async {
+    Map<String, String> queryParams = {};
     String? token;
     await storage.getToken().then((value) {
       token = value;
     });
-    final url = Uri.parse('${Config.drugs}?category=$catID');
-    print(url);
+    if (searchQuery != null) {
+      queryParams['search'] = searchQuery;
+    }
+    final url = Uri.parse(
+        '${Config.drugs}?${_getQueryString(queryParams)}&category=$catID');
     final respone = await http.get(url, headers: {
       'Authorization': 'JWT $token',
       "Accept-Language": "ar",
@@ -94,5 +98,11 @@ class Drugs with ChangeNotifier {
     _nextPageEndPoint = extractedData['next'];
     _previousPageEndPoint = extractedData['previous'];
     notifyListeners();
+  }
+
+  String _getQueryString(Map<String, String> params) {
+    return params.entries
+        .map((e) => '${e.key}=${Uri.encodeQueryComponent(e.value)}')
+        .join('&');
   }
 }
