@@ -54,7 +54,7 @@ class _AddressScreenState extends State<AddressScreen> {
                 .copyWith(fontSize: mediaQuery.width * 0.045),
           ),
         ),
-        body: _isLoading
+        body: addresses.isEmpty
             ? const Center(
                 child: Text(
                   'You have not added addresses yet!',
