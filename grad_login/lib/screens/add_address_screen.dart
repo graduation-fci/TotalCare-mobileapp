@@ -268,7 +268,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
               _streetController.text,
               _cityController.text,
               _descController.text,
-              _phoneController.text,
+              '${_countryController.text}${_phoneController.text}',
               _addressType.name,
               _titleController.text)
           .then((_) {
