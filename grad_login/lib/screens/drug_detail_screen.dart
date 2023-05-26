@@ -43,7 +43,7 @@ class _DrugDetailScreenState extends State<DrugDetailScreen>
     final args = ModalRoute.of(context)!.settings.arguments as DrugItem;
     final mediaQuery = MediaQuery.of(context);
     final error = Provider.of<Cart>(context).errorMSG;
-    final totalImages = args.imgURL.length;
+    final totalImages = args.imgURL.isNotEmpty ? args.imgURL.length : 1;
 
     return SafeArea(
       child: Stack(
@@ -64,16 +64,17 @@ class _DrugDetailScreenState extends State<DrugDetailScreen>
                   },
                   itemBuilder: (context, index) {
                     return CachedNetworkImage(
-                      imageUrl: args.imgURL[index]['image'],
+                      imageUrl: args.imgURL.isNotEmpty &&
+                              args.imgURL[index]['image'] != null
+                          ? args.imgURL[index]['image']
+                          : '',
                       width: double.infinity,
                       height: mediaQuery.size.height * 0.4,
                       placeholder: (context, url) =>
                           const Center(child: CircularProgressIndicator()),
-                      errorWidget: (context, url, error) => const Center(
-                        child: Icon(
-                          Icons.error,
-                          color: Colors.red,
-                        ),
+                      errorWidget: (context, url, error) => Image.asset(
+                        'assets/images/temp_med.jpeg',
+                        fit: BoxFit.contain,
                       ),
                       fit: BoxFit.contain,
                     );
@@ -247,59 +248,69 @@ class _DrugDetailScreenState extends State<DrugDetailScreen>
                           ),
                   ],
                 ),
-                bottomNavigationBar: Padding(
-                  padding: const EdgeInsets.only(top: 20),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: FloatingActionButton.extended(
-                      backgroundColor: Theme.of(context).primaryColor,
-                      onPressed: () async {
-                        await Provider.of<Cart>(context, listen: false)
-                            .addCart(cartID, args.id, number)
-                            .then((_) {
-                          if (error == null) {
-                            setState(() {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                customSnackBar(),
-                              );
-                            });
-                          } else {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  contentPadding: const EdgeInsets.all(20),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                  ),
-                                  title: const Text('Something went wrong...'),
-                                  content: Text(error),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text(
-                                        'Ok',
-                                        style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .secondary,
-                                        ),
+                bottomNavigationBar: Container(
+                  margin: const EdgeInsets.only(bottom: 30),
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      fixedSize: Size(
+                        mediaQuery.size.width * 0.85,
+                        mediaQuery.size.height * 0.06,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(40),
+                      ),
+                    ),
+                    onPressed: () async {
+                      await Provider.of<Cart>(context, listen: false)
+                          .addCart(cartID, args.id, number)
+                          .then((_) {
+                        if (error == null) {
+                          setState(() {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              customSnackBar(),
+                            );
+                          });
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                contentPadding: const EdgeInsets.all(20),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                title: const Text('Something went wrong...'),
+                                content: Text(error),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text(
+                                      'Ok',
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
                                       ),
                                     ),
-                                  ],
-                                );
-                              },
-                            );
-                          }
-                        });
-                      },
-                      label: Text(
-                        'Add to cart',
-                        style: Theme.of(context).textTheme.button,
-                      ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      });
+                    },
+                    child: Text(
+                      'Add to cart',
+                      style: Theme.of(context)
+                          .textTheme
+                          .button!
+                          .copyWith(fontSize: mediaQuery.size.width * 0.038),
                     ),
                   ),
                 ),
