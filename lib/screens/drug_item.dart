@@ -19,7 +19,8 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
   void initState() {
     // print('widgetID: ${widget.catID}');
     Future.delayed(Duration.zero).then((value) {
-      Provider.of<Drugs>(context, listen: false).fetchDrug(widget.catID);
+      Provider.of<Drugs>(context, listen: false)
+          .fetchDrug(catID: widget.catID.toString());
     });
     super.initState();
   }
@@ -41,18 +42,21 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
       ),
       itemCount: drugs.length,
       itemBuilder: (context, index) => GestureDetector(
-        onTap: () => Navigator.of(context).pushNamed(
-          DrugDetailScreen.routeName,
-          arguments: DrugItem(
-            id: drugs[index]['id'],
-            name: appLocalization == 'en'
-                ? drugs[index]['name']
-                : drugs[index]['name_ar'],
-            price: drugs[index]['price'],
-            imgURL: drugs[index]['images'],
-            drugsList: drugs[index]['drug'],
-          ), //medicine images is a list
-        ),
+        onTap: () {
+          FocusManager.instance.primaryFocus?.unfocus();
+          Navigator.of(context).pushNamed(
+            DrugDetailScreen.routeName,
+            arguments: DrugItem(
+              id: drugs[index]['id'],
+              name: appLocalization == 'en'
+                  ? drugs[index]['name']
+                  : drugs[index]['name_ar'],
+              price: drugs[index]['price'],
+              imgURL: drugs[index]['images'],
+              drugsList: drugs[index]['drug'],
+            ),
+          );
+        },
         child: Ink(
           decoration: ShapeDecoration(
             shape: RoundedRectangleBorder(
