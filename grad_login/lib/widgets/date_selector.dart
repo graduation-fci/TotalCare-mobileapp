@@ -29,7 +29,7 @@ class _DateSelectorState extends State<DateSelector> {
   void _presentDatePicker(context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: DateTime(2005, 1, 1),
       firstDate: DateTime(1920),
       lastDate: DateTime.now(),
     );
@@ -38,6 +38,7 @@ class _DateSelectorState extends State<DateSelector> {
         dataString = DateFormat('yyyy-MM-dd').format(pickedDate);
         dataString = dataString!.substring(0, 10);
         widget.selectdate = dataString;
+        widget.dateController.text = dataString!;
       });
     }
   }
@@ -68,11 +69,6 @@ class _DateSelectorState extends State<DateSelector> {
                 }
                 return null;
               },
-              onChanged: (_) {
-                setState(() {
-                  widget.dateController.text = dataString!;
-                });
-              },
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -83,7 +79,7 @@ class _DateSelectorState extends State<DateSelector> {
                 ),
                 fillColor: containerFillColor,
                 filled: true,
-                labelText: widget.selectdate == null ? 'No Date Chosen!' : null,
+                labelText: widget.selectdate == null ? 'No Date Chosen!' : 'Picked Date',
                 labelStyle: TextStyle(color: labelColor),
                 suffixIcon: IconButton(
                   icon: const Icon(
