@@ -9,6 +9,8 @@ import 'package:provider/provider.dart';
 
 import '../providers/categoriesProvider.dart';
 
+import '../providers/drugProvider.dart';
+import '../widgets/dataSearch.dart';
 import 'category_item.dart';
 import 'notification_widget.dart';
 
@@ -56,6 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final appLocalization = AppLocalizations.of(context)!;
     final mediaquery = MediaQuery.of(context).size;
     final userData = Provider.of<UserProvider>(context).userProfileData;
+    final drugsProvider = Provider.of<Drugs>(context);
     categoriesProvider = Provider.of<Categories>(context);
     nextUrl = categoriesProvider.nextPageEndPoint;
     previousUrl = categoriesProvider.previousPageEndPoint;
@@ -178,95 +181,62 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                     SizedBox(height: mediaquery.height * 0.01),
-                    SizedBox(
-                      width: double.infinity,
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Flexible(
-                                flex: 1,
-                                child: TextFormField(
-                                  focusNode: _focusNode,
-                                  controller: searchController,
-                                  onChanged: (value) =>
-                                      _loadCategories(searchQuery: value),
-                                  cursorColor: Colors.grey,
-                                  decoration: InputDecoration(
-                                      fillColor: Colors.grey.shade200,
-                                      filled: true,
-                                      border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(
-                                              mediaquery.height * 0.02),
-                                          borderSide: BorderSide.none),
-                                      hintText: appLocalization.search,
-                                      hintStyle: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey,
-                                          fontSize: mediaquery.width * 0.05),
-                                      suffixIcon: Icon(
-                                        Icons.search,
-                                        color: Colors.grey,
-                                        size: mediaquery.width * 0.075,
-                                      )),
+                    Row(
+                      children: [
+                        Flexible(
+                          flex: 1,
+                          child: SizedBox(
+                            height: 50,
+                            child: TextFormField(
+                              onTap: () {
+                                showSearch(
+                                  context: context,
+                                  delegate: DataSearch(drugsProvider),
+                                );
+                              },
+                              readOnly: true,
+                              cursorColor: Colors.grey,
+                              decoration: InputDecoration(
+                                fillColor: Colors.grey.shade200,
+                                filled: true,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      mediaquery.height * 0.02),
+                                  borderSide: BorderSide.none,
+                                ),
+                                hintText: appLocalization.search,
+                                hintStyle: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: mediaquery.width * 0.05,
+                                  color: Colors.grey,
+                                ),
+                                contentPadding:
+                                    const EdgeInsets.only(top: 6, left: 10),
+                                suffixIcon: Icon(
+                                  Icons.search,
+                                  color: Colors.grey,
+                                  size: mediaquery.width * 0.06,
                                 ),
                               ),
-                            ],
+                            ),
                           ),
-                          results != null && results!.isNotEmpty
-                              ? Visibility(
-                                  visible: _isVisible,
-                                  child: Container(
-                                    height: 200,
-                                    padding: const EdgeInsets.all(8),
-                                    margin: const EdgeInsets.only(top: 3),
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        border: Border.all(
-                                          color: Colors.grey.shade400,
-                                          width: 1,
-                                        )),
-                                    child: ListView.builder(
-                                      itemExtent: 50,
-                                      itemBuilder: (context, index) {
-                                        return ListTile(
-                                          title: Text(
-                                            '${results![index]['name']}',
-                                            style: TextStyle(
-                                                fontSize:
-                                                    mediaquery.width * 0.045),
-                                          ),
-                                          onTap: () {
-                                            FocusManager.instance.primaryFocus
-                                                ?.unfocus();
-
-                                            searchController.text = '';
-                                          },
-                                        );
-                                      },
-                                      itemCount: results!.length,
-                                    ),
-                                  ),
-                                )
-                              : Container(),
-                          SizedBox(
-                            height: mediaquery.height * 0.03,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                appLocalization.categories,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: mediaquery.width * 0.055),
-                              ),
-                            ],
-                          ),
-                          const CategoryItem(),
-                        ],
-                      ),
-                    )
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: mediaquery.height * 0.03),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          appLocalization.categories,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: mediaquery.width * 0.055),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: mediaquery.height * 0.03),
+                    const CategoryItem(),
                   ],
                 ),
               ),
