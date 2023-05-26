@@ -34,9 +34,9 @@ class _MedicinesScreenState extends State<MedicinesScreen> {
     }
   }
 
-  Future<void> _loadSearchedMedicines(int id, {String? searchQuery}) async {
+  Future<void> _loadSearchedMedicines(String id, {String? searchQuery}) async {
     await Provider.of<Drugs>(context, listen: false)
-        .fetchDrug(id, searchQuery: searchQuery);
+        .fetchDrug(catID: id, searchQuery: searchQuery);
   }
 
   @override
@@ -127,8 +127,9 @@ class _MedicinesScreenState extends State<MedicinesScreen> {
                         Flexible(
                           flex: 1,
                           child: TextFormField(
-                            onChanged: (value) =>
-                                _loadSearchedMedicines(args[0], searchQuery: value),
+                            onChanged: (value) => _loadSearchedMedicines(
+                                args[0].toString(),
+                                searchQuery: value),
                             cursorColor: Colors.grey,
                             decoration: InputDecoration(
                                 fillColor: Colors.grey.shade200,
