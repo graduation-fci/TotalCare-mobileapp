@@ -26,9 +26,21 @@ class DrugItem with ChangeNotifier {
 class Drugs with ChangeNotifier {
   String? errorMSG;
   Storage storage = Storage();
+
   List<dynamic> _list = [];
+  String? _nextPageEndPoint;
+
+  String? _previousPageEndPoint;
   List<dynamic> get items {
     return [..._list];
+  }
+
+  String? get nextPageEndPoint {
+    return _nextPageEndPoint;
+  }
+
+  String? get previousPageEndPoint {
+    return _previousPageEndPoint;
   }
 
   Future<void> fetchDrug(int catID) async {
@@ -36,7 +48,6 @@ class Drugs with ChangeNotifier {
     await storage.getToken().then((value) {
       token = value;
     });
-    final List<DrugItem> loadedCat = [];
     final url = Uri.parse('${Config.drugs}?category=$catID');
     print(url);
     final respone = await http.get(url, headers: {
@@ -45,8 +56,43 @@ class Drugs with ChangeNotifier {
     });
     final extractedData =
         json.decode(utf8.decode(respone.bodyBytes)) as Map<String, dynamic>;
-    log('$extractedData');
     _list = extractedData['results'];
+    _nextPageEndPoint = extractedData['next'];
+    _previousPageEndPoint = extractedData['previous'];
+    notifyListeners();
+  }
+
+  Future<void> fetchNextDrug(String nextUrl) async {
+    String? token;
+    await storage.getToken().then((value) {
+      token = value;
+    });
+    final url = Uri.parse(nextUrl);
+    final respone = await http.get(
+      url,
+      headers: {'Authorization': 'JWT $token', "Accept-Language": "ar"},
+    );
+    final extractedData = json.decode(utf8.decode(respone.bodyBytes));
+    _list.addAll(extractedData['results']);
+    _nextPageEndPoint = extractedData['next'];
+    _previousPageEndPoint = extractedData['previous'];
+    notifyListeners();
+  }
+
+  Future<void> fetchPreviousDrug(String previousUrl) async {
+    String? token;
+    await storage.getToken().then((value) {
+      token = value;
+    });
+    final url = Uri.parse(previousUrl);
+    final respone = await http.get(
+      url,
+      headers: {'Authorization': 'JWT $token', "Accept-Language": "ar"},
+    );
+    final extractedData = json.decode(utf8.decode(respone.bodyBytes));
+    _list = extractedData['results'];
+    _nextPageEndPoint = extractedData['next'];
+    _previousPageEndPoint = extractedData['previous'];
     notifyListeners();
   }
 }
