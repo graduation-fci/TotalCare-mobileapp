@@ -17,11 +17,12 @@ class InteractionsProvider with ChangeNotifier {
   }
 
   Future<void> getInteractions(
-      List<Map<String, dynamic>> interactionMeds) async {
+      List<Map<String, dynamic>> interactionMeds, {int? id}) async {
+    log(interactionMeds.toString());
     appState = AppState.loading;
     notifyListeners();
     final responseData =
-        await interactionsService.medicineInteraction(interactionMeds);
+        await interactionsService.medicineInteraction(interactionMeds, id: id);
     if (!responseData.containsKey('errorMsg')) {
       _response = responseData['permutations'];
       appState = AppState.done;

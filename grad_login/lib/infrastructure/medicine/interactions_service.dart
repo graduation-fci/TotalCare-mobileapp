@@ -9,7 +9,7 @@ class InteractionsService {
   Storage storage = Storage();
 
   Future<dynamic> medicineInteraction(
-      List<Map<String, dynamic>> interactionMedicines) async {
+      List<Map<String, dynamic>> interactionMedicines, {int? id}) async {
     final interactionsEndpoint = Uri.parse(Config.interactionMain);
     Map<String, dynamic> responseData = {};
     Map<String, String> error = {};
@@ -21,7 +21,7 @@ class InteractionsService {
 
     final response = await http.post(
       interactionsEndpoint,
-      body: json.encode({'medicine': interactionMedicines}),
+      body: json.encode({'id': id, 'medicine': interactionMedicines}),
       headers: {
         'Content-Type': 'application/json',
         "Authorization": "JWT $token",
