@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/orders_provider.dart';
-import '../screens/singe_order_screen.dart';
+import '../screens/single_order_screen.dart';
 
 class OrderItem extends StatelessWidget {
   final BuildContext context;
