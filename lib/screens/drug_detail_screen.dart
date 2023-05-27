@@ -31,8 +31,8 @@ class _DrugDetailScreenState extends State<DrugDetailScreen>
       duration: const Duration(milliseconds: 500),
     );
     Provider.of<Cart>(context, listen: false).getCartID().then((_) {
-      final token = Provider.of<Cart>(context, listen: false).cartID;
-      cartID = token;
+      final cartId = Provider.of<Cart>(context, listen: false).cartID;
+      cartID = cartId;
     });
 
     super.initState();
