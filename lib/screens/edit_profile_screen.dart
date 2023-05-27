@@ -1,4 +1,7 @@
 import 'dart:developer';
+import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:file_picker/file_picker.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -38,12 +41,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   FocusNode countryFocus = FocusNode();
   FocusNode userNameFocus = FocusNode();
   DateTime? selectdate;
+  File? imageFile;
+
+  void openUserFiles() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+    );
+    if (result != null) {
+      PlatformFile file = result.files.first;
+      imageFile = File(file.path!);
+      log(imageFile.toString());
+      Future.delayed(Duration.zero).then((value) =>
+          Provider.of<UserProvider>(context, listen: false)
+              .addUserImage(imageFile!));
+    }
+  }
 
   @override
   void initState() {
     Future.delayed(Duration.zero).then((_) {
-      userData =
-          Provider.of<UserProvider>(context, listen: false).userProfileData;
+      userData = Provider.of<UserProvider>(context, listen: false).jwtUserData;
       setState(() {
         firstNameController.text = userData['first_name'];
         lastNameController.text = userData['last_name'];
@@ -71,8 +88,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
     final appLocalization = AppLocalizations.of(context)!;
-    userData =
-        Provider.of<UserProvider>(context, listen: false).userProfileData;
+    final userProvider = Provider.of<UserProvider>(context);
+    userData = Provider.of<UserProvider>(context, listen: false).jwtUserData;
     String countryName = appLocalization.countryName;
     log('$userData');
 
@@ -116,17 +133,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
-                              Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border:
-                                      Border.all(color: Colors.white, width: 3),
-                                ),
-                                child: const CircleAvatar(
-                                  radius: 40,
-                                  backgroundColor: Colors.white,
-                                  backgroundImage: NetworkImage(
-                                    "http://picsum.photos/200/300",
+                              CircleAvatar(
+                                radius: 35,
+                                child: ClipOval(
+                                  child: CachedNetworkImage(
+                                    height: 70,
+                                    width: 70,
+                                    imageUrl: userProvider.userImage,
+                                    placeholder: (context, url) =>
+                                        const CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                        const Icon(
+                                      Icons.person,
+                                      color: Colors.grey,
+                                      size: 50,
+                                    ),
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
                               ),
@@ -549,9 +571,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 ),
                                 const SizedBox(height: 20),
                                 ElevatedButton(
-                                  onPressed: () {
-                                    print(_age);
-                                    print(_bloodGroup);
+                                  onPressed: () async {
+                                    openUserFiles();
+                                    await userProvider.getUserData();
                                   },
                                   child: const Text('Update Profile'),
                                 )
