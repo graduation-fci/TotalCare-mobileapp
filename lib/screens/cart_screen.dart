@@ -125,19 +125,29 @@ class _CartScreenState extends State<CartScreen> {
                                           padding: const EdgeInsets.all(8.0),
                                           child: ListTile(
                                             leading: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                child: SizedBox(
-                                                  height: 90,
-                                                  width: 90,
-                                                  child: CachedNetworkImage(
-                                                    width: 75,
-                                                    height: 75,
-                                                    imageUrl:
-                                                        carts[index].imgURL,
-                                                    fit: BoxFit.cover,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              child: SizedBox(
+                                                height: 90,
+                                                width: 90,
+                                                child: CachedNetworkImage(
+                                                  width: 75,
+                                                  height: 75,
+                                                  imageUrl: carts[index]
+                                                          .imgURL
+                                                          .startsWith('http')
+                                                      ? carts[index].imgURL
+                                                      : '',
+                                                  fit: BoxFit.cover,
+                                                  errorWidget:
+                                                      (context, url, error) =>
+                                                          Image.asset(
+                                                    'assets/images/temp_med.jpeg',
+                                                    fit: BoxFit.contain,
                                                   ),
-                                                )),
+                                                ),
+                                              ),
+                                            ),
                                             title: Text(
                                               carts[index].name,
                                               maxLines: 2,
