@@ -5,6 +5,8 @@ import 'package:grad_login/widgets/show_bottom_sheet.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../widgets/show_custom_dialog.dart';
+
 class SingleOrderScreen extends StatefulWidget {
   static const String routeName = 'single-order-screen';
   const SingleOrderScreen({super.key});
@@ -65,67 +67,58 @@ class _SingleOrderScreenState extends State<SingleOrderScreen> {
                         orderData['order_status'] == 'PEN'
                             ? TextButton(
                                 onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20.0),
-                                        ),
-                                        title: const Text(
-                                          'Are you sure?',
-                                          style: TextStyle(
-                                            fontSize: 20,
+                                  showCustomDialog(
+                                    context,
+                                    const Text(
+                                      'Are you sure?',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Do you want to cancel this order?',
+                                      style: TextStyle(
+                                        color: Colors.grey.shade700,
+                                      ),
+                                    ),
+                                    <Widget>[
+                                      Container(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            0, 0, 20, 12),
+                                        width: 120,
+                                        child: TextButton(
+                                          style: TextButton.styleFrom(
+                                            backgroundColor: Colors.red,
                                           ),
-                                        ),
-                                        content: Text(
-                                          'Do you want to cancel this order?',
-                                          style: TextStyle(
-                                            color: Colors.grey.shade700,
-                                          ),
-                                        ),
-                                        actions: <Widget>[
-                                          Container(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                0, 0, 20, 12),
-                                            width: 120,
-                                            child: TextButton(
-                                              style: TextButton.styleFrom(
-                                                backgroundColor: Colors.red,
-                                              ),
-                                              onPressed: () => cancelOrder(
-                                                  ordersProvider,
-                                                  orderData['id']),
-                                              child: const Text(
-                                                'Yes',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                ),
-                                              ),
+                                          onPressed: () => cancelOrder(
+                                              ordersProvider, orderData['id']),
+                                          child: const Text(
+                                            'Yes',
+                                            style: TextStyle(
+                                              color: Colors.white,
                                             ),
                                           ),
-                                          Container(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                0, 0, 20, 12),
-                                            width: 120,
-                                            child: TextButton(
-                                              style: TextButton.styleFrom(
-                                                backgroundColor: Colors.grey,
-                                              ),
-                                              onPressed: () =>
-                                                  Navigator.pop(context),
-                                              child: const Text(
-                                                'No',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                ),
-                                              ),
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            0, 0, 20, 12),
+                                        width: 120,
+                                        child: TextButton(
+                                          style: TextButton.styleFrom(
+                                            backgroundColor: Colors.grey,
+                                          ),
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: const Text(
+                                            'No',
+                                            style: TextStyle(
+                                              color: Colors.white,
                                             ),
                                           ),
-                                        ],
-                                      );
-                                    },
+                                        ),
+                                      ),
+                                    ],
                                   );
                                 },
                                 child: Text(
