@@ -148,8 +148,7 @@ class _SingleOrderScreenState extends State<SingleOrderScreen> {
                     leading: CachedNetworkImage(
                       width: 50,
                       height: 50,
-                      imageUrl: medicineList[index]['product']
-                          ['medicine_images'][0],
+                      imageUrl: medicineList[index]['product']['images'][0],
                       fit: BoxFit.cover,
                     ),
                     title: Text(medicineList[index]['product']['name']),
