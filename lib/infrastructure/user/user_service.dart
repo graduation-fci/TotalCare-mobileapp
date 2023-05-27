@@ -1,6 +1,9 @@
+import 'dart:developer';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 import '../../my_config.dart';
 import '../shared/storage.dart';
@@ -8,6 +11,53 @@ import '/models/medication.dart';
 
 class UserService {
   Storage storage = Storage();
+  String? errorMsg;
+
+  Future<Map<String, dynamic>> getUserData() async {
+    final url = Uri.parse(Config.patientProfile);
+    String? token;
+    await storage.getToken().then((value) {
+      token = value;
+    });
+    final response = await http.get(headers: {
+      'Authorization': 'JWT $token',
+    }, url);
+    final responseBody = json.decode(response.body);
+    log(responseBody.toString());
+    return responseBody;
+  }
+
+  Future<Map<String, dynamic>> addUserImage(File imageFile) async {
+    final uploadImageUrl = Uri.parse(Config.userImage);
+    final profileUrl = Uri.parse(Config.patientProfile);
+    String? token;
+    await storage.getToken().then((value) {
+      token = value;
+    });
+    final request = http.MultipartRequest('POST', uploadImageUrl);
+    request.headers['Authorization'] = 'JWT $token';
+    request.files.add(
+      await http.MultipartFile.fromPath(
+        'image',
+        imageFile.path,
+        contentType: MediaType.parse('image/*'),
+      ),
+    );
+
+    final uploadResponse = await request.send();
+    final uploadResponseBody = await uploadResponse.stream.bytesToString();
+    final parsedResponse = jsonDecode(uploadResponseBody);
+
+    final response = await http.patch(profileUrl,
+        headers: {
+          "content-type": "application/json",
+          "Authorization": "JWT $token",
+        },
+        body: json.encode({'image_file': parsedResponse['id']}));
+    final responseBody = json.decode(response.body);
+
+    return responseBody;
+  }
 
   Future<Map<String, dynamic>> addMedicationProfile(Medication med) async {
     final url = Uri.parse(Config.userMedications);

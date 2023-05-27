@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:grad_login/models/medication.dart';
@@ -9,13 +10,34 @@ import '../infrastructure/user/user_service.dart';
 class UserProvider with ChangeNotifier {
   UserService userService = UserService();
   String? errorMessage;
+  Map<String, dynamic> jwtUserData = {};
   Map<String, dynamic> userProfileData = {};
   AppState appState = AppState.init;
   final List _userMedications = [];
   final List<int> _medicationIds = [];
+  String _userImage = '';
+
+  String get userImage {
+    return _userImage;
+  }
 
   List get userMedications {
     return [..._userMedications];
+  }
+
+  Future<void> getUserData() async {
+    appState = AppState.loading;
+    notifyListeners();
+    final responseData = await userService.getUserData();
+    userProfileData = responseData;
+    _userImage = userProfileData['image']['image'];
+    notifyListeners();
+  }
+
+  Future<void> addUserImage(File userImage) async {
+    appState = AppState.loading;
+    notifyListeners();
+    await userService.addUserImage(userImage);
   }
 
   Future<void> addUserMedication(Medication med) async {
