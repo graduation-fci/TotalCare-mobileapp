@@ -274,7 +274,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Map<String, dynamic> data =
               json.decode(utf8.decode(base64Url.decode(payload)));
 
-          userProvider.jwtUserData = data;
+          userProvider.tokenUserData = data;
           cartProvider.fetchCart();
           userProvider
               .getUserMedications()
