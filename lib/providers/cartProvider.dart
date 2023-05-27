@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:grad_login/my_config.dart';
+
 import '../infrastructure/shared/storage.dart';
-import 'drugProvider.dart';
+import '../my_config.dart';
+import '../app_state.dart';
 
 class CartItem with ChangeNotifier {
   int id;
@@ -32,6 +33,7 @@ class Cart with ChangeNotifier {
   List<CartItem> _list = [];
   String cartID = '';
   String cartPrice = '0.0';
+  AppState appState = AppState.init;
 
   List<CartItem> get items {
     return [..._list];
@@ -83,7 +85,9 @@ class Cart with ChangeNotifier {
             name: extractedData['items'][i]['product']['name'],
             // name_ar: extractedData['items'][i][''],
             price: extractedData['items'][i]['product']['price'],
-            imgURL: extractedData['items'][i]['product']['medicine_images'][0],
+            imgURL: extractedData['items'][i]['product']['images'].isNotEmpty
+                ? extractedData['items'][i]['product']['images'][0]
+                : 'assets/images/temp_med.jpeg',
             quantity: extractedData['items'][i]['quantity'],
             totalPrice: extractedData['items'][i]['total_price'],
           ),
@@ -97,6 +101,8 @@ class Cart with ChangeNotifier {
   }
 
   Future<void> addCart(String id, int drugID, int num) async {
+    appState = AppState.loading;
+    notifyListeners();
     String? token;
     await storage.getToken().then((value) {
       token = value;
@@ -118,6 +124,8 @@ class Cart with ChangeNotifier {
       errorMSG = responseData['quantity'][0];
       notifyListeners();
     }
+    appState = AppState.done;
+    notifyListeners();
     fetchCart();
     // log(id.toString());
     // log(drugID.toString());
