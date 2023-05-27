@@ -98,7 +98,7 @@ class MyApp extends StatelessWidget {
               Map<String, dynamic> data =
                   json.decode(utf8.decode(base64Url.decode(payload)));
 
-              Provider.of<UserProvider>(context).userProfileData = data;
+              Provider.of<UserProvider>(context).jwtUserData = data;
               return const TabsScreen();
             } else {
               // User is not logged in, navigate to the login screen

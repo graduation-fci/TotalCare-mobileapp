@@ -480,7 +480,7 @@ class _RegisterFormScreenState extends State<RegisterFormScreen> {
             Map<String, dynamic> data =
                 json.decode(utf8.decode(base64Url.decode(payload)));
 
-            userProvider.userProfileData = data;
+            userProvider.jwtUserData = data;
           }).then((_) => Navigator.of(context).pushReplacementNamed(
                     ContinueRegisterScreen.routeName,
                     arguments: _userData,

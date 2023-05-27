@@ -26,7 +26,7 @@ class _UserMedicationsScreenState extends State<UserMedicationsScreen> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
     final userProvider = Provider.of<UserProvider>(context);
-    final userProfileData = userProvider.userProfileData;
+    final userProfileData = userProvider.jwtUserData;
     final userMedications = userProvider.userMedications;
 
     if (userMedications.isNotEmpty) {

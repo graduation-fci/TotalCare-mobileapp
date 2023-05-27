@@ -25,7 +25,7 @@ class _ProfilesState extends State<Profiles> {
   @override
   void initState() {
     Future.delayed(Duration.zero).then((_) => userData =
-        Provider.of<UserProvider>(context, listen: false).userProfileData);
+        Provider.of<UserProvider>(context, listen: false).jwtUserData);
     super.initState();
   }
 
@@ -34,8 +34,7 @@ class _ProfilesState extends State<Profiles> {
     final mediaQuery = MediaQuery.of(context).size;
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    userData =
-        Provider.of<UserProvider>(context, listen: false).userProfileData;
+    userData = Provider.of<UserProvider>(context, listen: false).jwtUserData;
 
     return SafeArea(
       child: Scaffold(
