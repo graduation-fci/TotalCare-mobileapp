@@ -14,8 +14,6 @@ class MyOrdersScreen extends StatefulWidget {
 }
 
 class _MyOrdersScreenState extends State<MyOrdersScreen> {
-  int _selectedPageIndex = 0;
-
   @override
   void initState() {
     Future.delayed(Duration.zero).then(
@@ -88,7 +86,20 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
-                          return orderItem(context, ordersData, index);
+                          String? orderStatus;
+                          if (ordersData[index]['order_status'] == 'PEN') {
+                            orderStatus = 'Pending';
+                          } else if (ordersData[index]['order_status'] ==
+                              'CAN') {
+                            orderStatus = 'Canceled';
+                          } else if (ordersData[index]['order_status'] ==
+                              'CON') {
+                            orderStatus = 'Confirmed';
+                          } else {
+                            orderStatus = 'Failed';
+                          }
+                          return OrderItem(
+                              context, ordersData, orderStatus, index);
                         },
                         itemCount: ordersData.length,
                       ),
@@ -98,57 +109,5 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
         ),
       ),
     );
-  }
-
-  Container topNavBar() {
-    // ignore: sized_box_for_whitespace
-    return Container(
-      height: 35,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: [
-          statusItem('Confirmed', 0),
-          statusItem('Pending', 1),
-          statusItem('Canceled', 2),
-          statusItem('Failed', 3),
-        ],
-      ),
-    );
-  }
-
-  GestureDetector statusItem(String text, int index) {
-    return GestureDetector(
-      onTap: () => {
-        _selectPage(index),
-      },
-      child: Container(
-        width: 100,
-        margin: const EdgeInsets.only(left: 15),
-        decoration: _selectedPageIndex == index
-            ? BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: Theme.of(context).colorScheme.secondary,
-              )
-            : null,
-        child: Center(
-          child: Text(
-            text,
-            style: TextStyle(
-              color: _selectedPageIndex == index ? Colors.white : Colors.grey,
-              fontWeight: _selectedPageIndex == index
-                  ? FontWeight.bold
-                  : FontWeight.normal,
-              fontSize: 13,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _selectPage(int index) {
-    setState(() {
-      _selectedPageIndex = index;
-    });
   }
 }
