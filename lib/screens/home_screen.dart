@@ -2,17 +2,18 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:grad_login/providers/userProvider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:provider/provider.dart';
 
 import '../providers/categoriesProvider.dart';
-
+import '../providers/userProvider.dart';
+import '../providers/cartProvider.dart';
 import '../providers/drugProvider.dart';
-import '../widgets/dataSearch.dart';
+
 import 'category_item.dart';
 import 'notification_widget.dart';
+import 'product_search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = '/home-screen';
@@ -58,7 +59,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final appLocalization = AppLocalizations.of(context)!;
     final mediaquery = MediaQuery.of(context).size;
     final userData = Provider.of<UserProvider>(context).userProfileData;
-    final drugsProvider = Provider.of<Drugs>(context);
     categoriesProvider = Provider.of<Categories>(context);
     nextUrl = categoriesProvider.nextPageEndPoint;
     previousUrl = categoriesProvider.previousPageEndPoint;
@@ -189,10 +189,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: 50,
                             child: TextFormField(
                               onTap: () {
-                                showSearch(
-                                  context: context,
-                                  delegate: DataSearch(drugsProvider),
-                                );
+                                Navigator.of(context)
+                                    .pushNamed(ProductSearchScreen.routeName);
                               },
                               readOnly: true,
                               cursorColor: Colors.grey,
