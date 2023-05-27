@@ -18,6 +18,7 @@ import 'providers/authProvider.dart';
 import 'providers/orders_provider.dart';
 
 import 'screens/cart_screen.dart';
+import 'screens/product_search_screen.dart';
 import 'screens/sub_categories_screen.dart';
 import 'screens/tabs_screen.dart';
 import 'screens/add_medication.dart';
@@ -134,6 +135,8 @@ class MyApp extends StatelessWidget {
           SingleOrderScreen.routeName: (context) => const SingleOrderScreen(),
           SubCategoriesScreen.routeName: (context) =>
               const SubCategoriesScreen(),
+          ProductSearchScreen.routeName: (context) =>
+              const ProductSearchScreen(),
         },
       ),
     );
