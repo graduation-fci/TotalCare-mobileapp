@@ -23,13 +23,11 @@ class UserService {
       'Authorization': 'JWT $token',
     }, url);
     final responseBody = json.decode(response.body);
-    log(responseBody.toString());
     return responseBody;
   }
 
-  Future<Map<String, dynamic>> addUserImage(File imageFile) async {
+  Future<Map<String, dynamic>> uploadProfileImage(File imageFile) async {
     final uploadImageUrl = Uri.parse(Config.userImage);
-    final profileUrl = Uri.parse(Config.patientProfile);
     String? token;
     await storage.getToken().then((value) {
       token = value;
@@ -47,16 +45,42 @@ class UserService {
     final uploadResponse = await request.send();
     final uploadResponseBody = await uploadResponse.stream.bytesToString();
     final parsedResponse = jsonDecode(uploadResponseBody);
+    return parsedResponse;
+  }
 
-    final response = await http.patch(profileUrl,
-        headers: {
-          "content-type": "application/json",
-          "Authorization": "JWT $token",
-        },
-        body: json.encode({'image_file': parsedResponse['id']}));
+  Future<Map<String, dynamic>> addUserImage(int id) async {
+    final profileUrl = Uri.parse(Config.patientProfile);
+
+    String? token;
+    await storage.getToken().then((value) {
+      token = value;
+    });
+
+    final response = await http.patch(
+      profileUrl,
+      headers: {
+        "content-type": "application/json",
+        "Authorization": "JWT $token",
+      },
+      body: json.encode(
+        {'image_file': id},
+      ),
+    );
     final responseBody = json.decode(response.body);
 
     return responseBody;
+  }
+
+  Future<void> deleteUserImage(int id) async {
+    final url = Uri.parse('${Config.userImage}$id/');
+    String? token;
+    await storage.getToken().then((value) {
+      token = value;
+    });
+    await http.delete(
+      headers: {'Authorization': 'JWT $token'},
+      url,
+    );
   }
 
   Future<Map<String, dynamic>> addMedicationProfile(Medication med) async {
