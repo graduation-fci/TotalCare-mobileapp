@@ -96,7 +96,7 @@ class _ContinueRegisterScreenState extends State<ContinueRegisterScreen> {
           actions: [
             TextButton(
               onPressed: () =>
-                  Navigator.pushReplacementNamed(context, HomeScreen.routeName),
+                  Navigator.pushReplacementNamed(context, TabsScreen.routeName),
               child: const Text(
                 'Skip',
                 style: TextStyle(
