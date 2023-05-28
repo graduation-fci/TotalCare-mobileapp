@@ -16,13 +16,18 @@ class UserProvider with ChangeNotifier {
   final List _userMedications = [];
   final List<int> _medicationIds = [];
   String _userImage = '';
+  int? _imageId;
+
+  List get userMedications {
+    return [..._userMedications];
+  }
 
   String get userImage {
     return _userImage;
   }
 
-  List get userMedications {
-    return [..._userMedications];
+  int? get imageId {
+    return _imageId;
   }
 
   Future<void> getUserData() async {
@@ -30,14 +35,41 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
     final responseData = await userService.getUserData();
     userProfileData = responseData;
-    _userImage = userProfileData['image']['image'];
+    if (responseData['image'] != null) {
+      _userImage = userProfileData['image']['image'];
+      _imageId = userProfileData['image']['id'];
+    }
+    log(responseData.toString());
+
     notifyListeners();
   }
 
-  Future<void> addUserImage(File userImage) async {
+  Future<void> uploadProfileImage(File userImage) async {
     appState = AppState.loading;
     notifyListeners();
-    await userService.addUserImage(userImage);
+    log(_imageId.toString());
+    final responseData = await userService.uploadProfileImage(userImage);
+    _imageId = responseData['id'];
+    log(responseData.toString());
+
+    notifyListeners();
+  }
+
+  Future<void> addUserImage(int id) async {
+    appState = AppState.loading;
+    notifyListeners();
+    final responseData = await userService.addUserImage(id);
+    _imageId = responseData['image_file'];
+    getUserData();
+  }
+
+  Future<void> deleteUserImage(int id) async {
+    appState = AppState.loading;
+    notifyListeners();
+    await userService.deleteUserImage(id);
+    _imageId = null;
+    _userImage = '';
+    notifyListeners();
   }
 
   Future<void> addUserMedication(Medication med) async {
