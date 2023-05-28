@@ -75,13 +75,13 @@ class _SingleOrderScreenState extends State<SingleOrderScreen> {
                                         fontSize: 20,
                                       ),
                                     ),
-                                    Text(
+                                    contentWidget: Text(
                                       'Do you want to cancel this order?',
                                       style: TextStyle(
                                         color: Colors.grey.shade700,
                                       ),
                                     ),
-                                    <Widget>[
+                                    actionsWidgets: <Widget>[
                                       Container(
                                         padding: const EdgeInsets.fromLTRB(
                                             0, 0, 20, 12),
