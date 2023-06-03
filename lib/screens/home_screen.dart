@@ -58,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final appLocalization = AppLocalizations.of(context)!;
     final mediaquery = MediaQuery.of(context).size;
-    final userData = Provider.of<UserProvider>(context).userProfileData;
+    final userData = Provider.of<UserProvider>(context).jwtUserData;
     categoriesProvider = Provider.of<Categories>(context);
     nextUrl = categoriesProvider.nextPageEndPoint;
     previousUrl = categoriesProvider.previousPageEndPoint;

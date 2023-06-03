@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:grad_login/screens/singe_order_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -18,6 +17,7 @@ import 'providers/authProvider.dart';
 import 'providers/orders_provider.dart';
 
 import 'screens/cart_screen.dart';
+import 'screens/single_order_screen.dart';
 import 'screens/product_search_screen.dart';
 import 'screens/sub_categories_screen.dart';
 import 'screens/tabs_screen.dart';
@@ -98,7 +98,7 @@ class MyApp extends StatelessWidget {
               Map<String, dynamic> data =
                   json.decode(utf8.decode(base64Url.decode(payload)));
 
-              Provider.of<UserProvider>(context).userProfileData = data;
+              Provider.of<UserProvider>(context).jwtUserData = data;
               return const TabsScreen();
             } else {
               // User is not logged in, navigate to the login screen

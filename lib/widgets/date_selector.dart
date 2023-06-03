@@ -79,7 +79,7 @@ class _DateSelectorState extends State<DateSelector> {
                 ),
                 fillColor: containerFillColor,
                 filled: true,
-                labelText: widget.selectdate == null ? 'No Date Chosen!' : 'Picked Date',
+                labelText: widget.selectdate == null ? 'Birth date' : 'Picked Date',
                 labelStyle: TextStyle(color: labelColor),
                 suffixIcon: IconButton(
                   icon: const Icon(

@@ -1,9 +1,12 @@
 import 'dart:developer';
+import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:grad_login/providers/userProvider.dart';
 import 'package:country_picker/country_picker.dart';
+import 'package:grad_login/widgets/show_custom_dialog.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/date_selector.dart';
@@ -38,12 +41,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   FocusNode countryFocus = FocusNode();
   FocusNode userNameFocus = FocusNode();
   DateTime? selectdate;
+  File? imageFile;
+
+  void removeProfileImage(userProvider, {oldImageId}) async {
+    oldImageId == null
+        ? userProvider.imageId == null
+            ? null
+            : userProvider.deleteUserImage(userProvider.imageId!)
+        : userProvider.deleteUserImage(oldImageId);
+
+    Navigator.of(context).pop();
+  }
 
   @override
   void initState() {
     Future.delayed(Duration.zero).then((_) {
-      userData =
-          Provider.of<UserProvider>(context, listen: false).userProfileData;
+      userData = Provider.of<UserProvider>(context, listen: false).jwtUserData;
       setState(() {
         firstNameController.text = userData['first_name'];
         lastNameController.text = userData['last_name'];
@@ -71,10 +84,58 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
     final appLocalization = AppLocalizations.of(context)!;
-    userData =
-        Provider.of<UserProvider>(context, listen: false).userProfileData;
+    final userProvider = Provider.of<UserProvider>(context);
+    userData = Provider.of<UserProvider>(context, listen: false).jwtUserData;
     String countryName = appLocalization.countryName;
-    log('$userData');
+    // log('$userData');
+
+    Future<void> openUserFiles() async {
+      final existingImageId = userProvider.imageId;
+      if (existingImageId == null) {
+        FilePickerResult? result = await FilePicker.platform.pickFiles(
+          type: FileType.image,
+        );
+        if (result != null) {
+          PlatformFile file = result.files.first;
+          imageFile = File(file.path!);
+          Future.delayed(Duration.zero)
+              .then(
+                (_) => Provider.of<UserProvider>(context, listen: false)
+                    .uploadProfileImage(imageFile!),
+              )
+              .then((value) => userProvider.imageId == null
+                  ? null
+                  : Provider.of<UserProvider>(context, listen: false)
+                      .addUserImage(userProvider.imageId!));
+        }
+      } else {
+        final oldImageId = existingImageId;
+        int? newImageId;
+        FilePickerResult? result = await FilePicker.platform.pickFiles(
+          type: FileType.image,
+        );
+        if (result != null) {
+          PlatformFile file = result.files.first;
+          imageFile = File(file.path!);
+
+          Future.delayed(Duration.zero)
+              .then((_) async {
+                await Provider.of<UserProvider>(context, listen: false)
+                    .uploadProfileImage(imageFile!);
+                newImageId = userProvider.imageId;
+                // log(newImageId.toString());
+              })
+              .then((_) =>
+                  removeProfileImage(userProvider, oldImageId: oldImageId))
+              .then((_) {
+                userProvider.imageId == null
+                    ? null
+                    : Provider.of<UserProvider>(context, listen: false)
+                        .addUserImage(newImageId!);
+              });
+        }
+      }
+    }
 
     return SafeArea(
       child: Scaffold(
@@ -116,18 +177,89 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
-                              Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border:
-                                      Border.all(color: Colors.white, width: 3),
-                                ),
-                                child: const CircleAvatar(
-                                  radius: 40,
-                                  backgroundColor: Colors.white,
-                                  backgroundImage: NetworkImage(
-                                    "http://picsum.photos/200/300",
-                                  ),
+                              GestureDetector(
+                                onTap: () {
+                                  showCustomDialog(
+                                    context,
+                                    Column(
+                                      children: [
+                                        dialogSelection(
+                                          () async {
+                                            await openUserFiles();
+                                          },
+                                          'Update profile photo',
+                                        ),
+                                        dialogSelection(
+                                          () {
+                                            removeProfileImage(userProvider);
+                                          },
+                                          'Remove photo',
+                                        ),
+                                        // dialogSelection(
+                                        //   () async {
+                                        //     if (await canLaunchUrl(Uri.parse(
+                                        //         userProvider.userImage))) {
+                                        //       await launchUrl(Uri.parse(
+                                        //           userProvider.userImage));
+                                        //     } else {
+                                        //       throw 'Could not launch ${userProvider.userImage}';
+                                        //     }
+                                        //   },
+                                        //   'View photo',
+                                        // ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.white,
+                                          width: 3,
+                                        ),
+                                      ),
+                                      child: CircleAvatar(
+                                        backgroundColor: Colors.grey.shade200,
+                                        radius: 35,
+                                        child: ClipOval(
+                                          child: userProvider.userImage == ''
+                                              ? const Icon(
+                                                  Icons.person,
+                                                  color: Colors.grey,
+                                                  size: 50,
+                                                )
+                                              : SizedBox(
+                                                  height: 70,
+                                                  width: 70,
+                                                  child: Image.network(
+                                                    userProvider.userImage,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      bottom: 0,
+                                      right: 0,
+                                      child: Container(
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.white,
+                                        ),
+                                        width: 26,
+                                        height: 26,
+                                        child: const Icon(
+                                          Icons.edit,
+                                          color: Colors.black45,
+                                          size: 18,
+                                        ),
+                                      ),
+                                    )
+                                  ],
                                 ),
                               ),
                               const SizedBox(width: 12),
@@ -549,10 +681,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 ),
                                 const SizedBox(height: 20),
                                 ElevatedButton(
-                                  onPressed: () {
-                                    print(_age);
-                                    print(_bloodGroup);
-                                  },
+                                  onPressed: () {},
                                   child: const Text('Update Profile'),
                                 )
                               ],
@@ -566,6 +695,40 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class dialogSelection extends StatelessWidget {
+  VoidCallback function;
+  String text;
+  dialogSelection(
+    this.function,
+    this.text, {
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: function,
+      child: SizedBox(
+        width: double.infinity,
+        height: 50,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              text,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
       ),
     );

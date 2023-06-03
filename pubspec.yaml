@@ -43,10 +43,11 @@ dependencies:
   provider: ^6.0.4
   intl: ^0.17.0
   http: ^0.13.5
-  flutter_secure_storage: ^7.0.1
+  flutter_secure_storage: ^8.0.0
   flutter_svg: ^1.1.6
   cached_network_image: ^3.2.3
   dots_indicator: ^3.0.0
+  file_picker: ^5.3.1
 
 dev_dependencies:
   flutter_test:

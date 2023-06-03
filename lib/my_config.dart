@@ -9,12 +9,12 @@ class Config {
   static const String userMedications = '$apiUrl/users/medications/';
   static const String generalCategories =
       '$apiUrl/medicine/general_categories/';
-
   static const String subCategories = '$apiUrl/medicine/categories/';
   static const String refreshJWT = '$apiUrl/auth/jwt/refresh/';
   static const String drugs = '$apiUrl/medicine/products/';
   static const String addresses = '$apiUrl/users/addresses/';
   static const String carts = '$apiUrl/store/carts/';
   static const String orders = '$apiUrl/store/orders/';
-  static const String contRegister = '$apiUrl/users/patients/me/';
+  static const String patientProfile = '$apiUrl/users/patients/me/';
+  static const String userImage = '$apiUrl/users/usersimages/';
 }

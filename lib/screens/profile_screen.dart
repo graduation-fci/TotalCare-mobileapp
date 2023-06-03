@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/authProvider.dart';
 import 'address_screen.dart';
 import 'edit_profile_screen.dart';
 import 'login_screen.dart';
 import 'my_orders_screen.dart';
-
-import '../providers/userProvider.dart';
 import 'user_medications.dart';
+
+import '../providers/authProvider.dart';
+import '../providers/userProvider.dart';
 
 class Profiles extends StatefulWidget {
   static const routeName = '/profiles-screen';
@@ -20,12 +20,13 @@ class Profiles extends StatefulWidget {
 }
 
 class _ProfilesState extends State<Profiles> {
-  Map<String, dynamic> userData = {};
+  Map<String, dynamic> tokenUserData = {};
+  Map<String, dynamic> patientData = {};
 
   @override
   void initState() {
-    Future.delayed(Duration.zero).then((_) => userData =
-        Provider.of<UserProvider>(context, listen: false).userProfileData);
+    Future.delayed(Duration.zero).then(
+        (_) => Provider.of<UserProvider>(context, listen: false).getUserData());
     super.initState();
   }
 
@@ -34,8 +35,8 @@ class _ProfilesState extends State<Profiles> {
     final mediaQuery = MediaQuery.of(context).size;
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    userData =
-        Provider.of<UserProvider>(context, listen: false).userProfileData;
+    tokenUserData = Provider.of<UserProvider>(context).jwtUserData;
+    patientData = Provider.of<UserProvider>(context).userProfileData;
 
     return SafeArea(
       child: Scaffold(
@@ -88,7 +89,7 @@ class _ProfilesState extends State<Profiles> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(height: 6),
+                        const SizedBox(height: 6),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
@@ -100,10 +101,23 @@ class _ProfilesState extends State<Profiles> {
                                   width: 3,
                                 ),
                               ),
-                              child: const CircleAvatar(
-                                radius: 40,
-                                backgroundImage: NetworkImage(
-                                  "http://picsum.photos/200/300",
+                              child: CircleAvatar(
+                                radius: 35,
+                                child: ClipOval(
+                                  child: userProvider.userImage == ''
+                                      ? const Icon(
+                                          Icons.person,
+                                          color: Colors.grey,
+                                          size: 50,
+                                        )
+                                      : SizedBox(
+                                          height: 70,
+                                          width: 70,
+                                          child: Image.network(
+                                            userProvider.userImage,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
                                 ),
                               ),
                             ),
@@ -113,7 +127,7 @@ class _ProfilesState extends State<Profiles> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "${userData['first_name']} ${userData['last_name']}",
+                                    "${tokenUserData['first_name']} ${tokenUserData['last_name']}",
                                     style: const TextStyle(
                                         fontSize: 18,
                                         color: Colors.black,
@@ -121,7 +135,7 @@ class _ProfilesState extends State<Profiles> {
                                   ),
                                   const SizedBox(height: 3),
                                   Text(
-                                    "${userData['email']}",
+                                    "${tokenUserData['email']}",
                                     style: const TextStyle(
                                       fontSize: 14,
                                       color: Colors.black,
@@ -189,24 +203,12 @@ class _ProfilesState extends State<Profiles> {
                     }),
                     buildDivider(),
                     buildAccountOption(
-                        context, 'Payment Methods', Icons.credit_card_outlined),
-                    buildDivider(),
-                    buildAccountOption(
                       context,
                       'Addresses',
                       Icons.location_on_outlined,
                       myFunc: () => Navigator.of(context)
                           .pushNamed(AddressScreen.routeName),
                     ),
-                    buildDivider(),
-                    buildAccountOption(
-                      context,
-                      'Payment History',
-                      Icons.history_outlined,
-                    ),
-                    buildDivider(),
-                    buildAccountOption(
-                        context, 'Invite Friends', Icons.person_add_outlined),
                     buildDivider(),
                     buildAccountOption(
                         context, 'Change Password', Icons.lock_outlined),

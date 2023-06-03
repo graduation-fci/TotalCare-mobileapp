@@ -58,7 +58,7 @@ class _ContinueRegisterScreenState extends State<ContinueRegisterScreen> {
 
     void onPressed(authProvider, userProvider) async {
       if (_formKey.currentState!.validate()) {
-        await authProvider.contRegister(userData).then((_) {
+        await authProvider.patientProfile(userData).then((_) {
           if (authProvider.appState == AppState.error) {
             showAlertDialog(
               context: context,
@@ -96,7 +96,7 @@ class _ContinueRegisterScreenState extends State<ContinueRegisterScreen> {
           actions: [
             TextButton(
               onPressed: () =>
-                  Navigator.pushReplacementNamed(context, HomeScreen.routeName),
+                  Navigator.pushReplacementNamed(context, TabsScreen.routeName),
               child: const Text(
                 'Skip',
                 style: TextStyle(

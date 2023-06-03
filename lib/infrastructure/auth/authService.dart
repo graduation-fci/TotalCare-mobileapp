@@ -63,7 +63,7 @@ class AuthService {
   }
 
   Future<Map<String, dynamic>?> continueRegistration(User user) async {
-    final registerEndPoint = Uri.parse(Config.contRegister);
+    final registerEndPoint = Uri.parse(Config.patientProfile);
     Map<String, dynamic> body = {};
     if (user.birthDate != null) {
       body['birth_date'] = user.birthDate;
