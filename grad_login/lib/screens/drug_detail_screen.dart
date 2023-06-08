@@ -88,7 +88,7 @@ class _DrugDetailScreenState extends State<DrugDetailScreen>
                         icon: const Icon(Icons.arrow_back),
                       ),
                       const Spacer(),
-                      const LoveBtn(),
+                       LoveBtn(2,9),
                     ],
                   ),
                 )

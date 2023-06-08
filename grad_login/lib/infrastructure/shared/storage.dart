@@ -29,6 +29,7 @@ class Storage {
   }
 
   Future<String?> getToken() async {
+    log('AAAA');
     return await storage.read(key: accessTokenKey);
   }
 

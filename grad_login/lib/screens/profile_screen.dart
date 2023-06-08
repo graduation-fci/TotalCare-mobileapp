@@ -10,6 +10,7 @@ import 'my_orders_screen.dart';
 
 import '../providers/userProvider.dart';
 import 'user_medications.dart';
+import 'wish_list_screen.dart';
 
 class Profiles extends StatefulWidget {
   static const routeName = '/profiles-screen';
@@ -178,7 +179,11 @@ class _ProfilesState extends State<Profiles> {
                     }),
                     buildDivider(),
                     buildAccountOption(
-                        context, 'Wishlist', Icons.favorite_border_outlined),
+                        context, 'Wishlist', Icons.favorite_border_outlined,
+                        myFunc: () {
+                      authProvider.logout();
+                      Navigator.of(context).pushNamed(WishListScreen.routeName);
+                    }),
                     buildDivider(),
                     buildAccountOption(
                         context, 'My Medications', Icons.receipt_outlined,

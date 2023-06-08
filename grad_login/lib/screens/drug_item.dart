@@ -84,7 +84,8 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
                   width: mediaquery.width * 0.5,
                   height: mediaquery.height * 0.18,
                   child: CachedNetworkImage(
-                    imageUrl: drugs[index]['medicine_images'][0]['image'],
+                    // imageUrl: drugs[index]['medicine_images'][0]['image'],
+                    imageUrl: drugs[index]['images'][0]['image'],
                     placeholder: (context, url) =>
                         const Center(child: CircularProgressIndicator()),
                     errorWidget: (context, url, error) => const Center(
@@ -96,12 +97,12 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
                     fit: BoxFit.contain,
                   ),
                 ),
-                const Positioned(
+                Positioned(
                   top: 2,
                   right: 5,
                   child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: LoveBtn(),
+                    padding: const EdgeInsets.all(8.0),
+                    child: LoveBtn(2, drugs[index]['id']),
                   ),
                 ),
               ],

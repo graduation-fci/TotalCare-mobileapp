@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:grad_login/screens/singe_order_screen.dart';
@@ -17,6 +16,7 @@ import 'providers/medicineProvider.dart';
 import 'providers/authProvider.dart';
 import 'providers/orders_provider.dart';
 
+import 'providers/wishProvider.dart';
 import 'screens/cart_screen.dart';
 import 'screens/sub_categories_screen.dart';
 import 'screens/tabs_screen.dart';
@@ -38,6 +38,7 @@ import 'screens/profile_screen.dart';
 import 'screens/edit_profile_screen.dart';
 import 'screens/my_orders_screen.dart';
 import 'screens/continue_register_screen.dart';
+import 'screens/wish_list_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -77,6 +78,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider.value(
           value: OrdersProvider(),
+        ),
+        ChangeNotifierProvider.value(
+          value: Wish(),
         ),
       ],
       child: MaterialApp(
@@ -134,6 +138,7 @@ class MyApp extends StatelessWidget {
           SingleOrderScreen.routeName: (context) => const SingleOrderScreen(),
           SubCategoriesScreen.routeName: (context) =>
               const SubCategoriesScreen(),
+          WishListScreen.routeName: (context) => const WishListScreen(),
         },
       ),
     );

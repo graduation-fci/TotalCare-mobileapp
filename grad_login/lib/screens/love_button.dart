@@ -1,7 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/wishProvider.dart';
 
 class LoveBtn extends StatefulWidget {
-  const LoveBtn({super.key});
+  final int id, drugID;
+  LoveBtn(this.id, this.drugID);
 
   @override
   State<LoveBtn> createState() => _LoveBtnState();
@@ -12,7 +18,7 @@ class _LoveBtnState extends State<LoveBtn> {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
-    
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: Container(
@@ -20,15 +26,22 @@ class _LoveBtnState extends State<LoveBtn> {
         width: mediaQuery.height * 0.04,
         decoration: const BoxDecoration(color: Colors.red),
         child: IconButton(
-            onPressed: () {
+            onPressed: () async {
+              // log(widget.id.toString());
+              // log(widget.drugID.toString());
+              _isFavorite
+                  ? await Provider.of<Wish>(context, listen: false)
+                      .deleteWish(widget.id, widget.drugID)
+                  : await Provider.of<Wish>(context, listen: false)
+                      .addWish(widget.id, widget.drugID);
               setState(() {
                 _isFavorite = !_isFavorite;
               });
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: _isFavorite
-                      ? const Text('Added to Favorites!')
-                      : const Text('Removed from Favorites!'),
+                      ? const Text('Added to Wish List!')
+                      : const Text('Removed from Wish List!'),
                 ),
               );
             },
