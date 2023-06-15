@@ -20,6 +20,7 @@ class _SubCategoriesScreenState extends State<SubCategoriesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)!.settings.arguments as List<dynamic>;
     final subCategories = Provider.of<Categories>(context).subCatItems;
     final appLocalization = AppLocalizations.of(context)!.localeName;
 
@@ -27,10 +28,19 @@ class _SubCategoriesScreenState extends State<SubCategoriesScreen> {
       child: Scaffold(
         // backgroundColor: Colors.white,
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Color(0xFF003745),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
           backgroundColor: Colors.white10,
           elevation: 0,
           centerTitle: true,
-          title: const Text('Sub-Categories'),
+          title: Text(args[0]),
         ),
         body: LayoutBuilder(builder: (context, constraints) {
           return SingleChildScrollView(

@@ -20,29 +20,20 @@ class Wish with ChangeNotifier {
   }
 
   Future<void> getWishID() async {
-    // String? token;
-    // await storage.getToken().then((value) {
-    //   token = value;
-    // });
-    // log(token.toString());
+    String? token = await storage.getToken();
+    log(token.toString());
     final url = Uri.parse(Config.wishList);
-    final respone = await http.get(url, headers: {
-      'Authorization':
-          'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjg2MjQ2NTI5LCJpYXQiOjE2ODYxNjAxMjksImp0aSI6IjdiMzIzNzI2MjdhMjQyYWY4NDJmYWM3Y2E3MTBkYTI3IiwidXNlcl9pZCI6MywidXNlcm5hbWUiOiIzYmRlbG1ha3NvdWQiLCJlbWFpbCI6ImFiZGVsbWFrc291ZGVsc3llZDFAZ21haWwuY29tIiwiZmlyc3RfbmFtZSI6IkFobWVkIiwibGFzdF9uYW1lIjoiQWJkZWxtYXFzb3VkIiwicHJvZmlsZV90eXBlIjoiUEFUIiwiaXNfc3RhZmYiOmZhbHNlfQ.3UQxTAX-NAvylCvQ2_vzsy8yUDZ5gCVM20JhGK-OYlk',
+    final response = await http.get(url, headers: {
+      'Authorization': 'JWT $token',
     });
-    final extractedData = json.decode(respone.body) as List<dynamic>;
+    final extractedData = json.decode(response.body) as List<dynamic>;
+    log(extractedData.toString());
     _list = extractedData[0]['items'];
-    // log(extractedData[0]['items'].toString());
-    // log(extractedData[0]['id'].toString());
-    // log(_list.toString());
     notifyListeners();
   }
 
   Future<void> addWish(int id, drugID) async {
-    String? token;
-    await storage.getToken().then((value) {
-      token = value;
-    });
+    String? token = await storage.getToken();
     final url = Uri.parse('${Config.wishList}$id/items/');
     log('accessed');
     final response = await http.post(
@@ -57,7 +48,6 @@ class Wish with ChangeNotifier {
     );
 
     if (response.statusCode == 201) {
-      // getWishID();
       log('Added');
       notifyListeners();
     } else {
@@ -69,19 +59,12 @@ class Wish with ChangeNotifier {
   Future<void> deleteWish(int id, drugID) async {
     log(id.toString());
     log(drugID.toString());
-    String? token;
-    await storage.getToken().then((value) {
-      token = value;
-    });
+    String? token = await storage.getToken();
     final url = Uri.parse('${Config.wishList}$id/items/$drugID/');
-
-    // log(_list.toString());
-    // log(url.toString());
     final response = await http.delete(
       url,
       headers: {
-        'Authorization':
-            'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjg2MjQ2NTI5LCJpYXQiOjE2ODYxNjAxMjksImp0aSI6IjdiMzIzNzI2MjdhMjQyYWY4NDJmYWM3Y2E3MTBkYTI3IiwidXNlcl9pZCI6MywidXNlcm5hbWUiOiIzYmRlbG1ha3NvdWQiLCJlbWFpbCI6ImFiZGVsbWFrc291ZGVsc3llZDFAZ21haWwuY29tIiwiZmlyc3RfbmFtZSI6IkFobWVkIiwibGFzdF9uYW1lIjoiQWJkZWxtYXFzb3VkIiwicHJvZmlsZV90eXBlIjoiUEFUIiwiaXNfc3RhZmYiOmZhbHNlfQ.3UQxTAX-NAvylCvQ2_vzsy8yUDZ5gCVM20JhGK-OYlk',
+        'Authorization': 'JWT $token',
         'Content-Type': 'application/json',
       },
     );
@@ -89,12 +72,5 @@ class Wish with ChangeNotifier {
     getWishID();
     notifyListeners();
     log(response.statusCode.toString());
-
-    // if (response.statusCode >= 400) {
-    //   addWish(id, drugID);
-    //   notifyListeners();
-    //   errorMSG = 'Failed to delete item, try again later!';
-    // }
-    // log('Deleted !');
   }
 }

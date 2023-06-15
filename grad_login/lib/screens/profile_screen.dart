@@ -1,8 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
+import '../main.dart';
 import '../providers/authProvider.dart';
+import '../widgets/language_Constants.dart';
+import '../widgets/languages.dart';
 import 'address_screen.dart';
 import 'edit_profile_screen.dart';
 import 'login_screen.dart';
@@ -23,6 +28,8 @@ class Profiles extends StatefulWidget {
 class _ProfilesState extends State<Profiles> {
   Map<String, dynamic> userData = {};
 
+  var locale;
+
   @override
   void initState() {
     Future.delayed(Duration.zero).then((_) => userData =
@@ -37,7 +44,7 @@ class _ProfilesState extends State<Profiles> {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     userData =
         Provider.of<UserProvider>(context, listen: false).userProfileData;
-
+    // log(locale.toString());
     return SafeArea(
       child: Scaffold(
         body: Column(
@@ -72,17 +79,43 @@ class _ProfilesState extends State<Profiles> {
                           // handle notifications button press
                         },
                       ),
-                      IconButton(
-                        icon: SvgPicture.asset(
-                          'assets/icons/settings-outlined.svg',
-                          color: Theme.of(context).colorScheme.secondary,
-                          height: 24,
-                          width: 24,
+
+                      DropdownButton<Language>(
+                        underline: const SizedBox(),
+                        icon: const Icon(
+                          Icons.language,
+                          color: Colors.white,
                         ),
-                        onPressed: () {
-                          // handle settings button press
+                        onChanged: (Language? language) async {
+                          if (language != null) {
+                            // log(language.languageCode.toString());
+                            // Locale _locale =
+                            // await setLocale(language.languageCode);
+                            // log('locale::${_locale.toString()}');
+                            // MyApp.setLocale(context, _locale);
+                            MyApp.setLocale(
+                                context, Locale(language.languageCode));
+                          }
                         },
-                      ),
+                        items: Language.languageList()
+                            .map<DropdownMenuItem<Language>>(
+                              (e) => DropdownMenuItem<Language>(
+                                value: e,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    Text(
+                                      e.flag,
+                                      style: const TextStyle(fontSize: 30),
+                                    ),
+                                    Text(e.name)
+                                  ],
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      )
                     ],
                   ),
                   Expanded(
@@ -146,7 +179,8 @@ class _ProfilesState extends State<Profiles> {
                                   ),
                                 ),
                                 child: Text(
-                                  "Edit",
+                                  // ابقى خليها edit
+                                  translation(context).email,
                                   style: Theme.of(context)
                                       .textTheme
                                       .button!
@@ -181,7 +215,6 @@ class _ProfilesState extends State<Profiles> {
                     buildAccountOption(
                         context, 'Wishlist', Icons.favorite_border_outlined,
                         myFunc: () {
-                      authProvider.logout();
                       Navigator.of(context).pushNamed(WishListScreen.routeName);
                     }),
                     buildDivider(),
