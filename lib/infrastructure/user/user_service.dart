@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
+import '../../models/user.dart';
 import '../../my_config.dart';
 import '../shared/storage.dart';
 import '/models/medication.dart';
@@ -13,7 +14,7 @@ class UserService {
   Storage storage = Storage();
   String? errorMsg;
 
-  Future<Map<String, dynamic>> getUserData() async {
+  Future<Map<String, dynamic>> getPatientData() async {
     final url = Uri.parse(Config.patientProfile);
     String? token;
     await storage.getToken().then((value) {
@@ -22,6 +23,73 @@ class UserService {
     final response = await http.get(headers: {
       'Authorization': 'JWT $token',
     }, url);
+    final responseBody = json.decode(response.body);
+    return responseBody;
+  }
+
+  Future<Map<String, dynamic>> getUserData() async {
+    final url = Uri.parse(Config.myProfile);
+    String? token;
+    await storage.getToken().then((value) {
+      token = value;
+    });
+    final response = await http.get(headers: {
+      'Authorization': 'JWT $token',
+    }, url);
+    final responseBody = json.decode(response.body);
+    return responseBody;
+  }
+
+  Future<Map<String, dynamic>> editUserData(User userData) async {
+    final url = Uri.parse(Config.myProfile);
+    String? token;
+    await storage.getToken().then((value) {
+      token = value;
+    });
+    final response = await http.patch(
+      url,
+      headers: {
+        'Authorization': 'JWT $token',
+        "content-type": "application/json",
+      },
+      body: json.encode({
+        'first_name': userData.first_name,
+        'last_name': userData.last_name,
+        'email': userData.email,
+      }),
+    );
+    final responseBody = json.decode(response.body);
+    return responseBody;
+  }
+
+  Future<Map<String, dynamic>> editPatientData(User userData) async {
+    final url = Uri.parse(Config.patientProfile);
+    Map<String, dynamic> body = {};
+    String? token;
+    await storage.getToken().then((value) {
+      token = value;
+    });
+    if (userData.birthDate != null) {
+      body['birth_date'] = userData.birthDate;
+    }
+    if (userData.gender != null) {
+      body['gender'] = userData.gender;
+    }
+    if (userData.phoneNumber != null) {
+      body['phone'] = userData.phoneNumber;
+    }
+    if (userData.bloodType != null) {
+      body['bloodType'] = userData.bloodType;
+    }
+
+    final response = await http.patch(
+      url,
+      headers: {
+        'Authorization': 'JWT $token',
+        "content-type": "application/json",
+      },
+      body: json.encode(body),
+    );
     final responseBody = json.decode(response.body);
     return responseBody;
   }
