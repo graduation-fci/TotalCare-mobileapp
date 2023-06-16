@@ -94,8 +94,10 @@ class AuthService {
   }
 
   Future<void> refreshJwt() async {
-    final refreshEndPoint = Uri.parse(Config.refreshJWT);
+    final refreshEndPoint = Uri.parse(Config.refreshToken);
 
+    storage.removeToken();
+    final refToken = storage.refToken;
     //problem: not sending request to server!
     final response = await http.post(
       refreshEndPoint,
@@ -104,12 +106,12 @@ class AuthService {
         "accept": "application/json",
       },
       body: json.encode(
-        {'refresh', storage.refToken},
+        {'refresh', refToken},
       ),
     );
 
     final responseData = json.decode(response.body);
-    print(responseData['access']);
+    storage.setAccessToken(responseData['access']);
   }
 
   Future<void> logout() async {
