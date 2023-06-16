@@ -2,15 +2,17 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:grad_login/models/medication.dart';
 
 import '../app_state.dart';
 import '../infrastructure/user/user_service.dart';
+import '../models/medication.dart';
+import '../models/user.dart';
 
 class UserProvider with ChangeNotifier {
   UserService userService = UserService();
   String? errorMessage;
   Map<String, dynamic> jwtUserData = {};
+  Map<String, dynamic> userPatientData = {};
   Map<String, dynamic> userProfileData = {};
   AppState appState = AppState.init;
   final List _userMedications = [];
@@ -33,13 +35,41 @@ class UserProvider with ChangeNotifier {
   Future<void> getUserData() async {
     appState = AppState.loading;
     notifyListeners();
-    final responseData = await userService.getUserData();
-    userProfileData = responseData;
-    if (responseData['image'] != null) {
-      _userImage = userProfileData['image']['image'];
-      _imageId = userProfileData['image']['id'];
+    final patientData = await userService.getPatientData();
+    final userData = await userService.getUserData();
+    userPatientData = patientData;
+    userProfileData = userData;
+    if (patientData['image'] != null) {
+      _userImage = userPatientData['image']['image'];
+      _imageId = userPatientData['image']['id'];
     }
-    log(responseData.toString());
+    // log(patientData.toString());
+    appState = AppState.done;
+    notifyListeners();
+  }
+
+  Future<void> editPatientData(User userDate) async {
+    appState = AppState.loading;
+    notifyListeners();
+    final patientData = await userService.editPatientData(userDate);
+    userPatientData = patientData;
+    if (patientData['image'] != null) {
+      _userImage = userPatientData['image']['image'];
+      _imageId = userPatientData['image']['id'];
+    }
+    log(userPatientData.toString());
+    appState = AppState.done;
+
+    notifyListeners();
+  }
+
+  Future<void> editUserData(User userDate) async {
+    appState = AppState.loading;
+    notifyListeners();
+    final userData = await userService.editUserData(userDate);
+    userProfileData = userData;
+    log(userProfileData.toString());
+    appState = AppState.done;
 
     notifyListeners();
   }
