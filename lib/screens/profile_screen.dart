@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:grad_login/app_state.dart';
 import 'package:provider/provider.dart';
 
 import 'address_screen.dart';
@@ -20,23 +23,12 @@ class Profiles extends StatefulWidget {
 }
 
 class _ProfilesState extends State<Profiles> {
-  Map<String, dynamic> tokenUserData = {};
-  Map<String, dynamic> patientData = {};
-
-  @override
-  void initState() {
-    Future.delayed(Duration.zero).then(
-        (_) => Provider.of<UserProvider>(context, listen: false).getUserData());
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    tokenUserData = Provider.of<UserProvider>(context).jwtUserData;
-    patientData = Provider.of<UserProvider>(context).userProfileData;
+    final tokenUserData = Provider.of<UserProvider>(context).jwtUserData;
 
     return SafeArea(
       child: Scaffold(
@@ -102,6 +94,7 @@ class _ProfilesState extends State<Profiles> {
                                 ),
                               ),
                               child: CircleAvatar(
+                                backgroundColor: Colors.grey.shade200,
                                 radius: 35,
                                 child: ClipOval(
                                   child: userProvider.userImage == ''
@@ -147,9 +140,23 @@ class _ProfilesState extends State<Profiles> {
                             Container(
                               margin: const EdgeInsets.only(right: 20),
                               child: ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(context)
-                                      .pushNamed(EditProfileScreen.routeName);
+                                onPressed: () async {
+                                  await userProvider.getUserData().then((_) {
+                                    final userData =
+                                        userProvider.userProfileData;
+                                    final patientData =
+                                        userProvider.userPatientData;
+                                    // log(userData.toString());
+                                    if (userProvider.appState !=
+                                        AppState.loading) {
+                                      Navigator.of(context).pushNamed(
+                                          EditProfileScreen.routeName,
+                                          arguments: {
+                                            'user_data': userData,
+                                            'patient_data': patientData
+                                          });
+                                    }
+                                  });
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor:
