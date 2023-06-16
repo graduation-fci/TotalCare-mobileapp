@@ -10,6 +10,7 @@ class User {
   String? phoneNumber;
   String? birthDate;
   String? bloodType;
+  String? gender;
 
   User({
     required this.username,
@@ -21,5 +22,6 @@ class User {
     this.phoneNumber,
     this.birthDate,
     this.bloodType,
+    this.gender,
   });
 }
