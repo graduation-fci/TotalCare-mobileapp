@@ -8,12 +8,14 @@ class BloodTypeInput extends StatefulWidget {
   final List bloodTypes;
   final TextEditingController bloodTypeController;
   User? user;
+  Color? backColor;
 
   BloodTypeInput({
     super.key,
     required this.bloodTypes,
     required this.bloodTypeController,
     this.user,
+    this.backColor,
   });
 
   @override
@@ -34,16 +36,17 @@ class _BloodTypeInputState extends State<BloodTypeInput> {
     Color labelColor = Colors.grey;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.35),
-            offset: const Offset(0, 10),
-            blurRadius: 25,
-          ),
-        ],
-      ),
+      decoration: widget.backColor != null
+          ? null
+          : BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.35),
+                  offset: const Offset(0, 10),
+                  blurRadius: 25,
+                ),
+              ],
+            ),
       child: DropdownButtonFormField(
         icon: Icon(
           Icons.arrow_drop_down_circle,
@@ -56,10 +59,20 @@ class _BloodTypeInputState extends State<BloodTypeInput> {
           border: InputBorder.none,
           labelText: 'Blood Type',
           labelStyle: TextStyle(color: labelColor),
-          enabledBorder: outlineInputBorder,
-          focusedBorder: outlineInputBorder,
+          enabledBorder: widget.backColor != null
+              ? OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Colors.transparent),
+                )
+              : outlineInputBorder,
+          focusedBorder: widget.backColor != null
+              ? OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Colors.transparent),
+                )
+              : outlineInputBorder,
           filled: true,
-          fillColor: containerFillColor,
+          fillColor: widget.backColor ?? containerFillColor,
           contentPadding: const EdgeInsets.symmetric(horizontal: 16),
         ),
         items: widget.bloodTypes.map((e) {
@@ -73,8 +86,10 @@ class _BloodTypeInputState extends State<BloodTypeInput> {
             widget.bloodTypeController.text = value!.toString();
           });
         },
-        validator: (value) {
-          widget.user?.bloodType = value.toString();
+        onSaved: (value) {
+          if (value != null) {
+            widget.user?.bloodType = value.toString();
+          }
         },
       ),
     );
