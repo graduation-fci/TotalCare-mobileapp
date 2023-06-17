@@ -83,6 +83,29 @@ class MedicineService {
     return responseData;
   }
 
+  Future<Map<String, dynamic>?> getNotification(int id) async {
+    const baseUrl = Config.interactionNotification;
+    String? token;
+    await storage.getToken().then((value) {
+      token = value;
+    });
+
+    final url = Uri.parse(baseUrl);
+    final response = await http.post(
+      url,
+      headers: {
+        "content-type": "application/json",
+        "Authorization": "JWT $token",
+      },
+      body: json.encode({"id": id}),
+    );
+    final responseData = json.decode(response.body);
+    if (responseData['details'] == null) {
+      return responseData;
+    }
+    return responseData;
+  }
+
   String _getQueryString(Map<String, String> params) {
     return params.entries
         .map((e) => '${e.key}=${Uri.encodeQueryComponent(e.value)}')

@@ -3,16 +3,15 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import 'package:provider/provider.dart';
+
 
 import '../providers/categoriesProvider.dart';
 import '../providers/userProvider.dart';
-import '../providers/cartProvider.dart';
-import '../providers/drugProvider.dart';
 
 import 'category_item.dart';
 import 'notification_widget.dart';
+import 'notifications_screen.dart';
 import 'product_search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -107,8 +106,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ],
                               ),
                             ),
-                            actions: const [
-                              NotificationIcon(),
+                            actions: [
+                              GestureDetector(
+                                child: NotificationIcon(),
+                                onTap: () => Navigator.pushNamed(
+                                  context,
+                                  NotificationsScreen.routeName,
+                                ),
+                              ),
                             ],
                             elevation: 0,
                             backgroundColor: Colors.white10,

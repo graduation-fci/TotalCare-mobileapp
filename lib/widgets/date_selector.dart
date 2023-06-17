@@ -9,15 +9,19 @@ class DateSelector extends StatefulWidget {
   final BuildContext context;
   final TextEditingController dateController;
   final User userData;
+  final dynamic validator;
 
   String? selectdate;
+  Color? backColor;
 
   DateSelector({
     super.key,
     this.selectdate,
+    this.backColor,
+    this.validator,
+    required this.userData,
     required this.context,
     required this.dateController,
-    required this.userData,
   });
 
   @override
@@ -59,7 +63,6 @@ class _DateSelectorState extends State<DateSelector> {
                 color: Colors.grey.withOpacity(0.25),
               )
             ]),
-            padding: const EdgeInsets.all(10),
             child: TextFormField(
               controller: widget.dateController,
               cursorColor: labelColor,
@@ -77,9 +80,10 @@ class _DateSelectorState extends State<DateSelector> {
                   borderSide: const BorderSide(color: Colors.grey),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                fillColor: containerFillColor,
+                fillColor: widget.backColor ?? containerFillColor,
                 filled: true,
-                labelText: widget.selectdate == null ? 'Birth date' : 'Picked Date',
+                labelText:
+                    widget.selectdate == null ? 'Birth date' : 'Picked Date',
                 labelStyle: TextStyle(color: labelColor),
                 suffixIcon: IconButton(
                   icon: const Icon(

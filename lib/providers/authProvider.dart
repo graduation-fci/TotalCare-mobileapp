@@ -30,6 +30,10 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> refreshToken() async {
+    await authService.refreshJwt();
+  }
+
   Future<void> register(User user) async {
     appState = AppState.loading;
     notifyListeners();
@@ -52,7 +56,6 @@ class AuthProvider with ChangeNotifier {
         break;
       default:
         response = responseData;
-        log('$response');
         appState = AppState.done;
         break;
     }
