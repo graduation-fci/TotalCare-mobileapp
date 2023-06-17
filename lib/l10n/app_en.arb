@@ -52,4 +52,6 @@
   "startOver": "Start Over",
   "save": "Save",
   "learnMore": "Learn more"
+  "settings":"Settings",
+  "emptycart":"You have not added items to cart yet!"
 }
