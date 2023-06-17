@@ -14,6 +14,7 @@ class Config {
   static const String drugs = '$apiUrl/medicine/products/';
   static const String addresses = '$apiUrl/users/addresses/';
   static const String carts = '$apiUrl/store/carts/';
+  static const String wishList = '$apiUrl/store/wishlists/';
   static const String orders = '$apiUrl/store/orders/';
   static const String patientProfile = '$apiUrl/users/patients/me/';
   static const String userImage = '$apiUrl/users/usersimages/';

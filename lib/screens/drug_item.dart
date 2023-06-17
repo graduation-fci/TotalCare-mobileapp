@@ -119,12 +119,13 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
                     fit: BoxFit.contain,
                   ),
                 ),
-                const Positioned(
+                Positioned(
                   top: 2,
                   right: 5,
                   child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: LoveBtn(),
+                    padding: const EdgeInsets.all(8.0),
+                    //عايزين نخلي ال 2 دي تبقى ال wishlistID
+                    child: LoveBtn(2, drugs[index]['id']),
                   ),
                 ),
               ],

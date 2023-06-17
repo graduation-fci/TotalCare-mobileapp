@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../providers/cartProvider.dart';
 import '../providers/orders_provider.dart';
 import '../providers/addressProvider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -32,6 +33,8 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appLocalization = AppLocalizations.of(context)!;
+
     final cartProvider = Provider.of<Cart>(context);
     final ordersProvider = Provider.of<OrdersProvider>(context);
     final addressProvider = Provider.of<Address>(context);
@@ -46,7 +49,7 @@ class _CartScreenState extends State<CartScreen> {
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.white,
-          title: const Text('Cart'),
+          title: Text(appLocalization.cart),
           centerTitle: true,
         ),
         body: carts.isEmpty
