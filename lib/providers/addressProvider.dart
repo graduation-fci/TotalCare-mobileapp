@@ -45,7 +45,7 @@ class Address with ChangeNotifier {
       'Authorization': 'JWT $token',
     });
     final extractedData = json.decode(respone.body) as List<dynamic>;
-    
+
     if (respone.statusCode == 200) {
       for (var i = 0; i < extractedData.length; i++) {
         loadedCat.add(

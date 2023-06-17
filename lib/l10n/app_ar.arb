@@ -51,5 +51,9 @@
   "unsavedInteractionsList": "التفاعلات الغير محفوظة",
   "startOver": "البدء من جديد",
   "save": "حفظ",
-  "learnMore": "معرفة المزيد"
+  "learnMore": "معرفة المزيد",
+  "settings":"الإعدادات",
+  "emptycart":"لم تقم بإضافة العناصر لعربة التسوق!"
+
+
 }

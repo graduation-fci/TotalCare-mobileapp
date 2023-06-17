@@ -88,14 +88,16 @@ class _HomeScreenState extends State<HomeScreen> {
                               text: TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: 'Hi ${userData['first_name']}!\n',
+                                    text:
+                                        '${appLocalization.hi} ${userData['first_name']}!\n',
                                     style: TextStyle(
                                         fontSize: mediaquery.width * 0.045,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black),
                                   ),
                                   TextSpan(
-                                    text: 'How are you feeling today?',
+                                    text:
+                                        '${appLocalization.howAreYouFeelingToday}',
                                     style: TextStyle(
                                         fontSize: mediaquery.width * 0.035,
                                         fontWeight: FontWeight.w500,
