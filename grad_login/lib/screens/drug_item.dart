@@ -1,11 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:grad_login/providers/drugProvider.dart';
 import 'package:grad_login/screens/drug_detail_screen.dart';
-import '../providers/drugProvider.dart';
+import 'package:grad_login/screens/love_button.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-import 'love_button.dart';
 
 class DrugItemScreen extends StatefulWidget {
   final int catID;
@@ -19,7 +18,8 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
   void initState() {
     // print('widgetID: ${widget.catID}');
     Future.delayed(Duration.zero).then((value) {
-      Provider.of<Drugs>(context, listen: false).fetchDrug(widget.catID);
+      Provider.of<Drugs>(context, listen: false)
+          .fetchDrug(catID: widget.catID.toString());
     });
     super.initState();
   }
