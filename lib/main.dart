@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:grad_login/screens/singe_order_screen.dart';
 import 'package:grad_login/screens/notifications_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -17,9 +17,8 @@ import 'providers/medicineProvider.dart';
 import 'providers/authProvider.dart';
 import 'providers/orders_provider.dart';
 
+import 'providers/wishProvider.dart';
 import 'screens/cart_screen.dart';
-import 'screens/single_order_screen.dart';
-import 'screens/product_search_screen.dart';
 import 'screens/sub_categories_screen.dart';
 import 'screens/tabs_screen.dart';
 import 'screens/add_medication.dart';
@@ -40,14 +39,40 @@ import 'screens/profile_screen.dart';
 import 'screens/edit_profile_screen.dart';
 import 'screens/my_orders_screen.dart';
 import 'screens/continue_register_screen.dart';
+import 'screens/wish_list_screen.dart';
+import 'widgets/language_Constants.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+
+  static void setLocale(BuildContext context, Locale newLocale) {
+    _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
+    state?.setLocale(newLocale);
+  }
+}
+
+class _MyAppState extends State<MyApp> {
   final storage = Storage();
-  MyApp({super.key});
+  Locale? _locale;
+
+  setLocale(Locale locale) {
+    setState(() {
+      _locale = locale;
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    getLocale().then((locale) => {setLocale(locale)});
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,32 +105,40 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(
           value: OrdersProvider(),
         ),
+        ChangeNotifierProvider.value(
+          value: Wish(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
+        locale: _locale,
         title: 'TotalCare',
         theme: _buildThemeData(),
-        home: FutureBuilder(
-          future: storage.getToken(),
-          builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
-            if (snapshot.hasData && snapshot.data != null) {
-              List<String> parts = snapshot.data!.split('.');
-              String payload = parts[1];
-              while (payload.length % 4 != 0) {
-                payload += '=';
-              }
-              Map<String, dynamic> data =
-                  json.decode(utf8.decode(base64Url.decode(payload)));
+        home: Directionality(
+          textDirection:
+              _locale == 'ar' ? TextDirection.ltr : TextDirection.ltr,
+          child: FutureBuilder(
+            future: storage.getToken(),
+            builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
+              if (snapshot.hasData && snapshot.data != null) {
+                List<String> parts = snapshot.data!.split('.');
+                String payload = parts[1];
+                while (payload.length % 4 != 0) {
+                  payload += '=';
+                }
+                Map<String, dynamic> data =
+                    json.decode(utf8.decode(base64Url.decode(payload)));
 
-              Provider.of<UserProvider>(context).jwtUserData = data;
-              return const TabsScreen();
-            } else {
-              // User is not logged in, navigate to the login screen
-              return const LoginScreen();
-            }
-          },
+                Provider.of<UserProvider>(context).userProfileData = data;
+                return const TabsScreen();
+              } else {
+                // User is not logged in, navigate to the login screen
+                return const LoginScreen();
+              }
+            },
+          ),
         ),
         routes: {
           ShowInteractionsResultsScreen.routeName: (ctx) =>
@@ -136,6 +169,7 @@ class MyApp extends StatelessWidget {
           SingleOrderScreen.routeName: (context) => const SingleOrderScreen(),
           SubCategoriesScreen.routeName: (context) =>
               const SubCategoriesScreen(),
+          WishListScreen.routeName: (context) => const WishListScreen(),
           ProductSearchScreen.routeName: (context) =>
               const ProductSearchScreen(),
           NotificationsScreen.routeName: (context) =>

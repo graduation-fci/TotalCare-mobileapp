@@ -31,7 +31,7 @@ class _LoveBtnState extends State<LoveBtn> {
               // log(widget.drugID.toString());
               _isFavorite
                   ? await Provider.of<Wish>(context, listen: false)
-                      .deleteWish(widget.id, widget.drugID)
+                      .deleteFavWish(widget.id, widget.drugID)
                   : await Provider.of<Wish>(context, listen: false)
                       .addWish(widget.id, widget.drugID);
               setState(() {

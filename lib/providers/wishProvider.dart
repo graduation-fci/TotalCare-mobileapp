@@ -27,7 +27,7 @@ class Wish with ChangeNotifier {
       'Authorization': 'JWT $token',
     });
     final extractedData = json.decode(response.body) as List<dynamic>;
-    log(extractedData.toString());
+    log(extractedData[0].toString());
     _list = extractedData[0]['items'];
     notifyListeners();
   }
@@ -53,6 +53,7 @@ class Wish with ChangeNotifier {
     } else {
       errorMSG = 'Failed to add address, Please try again later!';
     }
+    getWishID();
     notifyListeners();
   }
 
@@ -72,5 +73,32 @@ class Wish with ChangeNotifier {
     getWishID();
     notifyListeners();
     log(response.statusCode.toString());
+  }
+
+  Future<void> deleteFavWish(int id, drugID) async {
+    log(id.toString());
+    log(drugID.toString());
+    String? token = await storage.getToken();
+
+    log('items:::$items');
+    final prodID = await items.firstWhere((element) {
+      log('elements:::::$element');
+      return element['product']['id'] == drugID;
+    });
+    log('Product::${prodID.toString()}');
+
+    final url = Uri.parse('${Config.wishList}$id/items/${prodID['id']}/');
+    log(url.toString());
+    final response = await http.delete(
+      url,
+      headers: {
+        'Authorization': 'JWT $token',
+        'Content-Type': 'application/json',
+      },
+    );
+    log('Deleted!');
+    getWishID();
+    notifyListeners();
+    // log(response.statusCode.toString());
   }
 }
