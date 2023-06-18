@@ -1,18 +1,19 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:grad_login/app_state.dart';
 import 'package:provider/provider.dart';
 
+import '../main.dart';
+import '../providers/authProvider.dart';
+import '../widgets/language_Constants.dart';
+import '../widgets/languages.dart';
 import 'address_screen.dart';
 import 'edit_profile_screen.dart';
 import 'login_screen.dart';
 import 'my_orders_screen.dart';
-import 'user_medications.dart';
 
-import '../providers/authProvider.dart';
 import '../providers/userProvider.dart';
+import 'user_medications.dart';
+import 'wish_list_screen.dart';
 
 class Profiles extends StatefulWidget {
   static const routeName = '/profiles-screen';
@@ -23,13 +24,25 @@ class Profiles extends StatefulWidget {
 }
 
 class _ProfilesState extends State<Profiles> {
+  Map<String, dynamic> userData = {};
+
+  var locale;
+
+  @override
+  void initState() {
+    Future.delayed(Duration.zero).then((_) => userData =
+        Provider.of<UserProvider>(context, listen: false).userProfileData);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    final tokenUserData = Provider.of<UserProvider>(context).jwtUserData;
-
+    userData =
+        Provider.of<UserProvider>(context, listen: false).userProfileData;
+    // log(locale.toString());
     return SafeArea(
       child: Scaffold(
         body: Column(
@@ -64,17 +77,43 @@ class _ProfilesState extends State<Profiles> {
                           // handle notifications button press
                         },
                       ),
-                      IconButton(
-                        icon: SvgPicture.asset(
-                          'assets/icons/settings-outlined.svg',
-                          color: Theme.of(context).colorScheme.secondary,
-                          height: 24,
-                          width: 24,
+
+                      DropdownButton<Language>(
+                        underline: const SizedBox(),
+                        icon: const Icon(
+                          Icons.language,
+                          color: Colors.white,
                         ),
-                        onPressed: () {
-                          // handle settings button press
+                        onChanged: (Language? language) async {
+                          if (language != null) {
+                            // log(language.languageCode.toString());
+                            // Locale _locale =
+                            // await setLocale(language.languageCode);
+                            // log('locale::${_locale.toString()}');
+                            // MyApp.setLocale(context, _locale);
+                            MyApp.setLocale(
+                                context, Locale(language.languageCode));
+                          }
                         },
-                      ),
+                        items: Language.languageList()
+                            .map<DropdownMenuItem<Language>>(
+                              (e) => DropdownMenuItem<Language>(
+                                value: e,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    Text(
+                                      e.flag,
+                                      style: const TextStyle(fontSize: 30),
+                                    ),
+                                    Text(e.name)
+                                  ],
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      )
                     ],
                   ),
                   Expanded(
@@ -93,24 +132,10 @@ class _ProfilesState extends State<Profiles> {
                                   width: 3,
                                 ),
                               ),
-                              child: CircleAvatar(
-                                backgroundColor: Colors.grey.shade200,
-                                radius: 35,
-                                child: ClipOval(
-                                  child: userProvider.userImage == ''
-                                      ? const Icon(
-                                          Icons.person,
-                                          color: Colors.grey,
-                                          size: 50,
-                                        )
-                                      : SizedBox(
-                                          height: 70,
-                                          width: 70,
-                                          child: Image.network(
-                                            userProvider.userImage,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
+                              child: const CircleAvatar(
+                                radius: 40,
+                                backgroundImage: NetworkImage(
+                                  "http://picsum.photos/200/300",
                                 ),
                               ),
                             ),
@@ -120,7 +145,7 @@ class _ProfilesState extends State<Profiles> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "${tokenUserData['first_name']} ${tokenUserData['last_name']}",
+                                    "${userData['first_name']} ${userData['last_name']}",
                                     style: const TextStyle(
                                         fontSize: 18,
                                         color: Colors.black,
@@ -128,7 +153,7 @@ class _ProfilesState extends State<Profiles> {
                                   ),
                                   const SizedBox(height: 3),
                                   Text(
-                                    "${tokenUserData['email']}",
+                                    "${userData['email']}",
                                     style: const TextStyle(
                                       fontSize: 14,
                                       color: Colors.black,
@@ -140,23 +165,9 @@ class _ProfilesState extends State<Profiles> {
                             Container(
                               margin: const EdgeInsets.only(right: 20),
                               child: ElevatedButton(
-                                onPressed: () async {
-                                  await userProvider.getUserData().then((_) {
-                                    final userData =
-                                        userProvider.userProfileData;
-                                    final patientData =
-                                        userProvider.userPatientData;
-                                    // log(userData.toString());
-                                    if (userProvider.appState !=
-                                        AppState.loading) {
-                                      Navigator.of(context).pushNamed(
-                                          EditProfileScreen.routeName,
-                                          arguments: {
-                                            'user_data': userData,
-                                            'patient_data': patientData
-                                          });
-                                    }
-                                  });
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .pushNamed(EditProfileScreen.routeName);
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor:
@@ -166,7 +177,8 @@ class _ProfilesState extends State<Profiles> {
                                   ),
                                 ),
                                 child: Text(
-                                  "Edit",
+                                  // ابقى خليها edit
+                                  translation(context).email,
                                   style: Theme.of(context)
                                       .textTheme
                                       .button!
@@ -199,7 +211,10 @@ class _ProfilesState extends State<Profiles> {
                     }),
                     buildDivider(),
                     buildAccountOption(
-                        context, 'Wishlist', Icons.favorite_border_outlined),
+                        context, 'Wishlist', Icons.favorite_border_outlined,
+                        myFunc: () {
+                      Navigator.of(context).pushNamed(WishListScreen.routeName);
+                    }),
                     buildDivider(),
                     buildAccountOption(
                         context, 'My Medications', Icons.receipt_outlined,
@@ -210,12 +225,24 @@ class _ProfilesState extends State<Profiles> {
                     }),
                     buildDivider(),
                     buildAccountOption(
+                        context, 'Payment Methods', Icons.credit_card_outlined),
+                    buildDivider(),
+                    buildAccountOption(
                       context,
                       'Addresses',
                       Icons.location_on_outlined,
                       myFunc: () => Navigator.of(context)
                           .pushNamed(AddressScreen.routeName),
                     ),
+                    buildDivider(),
+                    buildAccountOption(
+                      context,
+                      'Payment History',
+                      Icons.history_outlined,
+                    ),
+                    buildDivider(),
+                    buildAccountOption(
+                        context, 'Invite Friends', Icons.person_add_outlined),
                     buildDivider(),
                     buildAccountOption(
                         context, 'Change Password', Icons.lock_outlined),
