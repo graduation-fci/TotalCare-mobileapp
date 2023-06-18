@@ -19,6 +19,7 @@ import 'providers/orders_provider.dart';
 
 import 'providers/wishProvider.dart';
 import 'screens/cart_screen.dart';
+import 'screens/product_search_screen.dart';
 import 'screens/sub_categories_screen.dart';
 import 'screens/tabs_screen.dart';
 import 'screens/add_medication.dart';
