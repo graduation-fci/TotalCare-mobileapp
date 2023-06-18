@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../app_state.dart';
 import '../models/medication.dart';
@@ -72,6 +73,8 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
     final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final medicineProvider =
+        Provider.of<MedicineProvider>(context, listen: false);
     medication =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
@@ -424,8 +427,22 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
                   _formKey.currentState!.save();
                   await userProvider
                       .editUserMedication(_med, medication['id'])
+                      .then((_) async => await medicineProvider
+                          .getNotifications(medication['id']))
                       .then((_) => userProvider.getUserMedications())
-                      .then((_) => Navigator.pop(context));
+                      .then((_) => Navigator.pop(context))
+                      .then((_) {
+                    medicineProvider.noticationsEn.isNotEmpty
+                        ? Fluttertoast.showToast(
+                            msg: 'New interactions found!',
+                            toastLength: Toast.LENGTH_LONG,
+                            gravity: ToastGravity.TOP_RIGHT,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0,
+                          )
+                        : null;
+                  });
                 }
               },
               style: ElevatedButton.styleFrom(

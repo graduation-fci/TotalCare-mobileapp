@@ -35,7 +35,9 @@ class _ShowInteractionsResultsScreenState
     final interactionsProvider =
         Provider.of<InteractionsProvider>(context, listen: false);
     final appLocalization = AppLocalizations.of(context)!;
-    List<dynamic> interactionsResponse = interactionsProvider.response;
+    final arguements = ModalRoute.of(context)!.settings.arguments
+        as List<dynamic>?;
+    List<dynamic> interactionsResponse = arguements ?? interactionsProvider.response;
 
     for (int i = 0; i < interactionsResponse.length; i++) {
       for (int j = 0; j < interactionsResponse[i]['interactions'].length; j++) {

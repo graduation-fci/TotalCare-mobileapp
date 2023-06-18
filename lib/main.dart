@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:grad_login/screens/singe_order_screen.dart';
+import 'package:grad_login/screens/notifications_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -169,6 +170,10 @@ class _MyAppState extends State<MyApp> {
           SubCategoriesScreen.routeName: (context) =>
               const SubCategoriesScreen(),
           WishListScreen.routeName: (context) => const WishListScreen(),
+          ProductSearchScreen.routeName: (context) =>
+              const ProductSearchScreen(),
+          NotificationsScreen.routeName: (context) =>
+              const NotificationsScreen(),
         },
       ),
     );

@@ -134,8 +134,8 @@ class ShowMedicationProfile extends StatelessWidget {
                     .getInteractions(interactionMedicines)
                     .then(
                       (_) => Navigator.of(context).pushNamed(
-                          ShowInteractionsResultsScreen.routeName,
-                          arguments: interactionMedicines),
+                        ShowInteractionsResultsScreen.routeName,
+                      ),
                     );
               },
               style: ElevatedButton.styleFrom(

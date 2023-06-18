@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:grad_login/providers/cartProvider.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/cartProvider.dart';
+import '../providers/authProvider.dart';
 import 'cart_screen.dart';
 import 'profile_screen.dart';
 import 'home_screen.dart';
@@ -23,27 +24,32 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   void initState() {
-    _pages = [
-      {
-        'page': const HomeScreen(),
-        'title': 'Home',
-      },
-      {
-        'page': const InteractionScreen(),
-        'title': 'Interactions',
-      },
-      {
-        'page': const CartScreen(),
-        'title': 'Cart',
-      },
-      {
-        'page': const Profiles(),
-        'title': 'Settings',
-      },
-    ];
+    try {
+      _pages = [
+        {
+          'page': const HomeScreen(),
+          'title': 'Home',
+        },
+        {
+          'page': const InteractionScreen(),
+          'title': 'Interactions',
+        },
+        {
+          'page': const CartScreen(),
+          'title': 'Cart',
+        },
+        {
+          'page': const Profiles(),
+          'title': 'Settings',
+        },
+      ];
 
-    Future.delayed(Duration.zero)
-        .then((_) => Provider.of<Cart>(context, listen: false).fetchCart());
+      Future.delayed(Duration.zero)
+          .then((_) => Provider.of<Cart>(context, listen: false).fetchCart());
+    } catch (e) {
+      Future.delayed(Duration.zero).then((value) =>
+          Provider.of<AuthProvider>(context, listen: false).refreshToken());
+    }
     super.initState();
   }
 

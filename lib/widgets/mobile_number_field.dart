@@ -34,7 +34,6 @@ class _MobileNumberFieldState extends State<MobileNumberField> {
     String countryName = appLocalization.countryName;
     Color containerFillColor = Colors.grey.shade100;
     Color labelColor = Colors.grey;
-    widget.countryController.text = '+20';
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Container(
