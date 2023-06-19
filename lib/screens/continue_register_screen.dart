@@ -38,6 +38,12 @@ class _ContinueRegisterScreenState extends State<ContinueRegisterScreen> {
   final _formKey = GlobalKey<FormState>();
 
   @override
+  void initState() {
+    countryController.text = '+20';
+    super.initState();
+  }
+
+  @override
   void dispose() {
     bloodTypeController.dispose();
     phoneNumberController.dispose();
@@ -56,9 +62,10 @@ class _ContinueRegisterScreenState extends State<ContinueRegisterScreen> {
     final userProvider = Provider.of<UserProvider>(context);
     final userData = ModalRoute.of(context)!.settings.arguments as User;
 
-    void onPressed(authProvider, userProvider) async {
+    void onPressed() async {
       if (_formKey.currentState!.validate()) {
-        await authProvider.patientProfile(userData).then((_) {
+        _formKey.currentState!.save();
+        await authProvider.contRegister(userData).then((_) {
           if (authProvider.appState == AppState.error) {
             showAlertDialog(
               context: context,
@@ -122,7 +129,6 @@ class _ContinueRegisterScreenState extends State<ContinueRegisterScreen> {
                 MobileNumberField(
                   countryController: countryController,
                   phoneController: phoneNumberController,
-                  user: userData,
                   validator: (value) {
                     if (value != null) {
                       userData.phoneNumber = countryController.text + value;
@@ -132,6 +138,11 @@ class _ContinueRegisterScreenState extends State<ContinueRegisterScreen> {
                 ),
                 DateSelector(
                   userData: userData,
+                  validator: (value) {
+                    if (value != null) {
+                      userData.birthDate = value;
+                    }
+                  },
                   context: context,
                   selectdate: selectedDate,
                   dateController: birthDateController,
@@ -144,7 +155,7 @@ class _ContinueRegisterScreenState extends State<ContinueRegisterScreen> {
           margin: const EdgeInsets.all(20),
           child: SignButton(
             mediaQuery: mediaQuery,
-            onPressed: () => onPressed(authProvider, userProvider),
+            onPressed: onPressed,
             label: appLocalization.register,
           ),
         ),
