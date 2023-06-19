@@ -23,19 +23,18 @@ class InteractionScreen extends StatefulWidget {
 class _InteractionScreenState extends State<InteractionScreen> {
   final TextEditingController searchController = TextEditingController();
   final TextEditingController titleController = TextEditingController();
-  final FocusNode _focusNode = FocusNode();
-  final Medication _med = Medication(title: '', medicineIds: []);
+  Medication _med = Medication(title: '', medicineIds: []);
 
   List<Map<String, dynamic>> _interactionMedicines = [];
   AppState appState = AppState.init;
-  bool _isVisible = true;
+  bool _isVisible = false;
   List<dynamic>? results;
 
   @override
   void initState() {
-    _focusNode.addListener(() {
+    searchController.addListener(() {
       setState(() {
-        _isVisible = _focusNode.hasFocus;
+        _isVisible = searchController.text.isNotEmpty;
       });
     });
     super.initState();
@@ -45,7 +44,6 @@ class _InteractionScreenState extends State<InteractionScreen> {
   void dispose() {
     searchController.dispose();
     titleController.dispose();
-    _focusNode.dispose();
     super.dispose();
   }
 
@@ -82,6 +80,7 @@ class _InteractionScreenState extends State<InteractionScreen> {
 
   void startOver() {
     _interactionMedicines = [];
+    _med = Medication(title: '', medicineIds: []);
     hasContent = false;
     setState(() {});
   }
@@ -136,7 +135,6 @@ class _InteractionScreenState extends State<InteractionScreen> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: TextFormField(
-                              focusNode: _focusNode,
                               onChanged: _filterDataList,
                               controller: searchController,
                               decoration: InputDecoration(
