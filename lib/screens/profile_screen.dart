@@ -10,9 +10,13 @@ import 'edit_profile_screen.dart';
 import 'login_screen.dart';
 import 'my_orders_screen.dart';
 import 'user_medications.dart';
+import 'wish_list_screen.dart';
 
 import '../providers/authProvider.dart';
+import '../widgets/language_Constants.dart';
+import '../widgets/languages.dart';
 import '../providers/userProvider.dart';
+import '../main.dart';
 
 class Profiles extends StatefulWidget {
   static const routeName = '/profiles-screen';
@@ -64,17 +68,42 @@ class _ProfilesState extends State<Profiles> {
                           // handle notifications button press
                         },
                       ),
-                      IconButton(
-                        icon: SvgPicture.asset(
-                          'assets/icons/settings-outlined.svg',
-                          color: Theme.of(context).colorScheme.secondary,
-                          height: 24,
-                          width: 24,
+                      DropdownButton<Language>(
+                        underline: const SizedBox(),
+                        icon: const Icon(
+                          Icons.language,
+                          color: Colors.white,
                         ),
-                        onPressed: () {
-                          // handle settings button press
+                        onChanged: (Language? language) async {
+                          if (language != null) {
+                            // log(language.languageCode.toString());
+                            // Locale _locale =
+                            // await setLocale(language.languageCode);
+                            // log('locale::${_locale.toString()}');
+                            // MyApp.setLocale(context, _locale);
+                            MyApp.setLocale(
+                                context, Locale(language.languageCode));
+                          }
                         },
-                      ),
+                        items: Language.languageList()
+                            .map<DropdownMenuItem<Language>>(
+                              (e) => DropdownMenuItem<Language>(
+                                value: e,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    Text(
+                                      e.flag,
+                                      style: const TextStyle(fontSize: 30),
+                                    ),
+                                    Text(e.name)
+                                  ],
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      )
                     ],
                   ),
                   Expanded(
@@ -199,7 +228,10 @@ class _ProfilesState extends State<Profiles> {
                     }),
                     buildDivider(),
                     buildAccountOption(
-                        context, 'Wishlist', Icons.favorite_border_outlined),
+                        context, 'Wishlist', Icons.favorite_border_outlined,
+                        myFunc: () {
+                      Navigator.of(context).pushNamed(WishListScreen.routeName);
+                    }),
                     buildDivider(),
                     buildAccountOption(
                         context, 'My Medications', Icons.receipt_outlined,
