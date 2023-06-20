@@ -35,9 +35,11 @@ class _ShowInteractionsResultsScreenState
     final interactionsProvider =
         Provider.of<InteractionsProvider>(context, listen: false);
     final appLocalization = AppLocalizations.of(context)!;
-    final arguements = ModalRoute.of(context)!.settings.arguments
-        as List<dynamic>?;
-    List<dynamic> interactionsResponse = arguements ?? interactionsProvider.response;
+    final localeName = AppLocalizations.of(context)!.localeName;
+    final arguements =
+        ModalRoute.of(context)!.settings.arguments as List<dynamic>?;
+    List<dynamic> interactionsResponse =
+        arguements ?? interactionsProvider.response;
 
     for (int i = 0; i < interactionsResponse.length; i++) {
       for (int j = 0; j < interactionsResponse[i]['interactions'].length; j++) {
@@ -95,7 +97,7 @@ class _ShowInteractionsResultsScreenState
                     right: 12,
                   ),
                   child: Text(
-                    '${interactionsResponse.length} ${appLocalization.interactions} found for the following ${uniqueDrugsList.length} drugs: ',
+                    '${interactionsResponse.length} ${appLocalization.interactions} ${appLocalization.foundforthefollowing} ${uniqueDrugsList.length} ${appLocalization.drugs} ',
                     style: customTextStyle(
                       mediaQuery.width * 0.043,
                       weight: FontWeight.w600,
@@ -221,18 +223,44 @@ class _ShowInteractionsResultsScreenState
                                         width: 2,
                                       ),
                                     ),
-                                    child: Text(
-                                      '${interactionList[i]['severity']}',
-                                      style: const TextStyle(
-                                        color: Color.fromARGB(255, 64, 26, 23),
-                                      ),
-                                    ),
+                                    child: appLocalization.localeName == 'ar'
+                                        ? FutureBuilder<Translation>(
+                                            future: translator.translate(
+                                              '${interactionList[i]['severity']}',
+                                              to: localeName,
+                                            ),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return const Center(
+                                                    child:
+                                                        CircularProgressIndicator());
+                                              } else if (snapshot.hasError) {
+                                                return const Text(
+                                                    'Translation Error');
+                                              } else {
+                                                return Text(
+                                                  snapshot.data.toString(),
+                                                  textAlign: TextAlign.justify,
+                                                  style: customTextStyle(
+                                                      mediaQuery.width * 0.042),
+                                                );
+                                              }
+                                            },
+                                          )
+                                        : Text(
+                                            '${interactionList[i]['severity']}',
+                                            style: const TextStyle(
+                                              color: Color.fromARGB(
+                                                  255, 64, 26, 23),
+                                            ),
+                                          ),
                                   ),
                                   const SizedBox(height: 16),
                                   Wrap(
                                     children: [
                                       Text(
-                                        'Applies to: ',
+                                        '${appLocalization.applyto}: ',
                                         style: customTextStyle(
                                             mediaQuery.width * 0.041),
                                       ),
@@ -247,56 +275,70 @@ class _ShowInteractionsResultsScreenState
                                   ),
                                   const SizedBox(height: 12),
                                   isProfessional
-                                      ? FutureBuilder<Translation>(
-                                          future: translator.translate(
-                                            interactionList[i]
-                                                ['professionalEffect'],
-                                            to: 'ar',
-                                          ),
-                                          builder: (context, snapshot) {
-                                            if (snapshot.connectionState ==
-                                                ConnectionState.waiting) {
-                                              return const Center(
-                                                  child:
-                                                      CircularProgressIndicator());
-                                            } else if (snapshot.hasError) {
-                                              return const Text(
-                                                  'Translation Error');
-                                            } else {
-                                              return Text(
-                                                snapshot.data.toString(),
-                                                textAlign: TextAlign.justify,
-                                                style: customTextStyle(
-                                                    mediaQuery.width * 0.042),
-                                              );
-                                            }
-                                          },
-                                        )
-                                      : FutureBuilder<Translation>(
-                                          future: translator.translate(
-                                            interactionList[i]
-                                                ['consumerEffect'],
-                                            to: 'ar',
-                                          ),
-                                          builder: (context, snapshot) {
-                                            if (snapshot.connectionState ==
-                                                ConnectionState.waiting) {
-                                              return const Center(
-                                                  child:
-                                                      CircularProgressIndicator());
-                                            } else if (snapshot.hasError) {
-                                              return const Text(
-                                                  'Translation Error');
-                                            } else {
-                                              return Text(
-                                                snapshot.data.toString(),
-                                                textAlign: TextAlign.justify,
-                                                style: customTextStyle(
-                                                    mediaQuery.width * 0.042),
-                                              );
-                                            }
-                                          },
-                                        ),
+                                      ? appLocalization.localeName == 'ar'
+                                          ? FutureBuilder<Translation>(
+                                              future: translator.translate(
+                                                interactionList[i]
+                                                    ['professionalEffect'],
+                                                to: localeName,
+                                              ),
+                                              builder: (context, snapshot) {
+                                                if (snapshot.connectionState ==
+                                                    ConnectionState.waiting) {
+                                                  return const Center(
+                                                      child:
+                                                          CircularProgressIndicator());
+                                                } else if (snapshot.hasError) {
+                                                  return const Text(
+                                                      'Translation Error');
+                                                } else {
+                                                  return Text(
+                                                    snapshot.data.toString(),
+                                                    textAlign:
+                                                        TextAlign.justify,
+                                                    style: customTextStyle(
+                                                        mediaQuery.width *
+                                                            0.042),
+                                                  );
+                                                }
+                                              },
+                                            )
+                                          : Text(
+                                              interactionList[i]
+                                                  ['professionalEffect'],
+                                            )
+                                      : appLocalization.localeName == 'ar'
+                                          ? FutureBuilder<Translation>(
+                                              future: translator.translate(
+                                                interactionList[i]
+                                                    ['consumerEffect'],
+                                                to: localeName,
+                                              ),
+                                              builder: (context, snapshot) {
+                                                if (snapshot.connectionState ==
+                                                    ConnectionState.waiting) {
+                                                  return const Center(
+                                                      child:
+                                                          CircularProgressIndicator());
+                                                } else if (snapshot.hasError) {
+                                                  return const Text(
+                                                      'Translation Error');
+                                                } else {
+                                                  return Text(
+                                                    snapshot.data.toString(),
+                                                    textAlign:
+                                                        TextAlign.justify,
+                                                    style: customTextStyle(
+                                                        mediaQuery.width *
+                                                            0.042),
+                                                  );
+                                                }
+                                              },
+                                            )
+                                          : Text(
+                                              interactionList[i]
+                                                  ['consumerEffect'],
+                                            ),
                                   const SizedBox(height: 24),
                                   const Divider(
                                     thickness: 1,
@@ -324,25 +366,6 @@ class _ShowInteractionsResultsScreenState
                         ),
                       ),
                     ),
-                    TextButton(
-                        onPressed: null,
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                width: 1,
-                                color: Colors.blueAccent,
-                              ),
-                            ),
-                          ),
-                          child: Text(
-                            'Save interactions report',
-                            style: TextStyle(
-                              color: Colors.blueAccent,
-                              fontSize: mediaQuery.width * 0.038,
-                            ),
-                          ),
-                        ))
                   ],
                 ),
               ],

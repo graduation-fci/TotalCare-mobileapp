@@ -53,5 +53,9 @@
   "save": "Save",
   "learnMore": "Learn more",
   "settings":"Settings",
-  "emptycart":"You have not added items to cart yet!"
+  "emptycart":"You have not added items to cart yet!",
+  "egyptianPound": "ج.م",
+  "foundforthefollowing": "found for the following",
+  "drugs": "drugs",
+  "applyto":"Applies to"
 }
