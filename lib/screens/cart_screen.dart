@@ -53,10 +53,11 @@ class _CartScreenState extends State<CartScreen> {
           centerTitle: true,
         ),
         body: carts.isEmpty
-            ? const Center(
+            ? Center(
                 child: Text(
-                  'You have not added items to cart yet!',
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                  appLocalization.emptycart,
+                  style: const TextStyle(
+                      fontSize: 17, fontWeight: FontWeight.bold),
                 ),
               )
             : LayoutBuilder(builder: (context, constraints) {

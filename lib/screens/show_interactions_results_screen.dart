@@ -35,9 +35,11 @@ class _ShowInteractionsResultsScreenState
     final interactionsProvider =
         Provider.of<InteractionsProvider>(context, listen: false);
     final appLocalization = AppLocalizations.of(context)!;
-    final arguements = ModalRoute.of(context)!.settings.arguments
-        as List<dynamic>?;
-    List<dynamic> interactionsResponse = arguements ?? interactionsProvider.response;
+    final localeName = appLocalization.localeName;
+    final arguements =
+        ModalRoute.of(context)!.settings.arguments as List<dynamic>?;
+    List<dynamic> interactionsResponse =
+        arguements ?? interactionsProvider.response;
 
     for (int i = 0; i < interactionsResponse.length; i++) {
       for (int j = 0; j < interactionsResponse[i]['interactions'].length; j++) {
@@ -248,10 +250,10 @@ class _ShowInteractionsResultsScreenState
                                   const SizedBox(height: 12),
                                   isProfessional
                                       ? FutureBuilder<Translation>(
-                                          future: translator.translate(
+                                          future:  translator.translate(
                                             interactionList[i]
                                                 ['professionalEffect'],
-                                            to: 'ar',
+                                            to: localeName,
                                           ),
                                           builder: (context, snapshot) {
                                             if (snapshot.connectionState ==
@@ -276,7 +278,7 @@ class _ShowInteractionsResultsScreenState
                                           future: translator.translate(
                                             interactionList[i]
                                                 ['consumerEffect'],
-                                            to: 'ar',
+                                            to: localeName,
                                           ),
                                           builder: (context, snapshot) {
                                             if (snapshot.connectionState ==
@@ -310,41 +312,41 @@ class _ShowInteractionsResultsScreenState
                           return Container();
                         },
                       ),
-                Row(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(left: 12, right: 6),
-                      height: 20,
-                      width: 20,
-                      child: const Center(
-                        child: Icon(
-                          Icons.circle,
-                          color: Colors.black87,
-                          size: 10,
-                        ),
-                      ),
-                    ),
-                    TextButton(
-                        onPressed: null,
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                width: 1,
-                                color: Colors.blueAccent,
-                              ),
-                            ),
-                          ),
-                          child: Text(
-                            'Save interactions report',
-                            style: TextStyle(
-                              color: Colors.blueAccent,
-                              fontSize: mediaQuery.width * 0.038,
-                            ),
-                          ),
-                        ))
-                  ],
-                ),
+                // Row(
+                //   children: [
+                //     Container(
+                //       margin: const EdgeInsets.only(left: 12, right: 6),
+                //       height: 20,
+                //       width: 20,
+                //       child: const Center(
+                //         child: Icon(
+                //           Icons.circle,
+                //           color: Colors.black87,
+                //           size: 10,
+                //         ),
+                //       ),
+                //     ),
+                // TextButton(
+                //     onPressed: null,
+                //     child: Container(
+                //       decoration: const BoxDecoration(
+                //         border: Border(
+                //           bottom: BorderSide(
+                //             width: 1,
+                //             color: Colors.blueAccent,
+                //           ),
+                //         ),
+                //       ),
+                //       child: Text(
+                //         'Save interactions report',
+                //         style: TextStyle(
+                //           color: Colors.blueAccent,
+                //           fontSize: mediaQuery.width * 0.038,
+                //         ),
+                //       ),
+                //     ))
+                //   ],
+                // ),
               ],
             ),
           ),
