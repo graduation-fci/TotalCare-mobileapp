@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:grad_login/providers/drugProvider.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import '../providers/cartProvider.dart';
 import 'cart_screen.dart';
@@ -41,6 +42,7 @@ class _MedicinesScreenState extends State<MedicinesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appLocalization = AppLocalizations.of(context)!;
     final mediaquery = MediaQuery.of(context).size;
     final args = ModalRoute.of(context)!.settings.arguments as List;
     final cartItems = Provider.of<Cart>(context).items;
@@ -87,26 +89,28 @@ class _MedicinesScreenState extends State<MedicinesScreen> {
                                           .secondary,
                                       size: 28,
                                     ),
-                                    Positioned(
-                                      top: 0,
-                                      right: 0,
-                                      child: Container(
-                                        decoration: const BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.red,
-                                        ),
-                                        width: 13,
-                                        height: 13,
-                                        child: Text(
-                                          cartItems.length.toString(),
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 10,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    )
+                                    cartItems.isEmpty
+                                        ? Container()
+                                        : Positioned(
+                                            top: 0,
+                                            right: 0,
+                                            child: Container(
+                                              decoration: const BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: Colors.red,
+                                              ),
+                                              width: 13,
+                                              height: 13,
+                                              child: Text(
+                                                cartItems.length.toString(),
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 10,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          )
                                   ],
                                 ),
                               )
@@ -138,7 +142,7 @@ class _MedicinesScreenState extends State<MedicinesScreen> {
                                     borderRadius: BorderRadius.circular(
                                         mediaquery.height * 0.02),
                                     borderSide: BorderSide.none),
-                                hintText: 'Search',
+                                hintText: appLocalization.search,
                                 hintStyle: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey,

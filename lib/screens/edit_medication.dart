@@ -33,15 +33,15 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
   List<dynamic>? results;
   Map<String, dynamic> medication = {};
   bool hasContent = true;
-  bool _isVisible = true;
+  bool _isVisible = false;
   AppState appState = AppState.init;
 
   @override
   void initState() {
     super.initState();
-    _searchFocusNode.addListener(() {
+    _searchController.addListener(() {
       setState(() {
-        _isVisible = _searchFocusNode.hasFocus;
+        _isVisible = _searchController.text.isNotEmpty;
       });
     });
 
@@ -51,7 +51,6 @@ class _EditMedicationScreenState extends State<EditMedicationScreen> {
       medication['medicine']
           .map((element) => medicineIds.add(element['id']))
           .toList();
-      log('$medicineIds');
       _titleController.text = medication['title'];
     });
   }

@@ -84,12 +84,12 @@ class AuthService {
       registerEndPoint,
       headers: {
         "content-type": "application/json",
-        "accept": "application/json",
         "Authorization": "JWT $token",
       },
       body: json.encode(body),
     );
     final responseData = json.decode(response.body);
+    log(responseData.toString());
     return responseData;
   }
 

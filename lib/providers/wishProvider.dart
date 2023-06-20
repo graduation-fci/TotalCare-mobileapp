@@ -14,9 +14,14 @@ class Wish with ChangeNotifier {
 
   Storage storage = Storage();
   List<dynamic> _list = [];
+  int _wishId = 0;
 
   List<dynamic> get items {
     return [..._list];
+  }
+
+  int get wishId {
+    return _wishId;
   }
 
   Future<void> getWishID() async {
@@ -27,7 +32,8 @@ class Wish with ChangeNotifier {
       'Authorization': 'JWT $token',
     });
     final extractedData = json.decode(response.body) as List<dynamic>;
-    log(extractedData[0].toString());
+    // log(extractedData[0].toString());
+    _wishId = extractedData[0]['id'];
     _list = extractedData[0]['items'];
     notifyListeners();
   }

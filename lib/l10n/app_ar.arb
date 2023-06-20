@@ -40,7 +40,7 @@
   "drugInteractionsChecker": "تحقق من تفاعلات الادوية",
   "drugInteractionsReport": "تقرير تفاعلات الادوية",
   "enterMedicineName": "ادخل اسم دواء",
-  "typeADrugNameInTheBoxAboveToGetStarted": ".ادخل اسم سواء فالبحث للبدء",
+  "typeADrugNameInTheBoxAboveToGetStarted": "ادخل اسم دواء في البحث للبدء",
   "myMedications": "أدويتي",
   "add": "أضف",
   "consumer": "المستهلك",
@@ -52,8 +52,7 @@
   "startOver": "البدء من جديد",
   "save": "حفظ",
   "learnMore": "معرفة المزيد",
-  "settings":"الإعدادات",
-  "emptycart":"لم تقم بإضافة العناصر لعربة التسوق!"
-
-
+  "settings": "الإعدادات",
+  "emptycart": "لم تقم بإضافة العناصر لعربة التسوق!",
+  "egyptianPound": "ج.م"
 }

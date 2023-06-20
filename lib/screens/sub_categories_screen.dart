@@ -22,6 +22,9 @@ class _SubCategoriesScreenState extends State<SubCategoriesScreen> {
   Widget build(BuildContext context) {
     final subCategories = Provider.of<Categories>(context).subCatItems;
     final appLocalization = AppLocalizations.of(context)!.localeName;
+    final argument =
+        ModalRoute.of(context)!.settings.arguments as List<dynamic>;
+    final title = argument[0];
 
     return SafeArea(
       child: Scaffold(
@@ -30,7 +33,7 @@ class _SubCategoriesScreenState extends State<SubCategoriesScreen> {
           backgroundColor: Colors.white10,
           elevation: 0,
           centerTitle: true,
-          title: const Text('Sub-Categories'),
+          title: Text(title),
           leading: IconButton(
             icon: const Icon(
               Icons.arrow_back,

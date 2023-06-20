@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:grad_login/screens/interaction_screen.dart';
+import 'package:grad_login/screens/tabs_screen.dart';
 import 'package:provider/provider.dart';
 
-
+import '../keys.dart';
 import '../providers/categoriesProvider.dart';
 import '../providers/userProvider.dart';
 
@@ -96,8 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         color: Colors.black),
                                   ),
                                   TextSpan(
-                                    text:
-                                        '${appLocalization.howAreYouFeelingToday}',
+                                    text: appLocalization.howAreYouFeelingToday,
                                     style: TextStyle(
                                         fontSize: mediaquery.width * 0.035,
                                         fontWeight: FontWeight.w500,
@@ -126,9 +128,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     Stack(
                       alignment: AlignmentDirectional.topStart,
                       children: [
-                        Image.asset(
-                          'assets/images/background.png',
-                          width: double.infinity,
+                        Transform(
+                          transform: appLocalization.localeName == 'ar'
+                              ? Matrix4.rotationY(math.pi)
+                              : Matrix4.rotationY(0),
+                          child: Image.asset(
+                            'assets/images/background.png',
+                            width: double.infinity,
+                          ),
                         ),
                         SizedBox(
                           height: mediaquery.height * 0.3,

@@ -5,6 +5,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:grad_login/providers/cartProvider.dart';
+import 'package:grad_login/providers/wishProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -51,6 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final appLocalization = AppLocalizations.of(context)!;
     final GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
     final cartProvider = Provider.of<Cart>(context);
+    final wishProvider = Provider.of<Wish>(context);
 
     return SafeArea(
       child: GestureDetector(
@@ -168,8 +170,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SignButton(
                     mediaQuery: mediaQuery,
-                    onPressed: () => onPressed(
-                        authProvider, userProvider, cartProvider, context),
+                    onPressed: () => onPressed(authProvider, userProvider,
+                        cartProvider, wishProvider, context),
                     label: appLocalization.login,
                   ),
                   if (authProvider.appState == AppState.loading)
@@ -245,7 +247,8 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void onPressed(authProvider, userProvider, cartProvider, context) async {
+  void onPressed(
+      authProvider, userProvider, cartProvider, wishProvider, context) async {
     if (_formKey.currentState!.validate()) {
       await authProvider
           .login(
@@ -276,6 +279,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
           userProvider.jwtUserData = data;
           cartProvider.fetchCart();
+          wishProvider.getWishID();
           userProvider
               .getUserMedications()
               .then((_) => Navigator.of(context).pushReplacementNamed(

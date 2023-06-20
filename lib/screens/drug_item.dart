@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:grad_login/providers/wishProvider.dart';
 import 'package:grad_login/screens/drug_detail_screen.dart';
 import '../providers/drugProvider.dart';
 import 'package:provider/provider.dart';
@@ -27,9 +28,11 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final appLocalization = AppLocalizations.of(context)!.localeName;
+    final appLocalization = AppLocalizations.of(context)!;
+    final localeName = appLocalization.localeName;
     final drugs = Provider.of<Drugs>(context).items;
     final mediaquery = MediaQuery.of(context).size;
+    final wishProvider = Provider.of<Wish>(context);
 
     return GridView.builder(
       shrinkWrap: true,
@@ -48,7 +51,7 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
             DrugDetailScreen.routeName,
             arguments: DrugItem(
               id: drugs[index]['id'],
-              name: appLocalization == 'en'
+              name: localeName == 'en'
                   ? drugs[index]['name']
                   : drugs[index]['name_ar'],
               price: drugs[index]['price'],
@@ -76,7 +79,7 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
               ),
               child: GridTileBar(
                 title: Text(
-                  appLocalization == 'en'
+                  localeName == 'en'
                       ? drugs[index]['name']
                       : drugs[index]['name_ar'],
                   style: const TextStyle(
@@ -86,7 +89,7 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
                   ),
                 ),
                 subtitle: Text(
-                  '${drugs[index]['price'].toString()} L.E.',
+                  '${drugs[index]['price'].toString()} ${appLocalization.egyptianPound}',
                   style: const TextStyle(color: Colors.black, fontSize: 11),
                 ),
               ),
@@ -124,8 +127,7 @@ class _DrugItemScreenState extends State<DrugItemScreen> {
                   right: 5,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    //عايزين نخلي ال 2 دي تبقى ال wishlistID
-                    child: LoveBtn(2, drugs[index]['id']),
+                    child: LoveBtn(wishProvider.wishId, drugs[index]['id']),
                   ),
                 ),
               ],
