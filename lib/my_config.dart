@@ -1,6 +1,6 @@
 class Config {
   // static const String apiUrl = "http://192.168.1.8:8000";
-  static const String apiUrl = "http://64.225.110.140:8000";
+  static const String apiUrl = "http://146.190.130.251:8000";
   static const String simpleMeds = '$apiUrl/medicine/simple_meds/';
   static const String refreshToken = '$apiUrl/auth/auth/jwt/refresh/';
   static const String interactionMain = '$apiUrl/medicine/interactions/';
