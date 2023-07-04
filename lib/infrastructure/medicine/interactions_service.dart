@@ -9,7 +9,8 @@ class InteractionsService {
   Storage storage = Storage();
 
   Future<dynamic> medicineInteraction(
-      List<Map<String, dynamic>> interactionMedicines, {int? id}) async {
+      List<Map<String, dynamic>> interactionMedicines,
+      {int? id}) async {
     final interactionsEndpoint = Uri.parse(Config.interactionMain);
     Map<String, dynamic> responseData = {};
     Map<String, String> error = {};
@@ -32,7 +33,7 @@ class InteractionsService {
       return error;
     }
     responseData = json.decode(response.body);
-    if (responseData.isEmpty) {
+    if (!responseData.containsKey('permutations')) {
       error['errorMsg'] = 'There is no Interactions between your medicines.';
       return error;
     }
